@@ -26,7 +26,7 @@ route.get("/", async (req, res) => {
   });
 
   // the res parameter references the HTTP response object
-  res.render("index", { entries: formattedEntries });
+  res.render("homePage", { entries: formattedEntries });
 });
 
 route.get("/createEntry", (req, res) => {
