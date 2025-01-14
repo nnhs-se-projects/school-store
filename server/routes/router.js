@@ -26,8 +26,12 @@ route.get("/", async (req, res) => {
   });
 
   // the res parameter references the HTTP response object
-  res.render("admin", { entries: formattedEntries });
+  res.render("index", { entries: formattedEntries });
 });
+
+route.get("/admin", async (req, res) => {
+  res.render("admin");
+})
 
 route.get("/createEntry", (req, res) => {
   res.render("createEntry", { habits: habitsOfMind });
