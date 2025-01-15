@@ -29,6 +29,10 @@ route.get("/", async (req, res) => {
   res.render("index", { entries: formattedEntries });
 });
 
+route.get("/admin", async (req, res) => {
+  res.render("admin");
+})
+
 route.get("/createEntry", (req, res) => {
   res.render("createEntry", { habits: habitsOfMind });
 });
