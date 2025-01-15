@@ -30,11 +30,10 @@
 }
 
 .homePageToolBar h1 {
-
   padding: 10px;
   margin-right: auto;
   color: orange;
-  flex-direction:center;
+  flex-direction: center;
   font-size: 40px;
 }
 
@@ -54,4 +53,10 @@
 
 .entryContent {
   flex-grow: 1;
+}
+
+.homePageInformation {
+  padding: 10px;
+  align-items: center;
+  margin: auto;
 }
