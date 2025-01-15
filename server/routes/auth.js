@@ -12,15 +12,17 @@ const CLIENT_ID =
 
 // from: https://developers.google.com/identity/gsi/web/guides/verify-google-id-token#node.js
 const { OAuth2Client } = require("google-auth-library");
+const User = require("../model/user");
+
 const client = new OAuth2Client();
 async function verify(token) {
   const ticket = await client.verifyIdToken({
     idToken: token,
     audience: CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
   });
-  const { sub, email } = ticket.getPayload();
-  console.log(sub, email);
-  return email;
+  const { sub, email, name } = ticket.getPayload();
+  console.log(sub, email, name);
+  return { googleId: sub, email, name };
 }
 
 route.get("/", (req, res) => {
@@ -28,7 +30,16 @@ route.get("/", (req, res) => {
 });
 
 route.post("/", async (req, res) => {
-  req.session.email = await verify(req.body.credential);
+  const { googleId, email, name } = await verify(req.body.credential);
+  let user = await User.findOne({ googleId });
+
+  if (!user) {
+    console.log("Creating new user");
+    user = new User({ googleId, email, name });
+    await user.save();
+  }
+
+  req.session.email = email;
   res.status(201).end();
 });
 
