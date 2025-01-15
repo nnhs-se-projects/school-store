@@ -9,6 +9,11 @@
   gap: 10px;
 }
 
+.admin #grid-row {
+  display: grid;
+  flex-direction: row;
+}
+
 .authForm img {
   width: 100px;
   height: 100px;

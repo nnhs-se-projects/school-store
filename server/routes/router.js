@@ -29,7 +29,7 @@ route.get("/", async (req, res) => {
   res.render("homePage", { entries: formattedEntries });
 });
 
-route.get("/admin", async (req, res) => {
+route.get("/admin", async (req, res) => { 
   res.render("admin");
 })
 
