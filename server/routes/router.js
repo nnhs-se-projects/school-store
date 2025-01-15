@@ -29,10 +29,6 @@ route.get("/", async (req, res) => {
   res.render("homePage", { entries: formattedEntries });
 });
 
-route.get("/admin", async (req, res) => {
-  res.render("admin");
-})
-
 route.get("/createEntry", (req, res) => {
   res.render("createEntry", { habits: habitsOfMind });
 });
@@ -56,6 +52,21 @@ route.get("/editEntry/:id", async (req, res) => {
   const entry = await Entry.findById(req.params.id);
   console.log(entry);
   res.send(entry);
+});
+
+function isAdmin(req, res, next) {
+  if (req.session && req.session.isAdmin) {
+    return next(); // Allow access to the next middleware or route
+  } else {
+    return res
+      .status(403)
+      .send("Forbidden: You do not have access to this page.");
+  }
+}
+
+route.get("/admin", isAdmin, (req, res) => {
+  // This will only be reached if the user is an admin
+  res.render("admin"); // or any other content specific to admin users
 });
 
 // delegate all authentication to the auth.js router
