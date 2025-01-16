@@ -26,6 +26,7 @@ route.get("/", async (req, res) => {
   });
 
   // the res parameter references the HTTP response object
+  console.log("rendering homePage");
   res.render("homePage", { entries: formattedEntries });
 });
 
@@ -66,7 +67,8 @@ function isAdmin(req, res, next) {
 
 route.get("/admin", isAdmin, (req, res) => {
   // This will only be reached if the user is an admin
-  res.render("admin"); // or any other content specific to admin users
+  console.log("Rendering admin page router");
+  return res.render("admin", { user: req.session.user }); // or any other content specific to admin users
 });
 
 // delegate all authentication to the auth.js router

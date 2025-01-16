@@ -32,34 +32,23 @@ route.get("/", (req, res) => {
 });
 
 route.post("/", async (req, res) => {
-  const { email, isAdmin } = await verify(req.body.credential);
-  req.session.email = email;
-  req.session.isAdmin = isAdmin; // Store the isAdmin status in the session
+  try {
+    const { email, isAdmin } = await verify(req.body.credential);
+    req.session.email = email;
+    req.session.isAdmin = isAdmin; // Store the isAdmin status in the session
 
-  if (isAdmin) {
-    // console.log("redirecting");
-    return res.redirect("/admin"); // Redirect to /admin if the user is an admin
+    console.log(`User isAdmin: ${isAdmin}`); // Log the isAdmin value
+
+    if (isAdmin) {
+      console.log("Redirecting to /admin");
+      res.redirect("/admin");
+    } else {
+      res.status(201).end();
+    }
+  } catch (error) {
+    console.error("Error during authentication:", error);
+    res.status(500).send("Internal Server Error");
   }
-
-  res.status(201).end();
-});
-
-function isAdmin(req, res, next) {
-  console.log("checking if admin");
-  if (req.session && req.session.isAdmin) {
-    console.log("is admin");
-    return next(); // Allow access to the next middleware or route
-  } else {
-    return res
-      .status(403)
-      .send("Forbidden: You do not have access to this page.");
-  }
-}
-
-route.get("/admin", isAdmin, (req, res) => {
-  // This will only be reached if the user is an admin
-  console.log("rendering admin");
-  res.render("admin"); // or any other content specific to admin users
 });
 
 module.exports = route;
