@@ -9,14 +9,17 @@
   gap: 10px;
 }
 
-.admin #grid-row {
-  display: grid;
-  flex-direction: row;
-}
-
 .authForm img {
   width: 100px;
   height: 100px;
+}
+
+table {
+  border: 1px solid;
+}
+
+th, td {
+  border: 1px solid;
 }
 
 .homePageToolBar {
