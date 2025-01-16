@@ -1,6 +1,8 @@
 const express = require("express");
 const route = express.Router();
 const Entry = require("../model/entry");
+const User = require("../model/user");
+const Item = require("../model/item");
 
 // easy way to assign static data (e.g., array of strings) to a variable
 const habitsOfMind = require("../model/habitsOfMind.json");
@@ -14,6 +16,18 @@ route.get("/", async (req, res) => {
   console.log("path: ", req.path);
 
   const entries = await Entry.find();
+  const items = await Item.find();
+
+  const formattedItems = items.map((item) => {
+    return {
+      id: item._id,
+      name: item.name,
+      price: item.price,
+      description: item.description,
+      image: item.image,
+      size: item.size,
+    };
+  });
 
   // convert MongoDB objects to objects formatted for the EJS template
   const formattedEntries = entries.map((entry) => {
@@ -28,6 +42,7 @@ route.get("/", async (req, res) => {
   // the res parameter references the HTTP response object
   res.render("homePage", {
     entries: formattedEntries,
+    items: formattedItems,
   });
 });
 
@@ -58,6 +73,31 @@ route.get("/editEntry/:id", async (req, res) => {
   const entry = await Entry.findById(req.params.id);
   console.log(entry);
   res.send(entry);
+});
+
+route.post("/cart", async (req, res) => {
+  const { googleId, itemId, quantity } = req.body;
+
+  const user = await User.findOne({ googleId });
+
+  if (!user) {
+    return res.status(404).send("User not found");
+  }
+
+  const itemIndex = user.cart.findIndex(
+    (item) => item.itemId.toString() === itemId
+  );
+
+  if (itemIndex > -1) {
+    // If item already exists in the cart, update the quantity
+    user.cart[itemIndex].quantity += quantity;
+  } else {
+    // If item does not exist in the cart, add it
+    user.cart.push({ itemId, quantity });
+  }
+
+  await user.save();
+  res.status(200).send("Item added to cart");
 });
 
 // delegate all authentication to the auth.js router

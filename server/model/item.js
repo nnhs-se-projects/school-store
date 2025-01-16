@@ -12,6 +12,12 @@ const ItemSchema = new mongoose.Schema({
   description: {
     type: String,
   },
+  image: {
+    type: String,
+  },
+  size: {
+    type: String,
+  },
   // Add other fields as necessary
 });
 

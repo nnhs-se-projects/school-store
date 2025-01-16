@@ -43,29 +43,4 @@ route.post("/", async (req, res) => {
   res.status(201).end();
 });
 
-route.post("/cart", async (req, res) => {
-  const { googleId, itemId, quantity } = req.body;
-
-  const user = await User.findOne({ googleId });
-
-  if (!user) {
-    return res.status(404).send("User not found");
-  }
-
-  const itemIndex = user.cart.findIndex(
-    (item) => item.itemId.toString() === itemId
-  );
-
-  if (itemIndex > -1) {
-    // If item already exists in the cart, update the quantity
-    user.cart[itemIndex].quantity += quantity;
-  } else {
-    // If item does not exist in the cart, add it
-    user.cart.push({ itemId, quantity });
-  }
-
-  await user.save();
-  res.status(200).send("Item added to cart");
-});
-
 module.exports = route;
