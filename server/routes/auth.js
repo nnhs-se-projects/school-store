@@ -35,16 +35,21 @@ route.post("/", async (req, res) => {
   try {
     const { email, isAdmin } = await verify(req.body.credential);
     req.session.email = email;
-    req.session.isAdmin = isAdmin; // Store the isAdmin status in the session
+    req.session.isAdmin = isAdmin;
 
-    console.log(`User isAdmin: ${isAdmin}`); // Log the isAdmin value
+    req.session.save((err) => {
+      if (err) {
+        console.error("Session save error:", err);
+        return res.status(500).send("Internal Server Error");
+      }
 
-    if (isAdmin) {
-      console.log("Redirecting to /admin");
-      res.redirect("/admin");
-    } else {
-      res.status(201).end();
-    }
+      if (isAdmin) {
+        console.log("Redirecting to /admin");
+        res.redirect("/admin");
+      } else {
+        res.redirect("/"); // Redirect non-admins to home
+      }
+    });
   } catch (error) {
     console.error("Error during authentication:", error);
     res.status(500).send("Internal Server Error");
