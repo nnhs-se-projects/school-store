@@ -4,6 +4,9 @@
 
 <!-- Main Site -->
 <main>
+  <% if (session && session.isAdmin) { %>
+    <button class="adminButton" onclick="window.location.href = '/admin';">View Orders</button>
+  <% } %>
  
   <p>The Naperville North Huskie Store is open Monday through Friday during 4th, 5th, and 6th period</p>
   <h2>Hours</h2>
@@ -19,7 +22,7 @@
 
 <!-- /Main Site -->
 
-<script src="/js/index.js"></script>
+<script src="/js/homePage.js"></script>
 
 <!-- include footer -->
 <%- include('include/_footer') %>

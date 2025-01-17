@@ -42,13 +42,8 @@ route.post("/", async (req, res) => {
         console.error("Session save error:", err);
         return res.status(500).send("Internal Server Error");
       }
-
-      if (isAdmin) {
-        console.log("Redirecting to /admin");
-        res.redirect("/admin");
-      } else {
-        res.redirect("/"); // Redirect non-admins to home
-      }
+      // Session saved successfully, send a response
+      res.status(200).send("Authentication successful");
     });
   } catch (error) {
     console.error("Error during authentication:", error);

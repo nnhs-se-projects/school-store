@@ -12,22 +12,10 @@ route.get("/", async (req, res) => {
   // the req parameter references the HTTP request object, which has
   //  a number of properties
   console.log("path: ", req.path);
-
-  const entries = await Entry.find();
-
-  // convert MongoDB objects to objects formatted for the EJS template
-  const formattedEntries = entries.map((entry) => {
-    return {
-      id: entry._id,
-      date: entry.date.toLocaleDateString(),
-      habit: entry.habit,
-      content: entry.content.slice(0, 20) + "...",
-    };
-  });
-
   // the res parameter references the HTTP response object
   console.log("rendering homePage");
-  res.render("homePage", { entries: formattedEntries });
+  console.log("session: ", req.session);
+  res.render("homePage", { session: req.session });
 });
 
 route.get("/createEntry", (req, res) => {
