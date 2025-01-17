@@ -207,6 +207,7 @@ body {
 
 .footer-content p {
   margin: 5px 0;
+  color: rgb(255, 155, 5);
 }
 
 .footer-content strong {
@@ -215,7 +216,7 @@ body {
 
 .footer-bottom {
   font-size: 0.9em;
-  color: #aaa; /* Lighter color for less emphasis */
+  color: #ffa600; /* Lighter color for less emphasis */
 }
 
 .footer-bottom p {
