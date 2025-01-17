@@ -13,6 +13,7 @@ const CLIENT_ID =
 // from: https://developers.google.com/identity/gsi/web/guides/verify-google-id-token#node.js
 const { OAuth2Client } = require("google-auth-library");
 const User = require("../model/user");
+const Item = require("../model/item");
 
 const client = new OAuth2Client();
 async function verify(token) {
@@ -40,6 +41,16 @@ route.post("/", async (req, res) => {
   }
 
   req.session.email = email;
+  /** 
+  const newItem = new Item({
+    name: "Shirt",
+    price: 11.8,
+    quantity: 11,
+    description: "A shirt",
+    image: "shirt.jpg",
+  });
+  await newItem.save();
+  */
   res.status(201).end();
 });
 
