@@ -6,8 +6,13 @@ const ItemSchema = new mongoose.Schema({
     required: true,
   },
   price: {
+    type: mongoose.Types.Decimal128,
+    required: true,
+  },
+  quanity: {
     type: Number,
     required: true,
+    default: 0,
   },
   description: {
     type: String,
@@ -17,7 +22,7 @@ const ItemSchema = new mongoose.Schema({
   },
   size: {
     type: String,
-  },
+  }
   // Add other fields as necessary
 });
 
