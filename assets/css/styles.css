@@ -158,15 +158,33 @@ body {
   display: inline-block;
 }
 
+/* Store hours styles */
+.store-hours {
+  padding: 10px 20px; /* Add padding around the container */
+  background-color: #f7f7f7; /* Optional: light background for distinction */
+  border-radius: 8px; /* Rounded corners */
+  margin-bottom: 20px; /* Space below the section */
+}
+
 .store-hours ul {
-  list-style: none;
-  padding: 0;
+  list-style: none; /* Remove default bullet points */
+  padding-left: 20px; /* Add space between the edge and the list items */
 }
 
 .store-hours li {
-  font-size: 1.1em;
-  margin: 8px 0;
-  color: #444;
+  position: relative;
+  margin: 8px 0; /* Add spacing between each list item */
+  padding-left: 20px; /* Space for custom bullet */
+}
+
+.store-hours li::before {
+  content: "•"; /* Custom bullet symbol */
+  color: #0077cc; /* Bullet color */
+  font-size: 1.2em; /* Bullet size */
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .store-hours strong {
