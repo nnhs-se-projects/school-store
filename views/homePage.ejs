@@ -1,23 +1,50 @@
-<!-- include header -->
-<%- include('include/_header') %>
-<!-- /include header -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>School Store</title>
+    <link rel="stylesheet" href="/css/pico.min.css" />
+    <link rel="stylesheet" href="/css/styles.css" />
 
-<!-- Main Site -->
+    <nav class="navbar">
+      <div onclick="window.location.href='/'" class="logo">Naperville North School Store <img src = img/Huskie-Box.png alt = "Huskie Logo" class = "logo-image"> </div>
+        <ul class="nav-links">
+            <% if ( session && session.isAdmin ) { %>
+            <li><a href="/admin">View Orders</a></li>
+            <% } %>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#contact">Contact</a></li>
+            
+        </ul>
+    </nav>
+
+  </div>
+  </head>
+  <body>
+<!-- HEADER END -->
+
 <main>
-  <% if (session && session.isAdmin) { %>
-    <button class="adminButton" onclick="window.location.href = '/admin';">View Orders</button>
-  <% } %>
- 
-  <p>The Naperville North Huskie Store is open Monday through Friday during 4th, 5th, and 6th period</p>
-  <h2>Hours</h2>
-  <ul>
-    <li>Monday: 10:36am - 1:18pm</li>
-    <li>Tuesday: 11:05am - 1:30pm</li>
-    <li>Wednesday: 11:21am - 1:36pm</li>
-    <li>Thursday: 11:05am - 1:30pm</li>
-    <li>Friday: 10:36am - 1:18pm</li>
+  <section class="store-info">
+    <h1>Naperville North Huskie Store</h1>
+    <p>
+      The Huskie Store is open Monday through Friday during 4th, 5th, and 6th
+      period.
+    </p>
 
-
+    <div class="store-hours">
+      <h2>Hours</h2>
+      <ul>
+        <li><strong>Monday:</strong> 10:36am - 1:18pm</li>
+        <li><strong>Tuesday:</strong> 11:05am - 1:30pm</li>
+        <li><strong>Wednesday:</strong> 11:21am - 1:36pm</li>
+        <li><strong>Thursday:</strong> 11:05am - 1:30pm</li>
+        <li><strong>Friday:</strong> 10:36am - 1:18pm</li>
+      </ul>
+    </div>
+  </section>
 </main>
 
 <!-- /Main Site -->

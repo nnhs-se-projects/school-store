@@ -14,17 +14,20 @@ const CLIENT_ID =
 
 // from: https://developers.google.com/identity/gsi/web/guides/verify-google-id-token#node.js
 const { OAuth2Client } = require("google-auth-library");
+const User = require("../model/user");
+const Item = require("../model/item");
+
 const client = new OAuth2Client();
 async function verify(token) {
   const ticket = await client.verifyIdToken({
     idToken: token,
     audience: CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
   });
-  const { sub, email } = ticket.getPayload();
-  console.log(sub, email);
+  const { sub, email, name } = ticket.getPayload();
+  console.log(sub, email, name);
   const isAdmin = adminEmails.includes(email);
   console.log("isAdmin: ", isAdmin);
-  return { email, isAdmin };
+  return { googleId: sub, email, name, isAdmin };
 }
 
 route.get("/", (req, res) => {
@@ -33,9 +36,27 @@ route.get("/", (req, res) => {
 
 route.post("/", async (req, res) => {
   try {
-    const { email, isAdmin } = await verify(req.body.credential);
+    const { googleId, email, name, isAdmin } = await verify(req.body.credential);
+    let user = await User.findOne({ googleId });
+
+    if (!user) {
+      console.log("Creating new user");
+      user = new User({ googleId, email, name });
+      await user.save();
+    }
+
     req.session.email = email;
     req.session.isAdmin = isAdmin;
+    /** 
+    const newItem = new Item({
+      name: "Shirt",
+      price: 11.8,
+      quantity: 11,
+      description: "A shirt",
+      image: "shirt.jpg",
+    });
+    await newItem.save();
+    */
 
     req.session.save((err) => {
       if (err) {
@@ -45,6 +66,7 @@ route.post("/", async (req, res) => {
       // Session saved successfully, send a response
       res.status(200).send("Authentication successful");
     });
+
   } catch (error) {
     console.error("Error during authentication:", error);
     res.status(500).send("Internal Server Error");

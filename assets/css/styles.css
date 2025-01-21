@@ -14,30 +14,6 @@
   height: 100px;
 }
 
-.homePageToolBar {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-  align-items: center;
-  background-color: navy;
-}
-
-.homePageToolBar img {
-  flex-shrink: 0;
-  width: 140px;
-  height: 140px;
-}
-
-.homePageToolBar h1 {
-
-  padding: 10px;
-  margin-right: auto;
-  color: orange;
-  flex-direction:center;
-  font-size: 40px;
-}
-
 .entry {
   display: flex;
   flex-direction: row;
@@ -54,4 +30,202 @@
 
 .entryContent {
   flex-grow: 1;
+}
+
+.homePageInformation {
+  padding: 1em;
+  line-height: 1em;
+  align-items: center;
+  margin: auto;
+}
+
+/* Navbar styling */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #000099; /* Dark background */
+  padding: 10px 20px;
+  color: #fff;
+}
+
+.navbar .logo {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: rgb(255, 255, 255);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Add spacing between the text and image */
+}
+
+.logo-image {
+  height: 40px; /* Adjust size to fit within the navbar */
+  width: auto; /* Maintain aspect ratio */
+  display: block; /* Ensure proper spacing */
+}
+
+.nav-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 15px;
+}
+
+.nav-links li {
+  display: inline;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #fff;
+  padding: 8px 15px;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.nav-links a:hover {
+  background-color: #0432ff; /* Slightly lighter on hover */
+}
+
+/* Responsive design */
+
+@media (max-width: 768px) {
+  .nav-links {
+    flex-direction: column;
+    gap: 10px;
+    display: none; /* Initially hidden */
+    background-color: #333333;
+    padding: 10px;
+    position: absolute;
+    top: 50px;
+    right: 20px;
+    border-radius: 5px;
+  }
+
+  .nav-links.active {
+    display: flex; /* Show on activation */
+  }
+
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+/* Store info section */
+.store-info {
+  max-width: 600px;
+  margin: 50px auto;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.store-info h1 {
+  font-size: 2em;
+  color: #0077cc;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.store-info p {
+  font-size: 1.1em;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #555;
+}
+
+/* Store hours styles */
+.store-hours h2 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  color: #333;
+  border-bottom: 2px solid #0077cc;
+  display: inline-block;
+}
+
+.store-hours ul {
+  list-style: none;
+  padding: 0;
+}
+
+.store-hours li {
+  font-size: 1.1em;
+  margin: 8px 0;
+  color: #444;
+}
+
+.store-hours strong {
+  color: #0077cc;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .store-info {
+    padding: 15px;
+  }
+
+  .store-info h1 {
+    font-size: 1.8em;
+  }
+
+  .store-hours h2 {
+    font-size: 1.3em;
+  }
+
+  .store-hours li {
+    font-size: 1em;
+  }
+}
+
+/* Footer styles */
+.site-footer {
+  background-color: #333; /* Dark background for contrast */
+  color: #fff; /* White text */
+  padding: 20px 0;
+  text-align: center;
+  font-size: 1em;
+}
+
+.footer-content {
+  margin-bottom: 10px;
+}
+
+.footer-content p {
+  margin: 5px 0;
+  color: rgb(255, 155, 5);
+}
+
+.footer-content strong {
+  color: #0077cc; /* Accent color for labels */
+}
+
+.footer-bottom {
+  font-size: 0.9em;
+  color: #ffa600; /* Lighter color for less emphasis */
+}
+
+.footer-bottom p {
+  margin: 0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .site-footer {
+    font-size: 0.9em;
+  }
 }
