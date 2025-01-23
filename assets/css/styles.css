@@ -14,31 +14,16 @@
   height: 100px;
 }
 
-.entry {
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  background-color: #f9f9f9;
+  color: #333;
   display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 10px;
-  border: black 1px solid;
+  flex-direction: column;
 }
-
-.entryHabit {
-  flex-basis: 200px;
-}
-
-.entryContent {
-  flex-grow: 1;
-}
-
-.homePageInformation {
-  padding: 1em;
-  line-height: 1em;
-  align-items: center;
-  margin: auto;
-}
-
 /* Navbar styling */
 .navbar {
   display: flex;
@@ -81,7 +66,7 @@
 
 .nav-links a {
   text-decoration: none;
-  color: #fff;
+  color: #ffffff;
   padding: 8px 15px;
   border-radius: 4px;
   transition: background-color 0.3s ease;
@@ -116,16 +101,14 @@
   }
 }
 
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  line-height: 1.6;
-  background-color: #f9f9f9;
-  color: #333;
+/* Store info section */
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Full height */
 }
 
-/* Store info section */
 .store-info {
   max-width: 600px;
   margin: 50px auto;
@@ -133,6 +116,8 @@ body {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  flex: 1; /* Pushes the footer to the bottom if there's not enough content */
+  padding: 20px;
 }
 
 .store-info h1 {
@@ -158,15 +143,29 @@ body {
   display: inline-block;
 }
 
-.store-hours ul {
-  list-style: none;
-  padding: 0;
+/* Store hours styles */
+.store-hours {
+  padding: 10px 20px; /* Add padding around the container */
+  background-color: #f7f7f7; /* Optional: light background for distinction */
+  border-radius: 8px; /* Rounded corners */
+  margin-bottom: 20px; /* Space below the section */
 }
 
 .store-hours li {
-  font-size: 1.1em;
-  margin: 8px 0;
-  color: #444;
+  position: relative;
+  margin: 8px 0; /* Add spacing between each list item */
+  padding-left: 20px; /* Space for custom bullet */
+  list-style: none;
+}
+
+.store-hours li::before {
+  content: "•"; /* Custom bullet symbol */
+  color: #0077cc; /* Bullet color */
+  font-size: 1.2em; /* Bullet size */
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .store-hours strong {

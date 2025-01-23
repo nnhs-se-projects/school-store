@@ -3,11 +3,41 @@
 <!-- /include header -->
 
 <!-- Main Site -->
+
+
+<link rel="stylesheet" href="/css/admin.css">
+
 <main>
-  <h1>Look at this admin page</h1>
-  <p>Imagine that there is a lot of <b><u>really cool</u></b> stuff here</p>
+  <h1>Student Orders</h1>
+  <div class="wrapper">
+    <table>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Order</th>
+        <th>Pickup Period</th>
+        <th>del</th>
+      </tr>
+
+      <!-- Once the list of orders and info is made, we could use a for loop to create the rest of the list -->
+
+      <tr>
+        <th>Benjamin Pozzi</th>
+        <th>bmpozzi@stu.naperville203.org</th>
+        <th>2 locks, 15 shirts</th>
+        <th>4th period</th>
+      </tr>
+
+      <!-- The for loop would go between these two comment lines -->
+
+    </table>
+  </div>
+
 </main>
+
 <!-- /Main Site -->
+
+
 
 <!-- include footer -->
 <%- include('include/_footer') %>
