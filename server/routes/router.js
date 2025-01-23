@@ -43,7 +43,7 @@ route.get("/", async (req, res) => {
   });
 });
 
-route.get("/admin", async (req, res) => {
+route.get("/admin", async (req, res) => { 
   res.render("admin");
 });
 
