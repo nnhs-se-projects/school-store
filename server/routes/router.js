@@ -57,6 +57,15 @@ function isAdmin(req, res, next) {
   }
 }
 
+route.get("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).send("Failed to log out");
+    }
+    res.redirect("/");
+  });
+});
+
 // uses the isAdmin middleware before rendering the page
 route.get("/admin", isAdmin, (req, res) => {
   // This will only be reached if the user is an admin
