@@ -18,5 +18,5 @@ async function handleCredentialResponse(res) {
   });
 
   // redirect to the index page
-  window.location = "/";
+  window.location.href = "/";
 }
