@@ -9,9 +9,9 @@ route.get("/", async (req, res) => {
 });
 
 // Route to add a new item
-route.post("/", async (req, res) => {
-  const { name, quantity } = req.body;
-  const item = new Item({ name, quantity });
+route.post("/addItem", async (req, res) => {
+  const { name, price, quantity } = req.body.item;
+  const item = new Item({ name, price, quantity });
   await item.save();
   res.status(201).json(item);
 });

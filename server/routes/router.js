@@ -46,6 +46,7 @@ route.get("/", async (req, res) => {
   });
 });
 
+
 function isAdmin(req, res, next) {
   // check if the session exists (user is logged in), and if they are an admin
   if (req.session && req.session.isAdmin) {
@@ -71,6 +72,11 @@ route.get("/admin", isAdmin, (req, res) => {
   // This will only be reached if the user is an admin
   // console.log("Rendering admin page router");
   return res.render("admin", { session: req.session, user: req.session.user });
+
+});
+
+route.get("/addItem", async (req, res) => {
+  res.render("addItem");
 });
 
 route.post("/cart", async (req, res) => {

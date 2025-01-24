@@ -9,7 +9,7 @@ const ItemSchema = new mongoose.Schema({
     type: mongoose.Types.Decimal128,
     required: true,
   },
-  quanity: {
+  quantity: {
     type: Number,
     required: true,
     default: 0,
@@ -22,7 +22,7 @@ const ItemSchema = new mongoose.Schema({
   },
   size: {
     type: String,
-  }
+  },
   // Add other fields as necessary
 });
 
