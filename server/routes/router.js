@@ -4,16 +4,27 @@ const route = express.Router();
 const User = require("../model/user");
 const Item = require("../model/item");
 
-// pass a path (e.g., "/") and a callback function to the get method
-//  when the client makes an HTTP GET request to the specified path,
-//  the callback function is executed
-route.get("/", async (req, res) => {
-  // the req parameter references the HTTP request object, which has
-  //  a number of properties
-  console.log("path: ", req.path);
+/*
+  How to create a get route
 
+  route.get("/path", middleware, (req, res) => {
+    path: the specified url or path you want to direct to
+    middleware: a function that runs before the route handler (optional) (i.e isAdmin, to check if the user is an admin)
+    req: the HTTP request object
+    res: the HTTP response object
+
+    res.render("view", { session: req.session, key: value, key: value, ... });
+    IMPORTANT: payload the session (req.session) into EVERY get route in order for the header to work
+
+*/
+
+route.get("/", async (req, res) => {
+  // console.log("path: ", req.path);
+
+  // get items from the database to display on the homepage
   const items = await Item.find();
 
+  // format the items into a usable array
   const formattedItems = items.map((item) => {
     return {
       id: item._id,
@@ -25,9 +36,10 @@ route.get("/", async (req, res) => {
     };
   });
 
-  console.log("rendering homePage");
-  console.log("session: ", req.session);
-  // the res parameter references the HTTP response object
+  // console.log("rendering homePage");
+  // console.log("session: ", req.session);
+
+  // render the homePage and payload the session and items
   res.render("homePage", {
     session: req.session,
     items: formattedItems,
@@ -35,6 +47,7 @@ route.get("/", async (req, res) => {
 });
 
 function isAdmin(req, res, next) {
+  // check if the session exists (user is logged in), and if they are an admin
   if (req.session && req.session.isAdmin) {
     return next(); // Allow access to the next middleware or route
   } else {
@@ -44,11 +57,12 @@ function isAdmin(req, res, next) {
   }
 }
 
+// uses the isAdmin middleware before rendering the page
 route.get("/admin", isAdmin, (req, res) => {
   // This will only be reached if the user is an admin
-  console.log("Rendering admin page router");
-  return res.render("admin", { user: req.session.user });
-}); // or any other content specific to admin users
+  // console.log("Rendering admin page router");
+  return res.render("admin", { session: req.session, user: req.session.user });
+});
 
 route.post("/cart", async (req, res) => {
   const { googleId, itemId, quantity } = req.body;
