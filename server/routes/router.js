@@ -51,13 +51,6 @@ route.get("/addItem", async (req, res) => {
   res.render("addItem");
 });
 
-route.post("/addItem", async (req, res) => {
-  const { name, price, description, image, size } = req.body.item;
-  const item = new Item({ name, price, description, image, size });
-  await item.save();
-  res.status(201).json(item);
-});
-
 route.post("/cart", async (req, res) => {
   const { googleId, itemId, quantity } = req.body;
 

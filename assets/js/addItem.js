@@ -1,13 +1,13 @@
 const submitButton = document.querySelector("input.submit");
 
 submitButton.addEventListener("click", async () => {
-  const name = document.querySelector("input.name").valu;
-  const price = document.querySelector("input.price").value;
-  const description = document.querySelector("textarea.description").value;
-  const image = document.querySelector("input.image").value;
-  const size = document.querySelector("input.size").value;
+  const name = document.querySelector("input#name").value;
+  const price = document.querySelector("input#price").value;
+  const quantity = document.querySelector("input#quantity").value;
 
-  const item = { name, price, description, image, size };
+  const item = { name, price, quantity };
+
+  console.log(item);
 
   const response = await fetch("/addItem", {
     method: "POST",
