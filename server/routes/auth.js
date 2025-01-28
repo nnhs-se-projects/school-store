@@ -15,7 +15,6 @@ const CLIENT_ID =
 // from: https://developers.google.com/identity/gsi/web/guides/verify-google-id-token#node.js
 const { OAuth2Client } = require("google-auth-library");
 const User = require("../model/user");
-const Item = require("../model/item");
 
 const client = new OAuth2Client();
 async function verify(token) {
@@ -36,7 +35,9 @@ route.get("/", (req, res) => {
 
 route.post("/", async (req, res) => {
   try {
-    const { googleId, email, name, isAdmin } = await verify(req.body.credential);
+    const { googleId, email, name, isAdmin } = await verify(
+      req.body.credential
+    );
     let user = await User.findOne({ googleId });
 
     if (!user) {
@@ -66,7 +67,6 @@ route.post("/", async (req, res) => {
       // Session saved successfully, send a response
       res.status(200).send("Authentication successful");
     });
-
   } catch (error) {
     console.error("Error during authentication:", error);
     res.status(500).send("Internal Server Error");

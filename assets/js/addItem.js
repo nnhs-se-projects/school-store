@@ -4,8 +4,9 @@ submitButton.addEventListener("click", async () => {
   const name = document.querySelector("input#name").value;
   const price = document.querySelector("input#price").value;
   const quantity = document.querySelector("input#quantity").value;
+  const description = document.querySelector("input#description").value;
 
-  const item = { name, price, quantity };
+  const item = { name, price, quantity, description };
 
   console.log(item);
 

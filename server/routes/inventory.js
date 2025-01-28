@@ -2,16 +2,10 @@ const express = require("express");
 const route = express.Router();
 const Item = require("../model/item");
 
-// Route to get all items
-route.get("/", async (req, res) => {
-  const items = await Item.find();
-  res.json(items);
-});
-
 // Route to add a new item
 route.post("/addItem", async (req, res) => {
-  const { name, price, quantity } = req.body.item;
-  const item = new Item({ name, price, quantity });
+  const { name, price, quantity, description } = req.body.item;
+  const item = new Item({ name, price, quantity, description });
   await item.save();
   res.status(201).json(item);
 });
