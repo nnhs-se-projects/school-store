@@ -27,6 +27,7 @@
 
   </section>
 
+  <img id="imagePreview" alt="Image Preview" style="display:none;">
   
     <div class = "item-list"> 
       <% items.forEach(function(item) { %>
@@ -34,6 +35,8 @@
           <h2><%= item.name %></h2>
           <p>Price: $<%= item.price %></p>
           <p>Description: <%= item.description %></p>
+          <img src="data:image/png;base64,<%= item.base64Image %>" alt="<%= item.name %>">
+          <img src="<%= item.image %>">
       </div>
       <% }) %>
     </div>

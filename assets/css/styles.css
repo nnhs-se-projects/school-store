@@ -261,3 +261,11 @@ body {
   color: #fff;
   margin-bottom: 10px;
 }
+
+/* Want to ensure that the aspect ratio remains 1 */
+.item img { 
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}

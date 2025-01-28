@@ -4,8 +4,8 @@ const Item = require("../model/item");
 
 // Route to add a new item
 route.post("/addItem", async (req, res) => {
-  const { name, price, quantity, description } = req.body.item;
-  const item = new Item({ name, price, quantity, description });
+  const { name, price, quantity, description, image } = req.body.item;
+  const item = new Item({ name, price, quantity, description, image });
   await item.save();
   res.status(201).json(item);
 });
