@@ -263,9 +263,14 @@ body {
 }
 
 /* Want to ensure that the aspect ratio remains 1 */
-.item img { 
+.item img {
   width: 100%;
   height: auto;
   display: block;
   border-radius: 8px;
+}
+
+.add-items {
+  margin-left: 20px;
+  margin-right: 20px;
 }
