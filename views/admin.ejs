@@ -17,23 +17,18 @@
         <th>delete</th>
       </tr>
 
-      <!-- Once the list of orders and info is made, we could use a for loop to create the rest of the list -->
+      <!-- The current code is just a test to see if I know how to do the admin list populating -->
 
-      <tr>
-        <th>Benjamin Pozzi</th>
-        <th>bmpozzi@stu.naperville203.org</th>
-        <th>2 locks, 15 shirts</th>
-        <th>4th period</th>
-      </tr>
+      <% for (let item of items) { %>
+        <tr>
+          <th><%= item.name %></th>
+          <th><%= item.price %></th>
+          <th><%= item.description %></th>
+          <th><%= item.size %></th>
+        </tr>
+      <% } %>
 
-      <tr>
-        <th>John Shirt Buyer</th>
-        <th>jsbuyer@Iloveshirts</th>
-        <th>2 shirts</th>
-        <th>6th period</th>
-      </tr>
-
-      <!-- The for loop would go between these two comment lines -->
+      <!-- Needs to be changed once the order list is created -->
 
     </table>
   </div>

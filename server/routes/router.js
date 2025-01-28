@@ -44,7 +44,25 @@ route.get("/", async (req, res) => {
 });
 
 route.get("/admin", async (req, res) => { 
-  res.render("admin");
+
+  // once the orders list is made, make sure to change the code to look for the list of orders, rather than the list of items
+
+  const items = await Item.find();
+
+  const formattedItems = items.map((item) => {
+    return {
+      id: item._id,
+      name: item.name,
+      price: item.price,
+      description: item.description,
+      image: item.image,
+      size: item.size,
+    };
+  });
+
+  res.render("admin", {
+    items: formattedItems, 
+  });
 });
 
 route.post("/cart", async (req, res) => {
