@@ -71,6 +71,21 @@ route.get("/addItem", isAdmin, async (req, res) => {
   res.render("addItem");
 });
 
+route.get("/item/:id", isAdmin, async (req, res) => {
+  const item = await Item.findById(req.params.id);
+  const formattedItem = {
+    id: item._id,
+    name: item.name,
+    price: item.price,
+    description: item.description,
+    quantity: item.quantity,
+    image: item.image,
+    size: item.size,
+  };
+
+  res.render("editItem", { item: formattedItem });
+});
+
 route.post("/cart", async (req, res) => {
   const { googleId, itemId, quantity } = req.body;
 

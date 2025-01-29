@@ -30,7 +30,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #000099; /* Dark background */
+  background-color: #002f55; /* Dark background */
   padding: 10px 20px;
   color: #fff;
 }
@@ -239,7 +239,7 @@ body {
 }
 
 .item {
-  background-color: #0019a7;
+  background-color: #002f55;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -271,6 +271,6 @@ body {
 }
 
 .add-items {
-  margin-left: 20px;
-  margin-right: 20px;
+  margin-left: 5%;
+  margin-right: 5%;
 }

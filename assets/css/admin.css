@@ -27,4 +27,18 @@ a.admin-link {
   display: flex;
   color: rgb(0, 68, 255);
   justify-content: center;
+  margin-top: 5%;
+}
+
+a.admin-link#editItem {
+  background-color: rgb(157, 255, 157);
+  color: rgb(0, 126, 17);
+}
+
+a.admin-link#editItem:hover {
+  background-color: rgba(65, 238, 59, 0.8);
+}
+
+a.admin-link#addItem:hover {
+  background-color: rgba(144, 144, 255, 0.8);
 }
