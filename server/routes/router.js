@@ -71,7 +71,7 @@ route.get("/addItem", isAdmin, async (req, res) => {
   res.render("addItem");
 });
 
-route.get("/item/:id", isAdmin, async (req, res) => {
+route.get("/editItem/:id", isAdmin, async (req, res) => {
   const item = await Item.findById(req.params.id);
   const formattedItem = {
     id: item._id,
@@ -82,8 +82,24 @@ route.get("/item/:id", isAdmin, async (req, res) => {
     image: item.image,
     size: item.size,
   };
-
   res.render("editItem", { item: formattedItem });
+});
+
+route.get("/manageItems", isAdmin, async (req, res) => {
+  const items = await Item.find();
+
+  const formattedItems = items.map((item) => {
+    return {
+      id: item._id,
+      name: item.name,
+      price: item.price,
+      description: item.description,
+      image: item.image,
+      size: item.size,
+    };
+  });
+
+  res.render("manageItems", { items: formattedItems });
 });
 
 route.post("/cart", async (req, res) => {

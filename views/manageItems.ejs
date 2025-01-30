@@ -1,0 +1,22 @@
+<%- include('include/_header') %>
+
+<main>
+  <div class="wrapper">
+    <h1>Manage Items</h1>
+    <div class="item-list">
+      <% for (let i = 0; i < items.length; i++) { %>
+      <div class="item">
+        <h2><%= items[i].name %></h2>
+        <p>Price: $<%= items[i].price %></p>
+        <p>Quantity: <%= items[i].quantity %></p>
+        <p>Description: <%= items[i].description %></p>
+        <img src="<%= items[i].image %>" />
+        <a href="/editItem/<%= items[i].id %>">Edit</a>
+        <a href="/deleteItem/<%= items[i].id %>">Delete</a>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</main>
+
+<%- include('include/_footer') %>
