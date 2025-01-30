@@ -2,19 +2,21 @@ table {
   display: flex;
   justify-content: center;
   font-family: Arial, sans-serif;
-  color: #000000;
+  color: #ffffff;
 }
 
 th, tr {
   border: 2px solid;
   font-family: Arial, sans-serif;
-  color: #000000;
+  color: #FF4800;
   /* padding: 8px; */
-  background-color: #dddddd;
+  background-color: #002F55;
 }
 
 h1 {
   display: flex;
+  font-size: 4em;
+  color: #FF4800;
   font-family: Arial, sans-serif;
   justify-content: center;
 }
