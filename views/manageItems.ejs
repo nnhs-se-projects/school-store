@@ -12,11 +12,16 @@
         <p>Description: <%= items[i].description %></p>
         <img src="<%= items[i].image %>" />
         <a href="/editItem/<%= items[i].id %>">Edit</a>
+        <a>Change Image</a>
         <a href="/deleteItem/<%= items[i].id %>">Delete</a>
       </div>
       <% } %>
     </div>
   </div>
 </main>
+
+<script>
+  "/js/manageItems.js";
+</script>
 
 <%- include('include/_footer') %>

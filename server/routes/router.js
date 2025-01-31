@@ -102,6 +102,12 @@ route.get("/manageItems", isAdmin, async (req, res) => {
   res.render("manageItems", { items: formattedItems });
 });
 
+// route to delete an item by its id
+route.get("deleteItem/:id", isAdmin, async (req, res) => {
+  await Item.findByIdAndDelete(req.params.id);
+  res.redirect("/manageItems");
+});
+
 route.post("/cart", async (req, res) => {
   const { googleId, itemId, quantity } = req.body;
 
