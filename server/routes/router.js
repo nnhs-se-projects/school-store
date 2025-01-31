@@ -16,7 +16,7 @@ const Item = require("../model/item");
     res.render("view", { key: value, key: value, ... });
 
 */
-
+// directs to the homepage
 route.get("/", async (req, res) => {
   // get items from the database to display on the homepage
   const items = await Item.find();
@@ -67,33 +67,28 @@ route.get("/logout", (req, res) => {
   });
 });
 
+route.get("/item/:id", async (req, res) => {
+  const item = await Item.findById(req.params.id);
+  res.render("item", { item });
+});
+// directs to the add item page
 route.get("/addItem", isAdmin, async (req, res) => {
   res.render("addItem");
 });
 
-route.post("/cart", async (req, res) => {
-  const { googleId, itemId, quantity } = req.body;
-
-  const user = await User.findOne({ googleId });
-
-  if (!user) {
-    return res.status(404).send("User not found");
+// directs to the cart page
+route.get("/cart", async (req, res) => {
+  try {
+    const user = await User.findOne({
+      googleId: req.session.user.googleId,
+    }).populate("cart.itemId");
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+    res.render("cart", { cart: user.cart });
+  } catch (error) {
+    res.status(500).send("An error occurred while fetching the cart data");
   }
-
-  const itemIndex = user.cart.findIndex(
-    (item) => item.itemId.toString() === itemId
-  );
-
-  if (itemIndex > -1) {
-    // If item already exists in the cart, update the quantity
-    user.cart[itemIndex].quantity += quantity;
-  } else {
-    // If item does not exist in the cart, add it
-    user.cart.push({ itemId, quantity });
-  }
-
-  await user.save();
-  res.status(200).send("Item added to cart");
 });
 
 // delegate all authentication to the auth.js router

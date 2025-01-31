@@ -1,0 +1,27 @@
+<!-- include header -->
+<%- include('include/_header') %>
+<!-- /include header -->
+
+<!-- INDIVIDUAL PRODUCT PAGE -->
+
+<main>
+  <div class="wrapper">
+    <!-- Main Site -->
+    <h1><%= item.name %></h1>
+
+    <img src="<%= item.image %>" />
+    <p><%= item.description %></p>
+    <p>Price: $<%= item.price %></p>
+    <!-- TODO: add size and quantity selector -->
+    <input type="hidden" id="itemId" value="<%= item.id %>" />
+    <button id="addToCart">Add to Cart</button>
+  </div>
+</main>
+
+<!-- /Main Site -->
+
+<script src="/js/item.js"></script>
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->

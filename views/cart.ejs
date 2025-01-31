@@ -1,0 +1,35 @@
+
+<!-- include header -->
+<%- include('include/_header') %>
+<!-- /include header -->
+
+<!-- Main Site -->
+
+<main>
+  <div class="wrapper">
+    <h1>Cart</h1>
+      <ul class="cart-list">
+        <% for (let i = 0; i < cart.length; i++) { %>
+          <li class="cart-item">
+            <div class="cart-item-image">
+              <img src="<%= cart[i].image %>" alt="<%= cart[i].name %>" />
+            </div>
+            <div class="cart-item-info">
+              <h2><%= cart[i].name %></h2>
+              <p><%= cart[i].description %></p>
+              <p><%= cart[i].price %></p>
+              <button class="remove-item" data-index="<%= i %>">Remove</button>
+            </div>
+          </li>
+        <% } %>
+
+  </div>
+</main>
+
+<!-- /Main Site -->
+
+<script src="/js/homePage.js"></script>
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->
