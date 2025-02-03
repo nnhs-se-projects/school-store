@@ -19,7 +19,7 @@ h1 {
 
 /* link styling */
 a.admin-link {
-  background-color: rgba(144, 144, 255, 0.5);
+  background-color: #002f55;
   padding: 20px;
   border-radius: 5px;
   margin-right: 35%;
@@ -31,14 +31,14 @@ a.admin-link {
 }
 
 a.admin-link#editItem {
-  background-color: rgb(157, 255, 157);
-  color: rgb(0, 126, 17);
+  background-color: #ff4800;
+  color: white;
 }
 
 a.admin-link#editItem:hover {
-  background-color: rgba(65, 238, 59, 0.8);
+  background-color: rgb(252, 36, 36);
 }
 
 a.admin-link#addItem:hover {
-  background-color: rgba(144, 144, 255, 0.8);
+  background-color: #01447a;
 }

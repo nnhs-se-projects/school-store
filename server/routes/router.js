@@ -93,6 +93,7 @@ route.get("/manageItems", isAdmin, async (req, res) => {
       id: item._id,
       name: item.name,
       price: item.price,
+      quantity: item.quantity,
       description: item.description,
       image: item.image,
       size: item.size,
@@ -103,7 +104,7 @@ route.get("/manageItems", isAdmin, async (req, res) => {
 });
 
 // route to delete an item by its id
-route.get("deleteItem/:id", isAdmin, async (req, res) => {
+route.get("/deleteItem/:id", isAdmin, async (req, res) => {
   await Item.findByIdAndDelete(req.params.id);
   res.redirect("/manageItems");
 });
