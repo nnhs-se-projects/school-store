@@ -5,7 +5,9 @@ const addToCartButton = document.getElementById("addToCart");
 addToCartButton.addEventListener("click", async () => {
   const itemId = document.getElementById("itemId").value;
   const quantity = document.getElementById("quantity").value;
+  const googleId = document.getElementById("googleId").value;
 
+  console.log("googleID: ", googleId);
   const response = await fetch("/cart/add", {
     method: "POST",
     headers: {

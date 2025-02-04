@@ -10,10 +10,28 @@
     <h1><%= item.name %></h1>
 
     <img src="<%= item.image %>" />
+
     <p><%= item.description %></p>
     <p>Price: $<%= item.price %></p>
     <!-- TODO: add size and quantity selector -->
     <input type="hidden" id="itemId" value="<%= item.id %>" />
+    <input type="hidden" id="googleId" value="<%= session.user.googleId %>" />
+
+    <label for="size">Size:</label>
+    <select id="size">
+      <option value="S">Small</option>
+      <option value="M">Medium</option>
+      <option value="L">Large</option>
+      <option value="XL">Extra Large</option>
+    </select>
+
+    <label for="quantity">Quantity:</label>
+    <select id="quantity">
+      <% for (let i = 1; i <= Math.min(10, item.quantity); i++) { %>
+      <option value="<%= i %>"><%= i %></option>
+      <% } %>
+    </select>
+    </select>
     <button id="addToCart">Add to Cart</button>
   </div>
 </main>

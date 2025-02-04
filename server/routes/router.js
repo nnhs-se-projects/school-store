@@ -50,11 +50,46 @@ function isAdmin(req, res, next) {
   }
 }
 
+route.post("/cart/add", async (req, res) => {
+  console.log("Adding item to cart");
+  console.log(req.body);
+  const { googleId, itemId, quantity } = req.body;
+
+  const user = await User.findOne({ googleId });
+  if (!user) {
+    console.log("User not found: ", googleId);
+    return res.status(404).send("User not found");
+  }
+
+  const item = await Item.findById(itemId);
+  if (!item || item.quantity < quantity) {
+    return res.status(400).send("Item not available or insufficient quantity");
+  }
+
+  const itemIndex = user.cart.findIndex(
+    (cartItem) => cartItem.itemId.toString() === itemId
+  );
+  if (itemIndex > -1) {
+    // If item already exists in the cart, update the quantity
+    user.cart[itemIndex].quantity += quantity;
+  } else {
+    // If item does not exist in the cart, add it
+    user.cart.push({ itemId, quantity });
+  }
+
+  // Update item quantity in inventory
+  item.quantity -= quantity;
+  await item.save();
+
+  await user.save();
+  res.status(200).send("Item added to cart");
+});
+
 // uses the isAdmin middleware before rendering the page
 route.get("/admin", isAdmin, (req, res) => {
   // This will only be reached if the user is an admin
   // console.log("Rendering admin page router");
-  return res.render("admin", { user: req.session.user });
+  return res.render("admin");
 });
 
 // logout route
@@ -67,31 +102,19 @@ route.get("/logout", (req, res) => {
   });
 });
 
+// displays product page for a specific item
 route.get("/item/:id", async (req, res) => {
   const item = await Item.findById(req.params.id);
   res.render("item", { item });
 });
+
 // directs to the add item page
 route.get("/addItem", isAdmin, async (req, res) => {
   res.render("addItem");
 });
 
-// directs to the cart page
-route.get("/cart", async (req, res) => {
-  try {
-    const user = await User.findOne({
-      googleId: req.session.user.googleId,
-    }).populate("cart.itemId");
-    if (!user) {
-      return res.status(404).send("User not found");
-    }
-    res.render("cart", { cart: user.cart });
-  } catch (error) {
-    res.status(500).send("An error occurred while fetching the cart data");
-  }
-});
-
 // delegate all authentication to the auth.js router
 route.use("/auth", require("./auth"));
+route.use("/cart", require("./cart"));
 
 module.exports = route;

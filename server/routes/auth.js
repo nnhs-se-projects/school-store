@@ -45,9 +45,9 @@ route.post("/", async (req, res) => {
       user = new User({ googleId, email, name });
       await user.save();
     }
-
     req.session.email = email;
     req.session.isAdmin = isAdmin;
+    req.session.user = user;
     /** 
     const newItem = new Item({
       name: "Shirt",
