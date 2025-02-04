@@ -207,3 +207,12 @@ body {
   display: flex;
   justify-content: center;
 }
+
+.manage-item-link {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  background-color: rgb(25, 25, 150);
+  text-decoration: none;
+  color: white;
+}

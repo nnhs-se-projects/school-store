@@ -8,18 +8,17 @@ submitButton.addEventListener("click", async () => {
   const description = document.querySelector("input#description").value;
   console.log(id);
 
-  // const imageInput = document.querySelector("input#image");
-  // const file = imageInput.files[0];
-  // const reader = new FileReader();
+  const imageInput = document.querySelector("input#image");
 
-  // reader.onloadend = async function () {
-  //   const base64String = reader.result;
-  //   console.log(base64String);
-  // , image: base64String
+  const image = imageInput.files[0];
 
-  // Display the image
-
-  const item = { name, price, quantity, description };
+  const item = {
+    name,
+    price,
+    quantity,
+    description,
+    image,
+  };
 
   const response = await fetch("/editItem/" + id, {
     method: "POST",
@@ -35,10 +34,3 @@ submitButton.addEventListener("click", async () => {
     console.error("error creating entry");
   }
 });
-
-//   if (file) {
-//     reader.readAsDataURL(file);
-//   } else {
-//     console.error("No file selected");
-//   }
-// });

@@ -22,12 +22,22 @@ route.put("/:id", async (req, res) => {
 });
 
 route.post("/editItem/:id", async (req, res) => {
-  const { name, price, quantity, description } = req.body.item;
-  const item = await Item.findByIdAndUpdate(
-    req.params.id,
-    { name, price, quantity, description },
-    { new: true }
-  );
+  const { name, price, quantity, description, image } = req.body.item;
+  let item;
+  if (image !== null) {
+    item = await Item.findByIdAndUpdate(
+      req.params.id,
+      { name, price, quantity, description, image },
+      { new: true }
+    );
+  } else {
+    item = await Item.findByIdAndUpdate(
+      req.params.id,
+      { name, price, quantity, description },
+      { new: true }
+    );
+  }
+
   res.json(item);
 });
 
