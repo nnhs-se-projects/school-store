@@ -50,41 +50,6 @@ function isAdmin(req, res, next) {
   }
 }
 
-route.post("/cart/add", async (req, res) => {
-  console.log("Adding item to cart");
-  console.log(req.body);
-  const { googleId, itemId, quantity } = req.body;
-
-  const user = await User.findOne({ googleId });
-  if (!user) {
-    console.log("User not found: ", googleId);
-    return res.status(404).send("User not found");
-  }
-
-  const item = await Item.findById(itemId);
-  if (!item || item.quantity < quantity) {
-    return res.status(400).send("Item not available or insufficient quantity");
-  }
-
-  const itemIndex = user.cart.findIndex(
-    (cartItem) => cartItem.itemId.toString() === itemId
-  );
-  if (itemIndex > -1) {
-    // If item already exists in the cart, update the quantity
-    user.cart[itemIndex].quantity += quantity;
-  } else {
-    // If item does not exist in the cart, add it
-    user.cart.push({ itemId, quantity });
-  }
-
-  // Update item quantity in inventory
-  item.quantity -= quantity;
-  await item.save();
-
-  await user.save();
-  res.status(200).send("Item added to cart");
-});
-
 // uses the isAdmin middleware before rendering the page
 route.get("/admin", isAdmin, (req, res) => {
   // This will only be reached if the user is an admin
@@ -115,6 +80,5 @@ route.get("/addItem", isAdmin, async (req, res) => {
 
 // delegate all authentication to the auth.js router
 route.use("/auth", require("./auth"));
-route.use("/cart", require("./cart"));
 
 module.exports = route;

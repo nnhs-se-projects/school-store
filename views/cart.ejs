@@ -11,10 +11,7 @@
       <ul class="cart-list">
         <% for (let i = 0; i < cart.length; i++) { %>
           <li class="cart-item">
-            <div class="cart-item-image">
               <img src="<%= cart[i].image %>" alt="<%= cart[i].name %>" />
-            </div>
-            <div class="cart-item-info">
               <h2><%= cart[i].name %></h2>
               <p><%= cart[i].description %></p>
               <p><%= cart[i].price %></p>
