@@ -23,8 +23,11 @@ route.put("/:id", async (req, res) => {
 
 route.post("/editItem/:id", async (req, res) => {
   const { name, price, quantity, description, image } = req.body.item;
+
+  console.log(name, price, quantity, description, image);
   let item;
   if (image !== null) {
+    console.log("image is not null");
     item = await Item.findByIdAndUpdate(
       req.params.id,
       { name, price, quantity, description, image },

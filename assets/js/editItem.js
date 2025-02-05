@@ -6,19 +6,19 @@ submitButton.addEventListener("click", async () => {
   const price = document.querySelector("input#price").value;
   const quantity = document.querySelector("input#quantity").value;
   const description = document.querySelector("input#description").value;
-  console.log(id);
-
   const imageInput = document.querySelector("input#image");
+  const file = imageInput.files[0];
+  const reader = new FileReader();
+  let base64String = null;
+  const item = { name, price, quantity, description, image: base64String };
 
-  const image = imageInput.files[0];
-
-  const item = {
-    name,
-    price,
-    quantity,
-    description,
-    image,
-  };
+  await (reader.onloadend = await async function () {
+    console.log(file);
+    base64String = reader.result;
+    console.log(base64String);
+    item.image = base64String;
+    console.log("okewgheswiougbnweuigqwhnfuigwbhguir4ebgiu:       " + item);
+  });
 
   const response = await fetch("/editItem/" + id, {
     method: "POST",
@@ -32,5 +32,9 @@ submitButton.addEventListener("click", async () => {
     window.location = "/manageItems";
   } else {
     console.error("error creating entry");
+  }
+
+  if (file) {
+    reader.readAsDataURL(file);
   }
 });
