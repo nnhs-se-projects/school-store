@@ -13,14 +13,11 @@ const Item = require("../model/item");
     req: the HTTP request object
     res: the HTTP response object
 
-    res.render("view", { session: req.session, key: value, key: value, ... });
-    IMPORTANT: payload the session (req.session) into EVERY get route in order for the header to work
+    res.render("view", { key: value, key: value, ... });
 
 */
 
 route.get("/", async (req, res) => {
-  // console.log("path: ", req.path);
-
   // get items from the database to display on the homepage
   const items = await Item.find();
 
@@ -36,16 +33,11 @@ route.get("/", async (req, res) => {
     };
   });
 
-  // console.log("rendering homePage");
-  // console.log("session: ", req.session);
-
-  // render the homePage and payload the session and items
+  // render the homePage view and pass the items to it
   res.render("homePage", {
-    session: req.session,
     items: formattedItems,
   });
 });
-
 
 function isAdmin(req, res, next) {
   // check if the session exists (user is logged in), and if they are an admin
@@ -58,6 +50,14 @@ function isAdmin(req, res, next) {
   }
 }
 
+// uses the isAdmin middleware before rendering the page
+route.get("/admin", isAdmin, (req, res) => {
+  // This will only be reached if the user is an admin
+  // console.log("Rendering admin page router");
+  return res.render("admin", { user: req.session.user });
+});
+
+// logout route
 route.get("/logout", (req, res) => {
   req.session.destroy((err) => {
     if (err) {
@@ -67,16 +67,46 @@ route.get("/logout", (req, res) => {
   });
 });
 
-// uses the isAdmin middleware before rendering the page
-route.get("/admin", isAdmin, (req, res) => {
-  // This will only be reached if the user is an admin
-  // console.log("Rendering admin page router");
-  return res.render("admin", { session: req.session, user: req.session.user });
-
+route.get("/addItem", isAdmin, async (req, res) => {
+  res.render("addItem");
 });
 
-route.get("/addItem", async (req, res) => {
-  res.render("addItem");
+route.get("/editItem/:id", isAdmin, async (req, res) => {
+  const item = await Item.findById(req.params.id);
+  const formattedItem = {
+    id: item._id,
+    name: item.name,
+    price: item.price,
+    description: item.description,
+    quantity: item.quantity,
+    image: item.image,
+    size: item.size,
+  };
+  res.render("editItem", { item: formattedItem });
+});
+
+route.get("/manageItems", isAdmin, async (req, res) => {
+  const items = await Item.find();
+
+  const formattedItems = items.map((item) => {
+    return {
+      id: item._id,
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity,
+      description: item.description,
+      image: item.image,
+      size: item.size,
+    };
+  });
+
+  res.render("manageItems", { items: formattedItems });
+});
+
+// route to delete an item by its id
+route.get("/deleteItem/:id", isAdmin, async (req, res) => {
+  await Item.findByIdAndDelete(req.params.id);
+  res.redirect("/manageItems");
 });
 
 route.post("/cart", async (req, res) => {

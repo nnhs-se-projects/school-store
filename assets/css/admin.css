@@ -4,7 +4,8 @@ table {
   color: black;
 }
 
-th, tr {
+th,
+tr {
   border: 2px solid;
   color: black;
   /* padding: 8px; */
@@ -14,4 +15,30 @@ th, tr {
 h1 {
   display: flex;
   justify-content: center;
+}
+
+/* link styling */
+a.admin-link {
+  background-color: #002f55;
+  padding: 20px;
+  border-radius: 5px;
+  margin-right: 35%;
+  margin-left: 35%;
+  display: flex;
+  color: rgb(0, 68, 255);
+  justify-content: center;
+  margin-top: 5%;
+}
+
+a.admin-link#editItem {
+  background-color: #ff4800;
+  color: white;
+}
+
+a.admin-link#editItem:hover {
+  background-color: rgb(252, 36, 36);
+}
+
+a.admin-link#addItem:hover {
+  background-color: #01447a;
 }
