@@ -10,31 +10,42 @@ submitButton.addEventListener("click", async () => {
   const file = imageInput.files[0];
   const reader = new FileReader();
   let base64String = null;
-  const item = { name, price, quantity, description, image: base64String };
 
-  await (reader.onloadend = await async function () {
-    console.log(file);
+  reader.onloadend = async function () {
     base64String = reader.result;
-    console.log(base64String);
-    item.image = base64String;
-    console.log("okewgheswiougbnweuigqwhnfuigwbhguir4ebgiu:       " + item);
-  });
+    const item = { name, price, quantity, description, image: base64String };
+    const response = await fetch("/editItem/" + id, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ item }),
+    });
 
-  const response = await fetch("/editItem/" + id, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ item }),
-  });
-
-  if (response.ok) {
-    window.location = "/manageItems";
-  } else {
-    console.error("error creating entry");
-  }
+    if (response.ok) {
+      window.location = "/manageItems";
+    } else {
+      console.error("error creating entry");
+    }
+  };
 
   if (file) {
     reader.readAsDataURL(file);
+  } else {
+    const item = { name, price, quantity, description, image: base64String };
+
+    const response = await fetch("/editItem/" + id, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ item }),
+    });
+
+    if (response.ok) {
+      window.location = "/manageItems";
+    } else {
+      console.error("error creating entry");
+    }
   }
 });
