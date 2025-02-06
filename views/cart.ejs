@@ -10,12 +10,12 @@
     <h1>Cart</h1>
       <ul class="cart-list">
         <% for (let i = 0; i < cart.length; i++) { %>
-          <li class="cart-item">
-              <img src="<%= cart[i].image %>" alt="<%= cart[i].name %>" />
+          <li class="cart-item" onclick="window.location.href='/item/' + '<%= cart[i].id %>'">
               <h2><%= cart[i].name %></h2>
+              <img src="<%= cart[i].image %>" alt="<%= cart[i].name %>" />
               <p><%= cart[i].description %></p>
               <p><%= cart[i].price %></p>
-              <button class="remove-item" data-index="<%= i %>">Remove</button>
+              <button class="remove-item" data-id="<%= cart[i].id %>" onclick="event.stopPropagation();">Remove</button>
             </div>
           </li>
         <% } %>
@@ -25,7 +25,7 @@
 
 <!-- /Main Site -->
 
-<script src="/js/homePage.js"></script>
+<script src="/js/cart.js"></script>
 
 <!-- include footer -->
 <%- include('include/_footer') %>

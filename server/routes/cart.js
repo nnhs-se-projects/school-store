@@ -17,11 +17,17 @@ route.get("/cart", async (req, res) => {
     const userCart = [];
     for (let i = 0; i < user.cart.length; i++) {
       const item = await Item.findById(user.cart[i].itemId);
+      if (!item) {
+        return res.status(404).send("Item not found");
+      }
+      console.log("image: ", item);
+
       userCart.push({
-        itemId: item._id,
+        id: item._id,
         name: item.name,
         price: item.price,
         quantity: user.cart[i].quantity,
+        image: item.image,
       });
     }
 
