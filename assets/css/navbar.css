@@ -43,9 +43,24 @@
   color: #ffffff;
   padding: 8px 15px;
   border-radius: 4px;
-  transition: background-color 0.3s ease;
+  position: relative;
 }
 
-.nav-links a:hover {
-  background-color: #0432ff; /* Slightly lighter on hover */
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  display: block;
+  background: #ffffff;
+  transition: width 0.5s ease;
+  left: 50%;
+  bottom: -5px;
+  transform: translateX(-50%);
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+  left: 50%;
+  transform: translateX(-50%);
 }
