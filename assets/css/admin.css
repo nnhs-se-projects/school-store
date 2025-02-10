@@ -36,7 +36,7 @@ a.admin-link#editItem {
 }
 
 a.admin-link#editItem:hover {
-  background-color: rgb(252, 36, 36);
+  background-color: rgb(255, 99, 99);
 }
 
 a.admin-link#addItem:hover {
