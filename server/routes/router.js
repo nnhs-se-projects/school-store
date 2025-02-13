@@ -134,6 +134,9 @@ route.post("/cart", async (req, res) => {
   res.status(200).send("Item added to cart");
 });
 
+
+
+
 // delegate all authentication to the auth.js router
 route.use("/auth", require("./auth"));
 
