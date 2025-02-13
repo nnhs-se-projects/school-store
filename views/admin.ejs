@@ -1,39 +1,21 @@
 <!-- include header -->
 <%- include('include/_header') %>
 <!-- /include header -->
-<!-- words -->
-<!-- Main Site -->
 
 <link rel="stylesheet" href="/css/admin.css">
 
-  <h1><b>Student Orders</b></h1>
-    <table>
-      <tr>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Order</th>
-        <th>Pickup Period</th>
-        <th>del</th>
-      </tr>
-
-      <!-- The current code is just a test to see if I know how to do the admin list populating -->
-
-      <% for (let item of items) { %>
-        <tr>
-          <th><%= item.name %></th>
-          <th><%= item.price %></th>
-          <th><%= item.description %></th>
-          <th><%= item.size %></th>
-        </tr>
-      <% } %>
-
-    </table>
+<main>
+  <h1><b>Manage Inventory</b></h1>
+  <div>
 
     <a class="admin-link" href="addItem" id="addItem"
       ><strong>Add Item</strong></a
     >
     <a class="admin-link" href="manageItems" id="editItem"
       ><strong>Manage Items</strong></a
+    >
+    <a class="admin-link" href="studentOrders" id="studentOrders"
+      ><strong>View Student Orders</strong></a
     >
   </div>
 </main>

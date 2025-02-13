@@ -71,6 +71,10 @@ route.get("/addItem", isAdmin, async (req, res) => {
   res.render("addItem");
 });
 
+route.get("/studentOrders", isAdmin, async (req, res) => {
+  res.render("studentOrders")
+})
+
 route.get("/editItem/:id", isAdmin, async (req, res) => {
   const item = await Item.findById(req.params.id);
   const formattedItem = {
