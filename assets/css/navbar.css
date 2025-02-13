@@ -12,9 +12,6 @@
   font-size: 1.5em;
   font-weight: bold;
   color: rgb(255, 255, 255);
-}
-
-.logo {
   display: flex;
   align-items: center;
   gap: 10px; /* Add spacing between the text and image */
@@ -39,13 +36,44 @@
 }
 
 .nav-links a {
+  position: relative;
   text-decoration: none;
   color: #ffffff;
-  padding: 8px 15px;
   border-radius: 4px;
-  transition: background-color 0.3s ease;
+  padding: 0, 10px;
 }
 
-.nav-links a:hover {
-  background-color: #0432ff; /* Slightly lighter on hover */
+.nav-links a:after {
+  content: "";
+  position: absolute;
+  background-color: #ffffff;
+  height: 3px;
+  width: 0;
+  left: 0;
+  bottom: -10px;
+  transition: 0.3s;
 }
+
+.nav-links a:hover:after {
+  width: 100%;
+}
+
+/* 
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  display: block;
+  background: #ffffff;
+  left: 50%;
+  bottom: -5px;
+  transform: translateX(-50%);
+  transition: width 0.5s ease;
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+} */

@@ -9,18 +9,21 @@
     <link rel="stylesheet" href="/css/navbar.css" />
 
     <nav class="navbar">
-      <div onclick="window.location.href='/'" class="logo">Naperville North School Store <img src = "img/NN-Mascot.png" alt = "Huskie Logo" class = "logo-image"> </div>
+      <div onclick="window.location.href='/'" class="logo">Naperville North School Store <img src = "/img/Mascot.png" alt = "Huskie Logo" class = "logo-image"> </div>
+        <div class="hamburger" onclick="toggleMenu()">☰</div>
         <ul class="nav-links">
             <% if ( session && session.isAdmin ) { %>
-            <li><a href="/admin">View Orders</a></li>
+            <li><a href="/admin"><strong>View Orders</strong></a></li>
             <% } %>
-            <li><a href="/#home">Home</a></li>
-            <li><a href="/#cart">Cart</a></li>
-            <li><a href="/#contact">Contact</a></li>
+            <li><a href="/#home"><strong>Home</strong></a></li>
+            <li><a href="/#cart"><strong>Cart</strong></a></li>
+            <li><a href="/#contact"><strong>Contact</strong></a></li>
+            <li><a href="/logout"><strong>Logout</strong></a></li>
         </ul>
     </nav>
 
   </div>
   </head>
   <body>
+    
 
