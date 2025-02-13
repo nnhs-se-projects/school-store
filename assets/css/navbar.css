@@ -40,7 +40,7 @@
   text-decoration: none;
   color: #ffffff;
   border-radius: 4px;
-  padding: 0, 10px;
+  padding: 0 10px;
 }
 
 .nav-links a:after {
@@ -49,31 +49,38 @@
   background-color: #ffffff;
   height: 3px;
   width: 0;
-  left: 0;
+  left: 50%;
   bottom: -10px;
-  transition: 0.3s;
+  transition: width 0.3s ease, left 0.3s ease;
+  transform: translateX(-50%);
 }
 
 .nav-links a:hover:after {
   width: 100%;
-}
-
-/* 
-.nav-links a::after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 2px;
-  display: block;
-  background: #ffffff;
-  left: 50%;
-  bottom: -5px;
-  transform: translateX(-50%);
-  transition: width 0.5s ease;
-}
-
-.nav-links a:hover::after {
-  width: 100%;
   left: 50%;
   transform: translateX(-50%);
-} */
+}
+
+/* Responsive navbar styling */
+@media (max-width: 950px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .nav-links li {
+    width: 100%;
+    text-align: center;
+  }
+
+  .nav-links a {
+    padding: 10px;
+    width: 100%;
+  }
+}

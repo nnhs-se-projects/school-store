@@ -9,31 +9,6 @@ body {
   flex-direction: column;
 }
 
-/* Responsive design */
-
-@media (max-width: 768px) {
-  .nav-links {
-    flex-direction: column;
-    gap: 10px;
-    display: none; /* Initially hidden */
-    background-color: #333333;
-    padding: 10px;
-    position: absolute;
-    top: 50px;
-    right: 20px;
-    border-radius: 5px;
-  }
-
-  .nav-links.active {
-    display: flex; /* Show on activation */
-  }
-
-  .navbar {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
 /* Store info section */
 
 .wrapper {
@@ -47,10 +22,6 @@ body {
   max-width: 600px;
   margin: 50px auto;
   background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  flex: 1; /* Pushes the footer to the bottom if there's not enough content */
   padding: 20px;
 }
 
@@ -101,25 +72,6 @@ body {
   transform: translateY(-50%);
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
-  .store-info {
-    padding: 15px;
-  }
-
-  .store-info h1 {
-    font-size: 1.8em;
-  }
-
-  .store-hours h2 {
-    font-size: 1.3em;
-  }
-
-  .store-hours li {
-    font-size: 1em;
-  }
-}
-
 /* Footer styles */
 .site-footer {
   background-color: #333; /* Dark background for contrast */
@@ -158,12 +110,35 @@ body {
   }
 }
 
-/* Item-list styling, want each item to be next to the other one, 4 in each row */
 .item-list {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
   margin: 20px;
+}
+
+@media (max-width: 1200px) {
+  .item-list {
+    grid-template-columns: repeat(
+      3,
+      1fr
+    ); /* 3 items per row for medium screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .item-list {
+    grid-template-columns: repeat(
+      2,
+      1fr
+    ); /* 2 items per row for small screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .item-list {
+    grid-template-columns: 1fr; /* 1 item per row for extra small screens */
+  }
 }
 
 .item {
@@ -198,6 +173,7 @@ body {
   border-radius: 8px;
   object-fit: cover;
   aspect-ratio: 1 / 1;
+  align-self: flex-end;
 }
 
 .add-items {
