@@ -1,0 +1,40 @@
+<%- include('include/_header') %>
+
+<main>
+  <div class="wrapper" id="manageItems">
+    <h1>Manage Items</h1>
+    <div class="item-list">
+      <% for (let i = 0; i < items.length; i++) { %>
+      <div class="item">
+        <h2><%= items[i].name %></h2>
+        <p>Price: $<%= items[i].price %></p>
+        <p>Quantity: <%= items[i].quantity %></p>
+        <p>Description: <%= items[i].description %></p>
+        <img src="<%= items[i].image %>" />
+        <a href="/editItem/<%= items[i].id %>" class="manage-item-link"
+          ><strong>Edit Content</strong></a
+        >
+        <a
+          href="#"
+          onclick="confirmDelete('<%= items[i].id %>')"
+          class="manage-item-link"
+          ><strong>Delete</strong></a
+        >
+        <script>
+          function confirmDelete(itemId) {
+            if (confirm("Are you sure you want to delete this item?")) {
+              window.location.href = "/deleteItem/" + itemId;
+            }
+          }
+        </script>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</main>
+
+<script>
+  "/js/manageItems.js";
+</script>
+
+<%- include('include/_footer') %>

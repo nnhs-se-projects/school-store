@@ -1,9 +1,14 @@
+
 <!-- include header -->
 <%- include('include/_header') %>
 <!-- /include header -->
 
 <!-- Main Site -->
 
+    
+<main>
+  <div class="wrapper">
+  
   <section class="store-info">
     <h1>Naperville North Huskie Store</h1>
     <p>
@@ -22,12 +27,26 @@
       </ul>
 
     </div>
+
   </section>
+
+  <img id="imagePreview" alt="Image Preview" style="display:none;">
+  
+    <div class = "item-list"> 
+      <% items.forEach(function(item) { %>
+        <div class = "item" onclick= "window.location.href='/item/<%= item.id %>'">
+          <h2><%= item.name %></h2>
+          <p>Price: $<%= item.price %></p>
+          <p>Description: <%= item.description %></p>
+          <img src="<%= item.image %>">
+      </div>
+      <% }) %>
+    </div>
 </main>
 
 <!-- /Main Site -->
 
-<script src="/js/index.js"></script>
+<script src="/js/homePage.js"></script>
 
 <!-- include footer -->
 <%- include('include/_footer') %>

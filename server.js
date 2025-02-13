@@ -59,13 +59,20 @@ app.use((req, res, next) => {
 // create the HTTP server
 const server = http.createServer(app);
 
+// attaches session data to every route
+app.use((req, res, next) => {
+  if (req.method === "GET") {
+    res.locals.session = req.session;
+  }
+  next();
+});
+
 // to keep this file manageable, we will move the routes to a separate file
 //  the exported router object is an example of middleware
 app.use("/", require("./server/routes/router"));
-
 app.use("/auth", require("./server/routes/auth"));
-app.use("/inventory", require("./server/routes/inventory"));
 app.use("/cart", require("./server/routes/cart"));
+app.use(require("./server/routes/inventory"));
 
 // start the server on port 8080
 server.listen(8080, () => {

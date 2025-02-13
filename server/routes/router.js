@@ -1,20 +1,27 @@
 const express = require("express");
 const route = express.Router();
-const Entry = require("../model/entry");
+
 const User = require("../model/user");
 const Item = require("../model/item");
 
-// pass a path (e.g., "/") and a callback function to the get method
-//  when the client makes an HTTP GET request to the specified path,
-//  the callback function is executed
-route.get("/", async (req, res) => {
-  // the req parameter references the HTTP request object, which has
-  //  a number of properties
-  console.log("path: ", req.path);
+/*
+  How to create a get route
 
-  const entries = await Entry.find();
+  route.get("/path", middleware, (req, res) => {
+    path: the specified url or path you want to direct to
+    middleware: a function that runs before the route handler (optional) (i.e isAdmin, to check if the user is an admin)
+    req: the HTTP request object
+    res: the HTTP response object
+
+    res.render("view", { key: value, key: value, ... });
+
+*/
+
+route.get("/", async (req, res) => {
+  // get items from the database to display on the homepage
   const items = await Item.find();
 
+  // format the items into a usable array
   const formattedItems = items.map((item) => {
     return {
       id: item._id,
@@ -26,27 +33,59 @@ route.get("/", async (req, res) => {
     };
   });
 
-  // convert MongoDB objects to objects formatted for the EJS template
-  const formattedEntries = entries.map((entry) => {
-    return {
-      id: entry._id,
-      date: entry.date.toLocaleDateString(),
-      habit: entry.habit,
-      content: entry.content.slice(0, 20) + "...",
-    };
-  });
-
-  // the res parameter references the HTTP response object
+  // render the homePage view and pass the items to it
   res.render("homePage", {
-    entries: formattedEntries,
     items: formattedItems,
   });
 });
 
-route.get("/admin", async (req, res) => { 
+function isAdmin(req, res, next) {
+  // check if the session exists (user is logged in), and if they are an admin
+  if (req.session && req.session.isAdmin) {
+    return next(); // Allow access to the next middleware or route
+  } else {
+    return res
+      .status(403)
+      .send("Forbidden: You do not have access to this page.");
+  }
+}
 
-  // once the orders list is made, make sure to change the code to look for the list of orders, rather than the list of items
+// uses the isAdmin middleware before rendering the page
+route.get("/admin", isAdmin, (req, res) => {
+  // This will only be reached if the user is an admin
+  // console.log("Rendering admin page router");
+  return res.render("admin", { user: req.session.user });
+});
 
+// logout route
+route.get("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).send("Failed to log out");
+    }
+    res.redirect("/");
+  });
+});
+
+route.get("/addItem", isAdmin, async (req, res) => {
+  res.render("addItem");
+});
+
+route.get("/editItem/:id", isAdmin, async (req, res) => {
+  const item = await Item.findById(req.params.id);
+  const formattedItem = {
+    id: item._id,
+    name: item.name,
+    price: item.price,
+    description: item.description,
+    quantity: item.quantity,
+    image: item.image,
+    size: item.size,
+  };
+  res.render("editItem", { item: formattedItem });
+});
+
+route.get("/manageItems", isAdmin, async (req, res) => {
   const items = await Item.find();
 
   const formattedItems = items.map((item) => {
@@ -54,15 +93,20 @@ route.get("/admin", async (req, res) => {
       id: item._id,
       name: item.name,
       price: item.price,
+      quantity: item.quantity,
       description: item.description,
       image: item.image,
       size: item.size,
     };
   });
 
-  res.render("admin", {
-    items: formattedItems, 
-  });
+  res.render("manageItems", { items: formattedItems });
+});
+
+// route to delete an item by its id
+route.get("/deleteItem/:id", isAdmin, async (req, res) => {
+  await Item.findByIdAndDelete(req.params.id);
+  res.redirect("/manageItems");
 });
 
 route.post("/cart", async (req, res) => {
