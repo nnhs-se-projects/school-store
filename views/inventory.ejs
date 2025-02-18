@@ -4,22 +4,19 @@
 
 <link rel="stylesheet" href="/css/admin.css">
 <main>
-  <h1>Student Orders</h1>
+  <h1>Inventory Spreadsheet</h1>
 
   <table>
     <tr>
       <th> Name </th>
-      <th> Email </th>
-      <th> Order </th>
-      <th> Pickup Time </th>
-      <th> Delete </th>
+      <th> Amount Remaining </th>
     </tr>
+    <% items.forEach(function(item) { %>
     <tr>
-      <th> Benjamin </th>
-      <th> SuperBilly@email.com </th>
-      <th> Really long order to test the stretching of the boxes </th>
-      <th> 5th period </th>
+      <th> <%= item.name %> </th>
+      <th> <%= item.quantity %> </th>
     </tr>
+    <% }) %>
   </table>
 
   <div>

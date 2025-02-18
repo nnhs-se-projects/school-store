@@ -3,6 +3,7 @@ table {
   display: flex;
   justify-content: center;
   font-family: Arial, sans-serif;
+  padding: 40px;
 }
 
 th {
