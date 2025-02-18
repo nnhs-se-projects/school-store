@@ -134,8 +134,20 @@ route.post("/cart", async (req, res) => {
   res.status(200).send("Item added to cart");
 });
 
+route.get("/item/:id", async (req, res) => {
+  const item = await Item.findById(req.params.id);
 
+  const formattedItem = {
+    id: item._id,
+    name: item.name,
+    price: item.price,
+    description: item.description,
+    image: item.image,
+    size: item.size,
+  };
 
+  res.render("itemPage", { item: formattedItem });
+});
 
 // delegate all authentication to the auth.js router
 route.use("/auth", require("./auth"));
