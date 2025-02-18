@@ -15,23 +15,29 @@ route.get("/cart", async (req, res) => {
     }
 
     const userCart = [];
+    let warnUser = false;
     for (let i = 0; i < user.cart.length; i++) {
       const item = await Item.findById(user.cart[i].itemId);
       if (!item) {
-        return res.status(404).send("Item not found");
-      }
-      console.log("image: ", item);
+        user.cart.splice(i, 1);
+        await user.save();
+        i--; // Adjust index after removal
+        warnUser = true; // Item not found in inventory
+        console.log("Item not found in inventory: ", user.cart[i].itemId);
+      } else {
+        console.log("image: ", item);
 
-      userCart.push({
-        id: item._id,
-        name: item.name,
-        price: item.price,
-        quantity: user.cart[i].quantity,
-        image: item.image,
-      });
+        userCart.push({
+          id: item._id,
+          name: item.name,
+          price: item.price,
+          quantity: user.cart[i].quantity,
+          image: item.image,
+        });
+      }
     }
 
-    res.render("cart", { cart: userCart });
+    res.render("cart", { cart: userCart, warn: warnUser });
   } catch (error) {
     res.status(500).send("An error occurred while fetching the cart data");
   }
