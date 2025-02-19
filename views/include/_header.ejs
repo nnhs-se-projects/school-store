@@ -4,24 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>School Store</title>
-    <link rel="stylesheet" href="/css/pico.min.css" />
     <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="/css/navbar.css" />
 
     <nav class="navbar">
-      <div onclick="window.location.href='/'" class="logo">Naperville North School Store <img src = /img/Huskie-Box.png alt = "Huskie Logo" class = "logo-image"> </div>
+      <div onclick="window.location.href='/'" class="logo">Naperville North School Store <img src = "/img/Mascot.png" alt = "Huskie Logo" class = "logo-image"> </div>
         <ul class="nav-links">
             <% if ( session && session.isAdmin ) { %>
-            <li><a href="/admin">View Orders</a></li>
+            <li><a href="/admin"><strong>View Orders</strong></a></li>
             <% } %>
-            <li><a href="/">Home</a></li>
-            <li><a href="/cart">Cart</a></li>
-            <li><a href="/#contact">Contact</a></li>
+            <li><a href="/"><strong>Home</strong></a></li>
+            <li><a href="/cart"><strong>Cart</strong></a></li>
+            <li><a href="/#contact"><strong>Contact</strong></a></li>
+            <li><a href="/logout"><strong>Logout</strong></a></li>
         </ul>
+          
     </nav>
-
-  </div>
   </head>
-
   <body>
-
     

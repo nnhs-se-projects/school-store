@@ -21,4 +21,27 @@ route.put("/:id", async (req, res) => {
   res.json(item);
 });
 
+route.post("/editItem/:id", async (req, res) => {
+  const { name, price, quantity, description, image } = req.body.item;
+
+  console.log(name, price, quantity, description, image);
+  let item;
+  if (image !== null) {
+    console.log("image is not null");
+    item = await Item.findByIdAndUpdate(
+      req.params.id,
+      { name, price, quantity, description, image },
+      { new: true }
+    );
+  } else {
+    item = await Item.findByIdAndUpdate(
+      req.params.id,
+      { name, price, quantity, description },
+      { new: true }
+    );
+  }
+
+  res.json(item);
+});
+
 module.exports = route;

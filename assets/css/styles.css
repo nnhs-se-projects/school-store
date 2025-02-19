@@ -1,19 +1,3 @@
-/* styling for the authentication page */
-
-.authForm {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-}
-
-.authForm img {
-  width: 100px;
-  height: 100px;
-}
-
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -25,89 +9,13 @@ body {
   flex-direction: column;
 }
 
-/* Navbar styling */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #000099; /* Dark background */
-  padding: 10px 20px;
-  color: #fff;
-}
-
-.navbar .logo {
-  font-size: 1.5em;
-  font-weight: bold;
-  color: rgb(255, 255, 255);
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px; /* Add spacing between the text and image */
-}
-
-.logo-image {
-  height: 40px; /* Adjust size to fit within the navbar */
-  width: auto; /* Maintain aspect ratio */
-  display: block; /* Ensure proper spacing */
-}
-
-.nav-links {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  gap: 15px;
-}
-
-.nav-links li {
-  display: inline;
-}
-
-.nav-links a {
-  text-decoration: none;
-  color: #ffffff;
-  padding: 8px 15px;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
-}
-
-.nav-links a:hover {
-  background-color: #0432ff; /* Slightly lighter on hover */
-}
-
-/* Responsive design */
-
-@media (max-width: 768px) {
-  .nav-links {
-    flex-direction: column;
-    gap: 10px;
-    display: none; /* Initially hidden */
-    background-color: #333333;
-    padding: 10px;
-    position: absolute;
-    top: 50px;
-    right: 20px;
-    border-radius: 5px;
-  }
-
-  .nav-links.active {
-    display: flex; /* Show on activation */
-  }
-
-  .navbar {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
 /* Store info section */
 
 .wrapper {
   display: flex;
   flex-direction: column;
   min-height: 100vh; /* Full height */
+  color: #002f55;
 }
 
 .store-info {
@@ -115,15 +23,10 @@ body {
   margin: 50px auto;
   background-color: #fff;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  flex: 1; /* Pushes the footer to the bottom if there's not enough content */
-  padding: 20px;
 }
 
 .store-info h1 {
   font-size: 2em;
-  color: #0077cc;
   margin-bottom: 10px;
   text-align: center;
 }
@@ -140,7 +43,7 @@ body {
   font-size: 1.5em;
   margin-bottom: 10px;
   color: #333;
-  border-bottom: 2px solid #0077cc;
+  border-bottom: 2px solid #002f55;
   display: inline-block;
 }
 
@@ -161,35 +64,12 @@ body {
 
 .store-hours li::before {
   content: "•"; /* Custom bullet symbol */
-  color: #0077cc; /* Bullet color */
+  color: #002f55; /* Bullet color */
   font-size: 1.2em; /* Bullet size */
   position: absolute;
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-}
-
-.store-hours strong {
-  color: #0077cc;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .store-info {
-    padding: 15px;
-  }
-
-  .store-info h1 {
-    font-size: 1.8em;
-  }
-
-  .store-hours h2 {
-    font-size: 1.3em;
-  }
-
-  .store-hours li {
-    font-size: 1em;
-  }
 }
 
 /* Footer styles */
@@ -207,16 +87,16 @@ body {
 
 .footer-content p {
   margin: 5px 0;
-  color: rgb(255, 155, 5);
+  color: #ff4800;
 }
 
 .footer-content strong {
-  color: #0077cc; /* Accent color for labels */
+  color: #ffffff; /* Accent color for labels */
 }
 
 .footer-bottom {
   font-size: 0.9em;
-  color: #ffa600; /* Lighter color for less emphasis */
+  color: #ff4800; /* Lighter color for less emphasis */
 }
 
 .footer-bottom p {
@@ -230,7 +110,6 @@ body {
   }
 }
 
-/* Item-list styling, want each item to be next to the other one, 4 in each row */
 .item-list {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -238,8 +117,32 @@ body {
   margin: 20px;
 }
 
+@media (max-width: 1200px) {
+  .item-list {
+    grid-template-columns: repeat(
+      3,
+      1fr
+    ); /* 3 items per row for medium screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .item-list {
+    grid-template-columns: repeat(
+      2,
+      1fr
+    ); /* 2 items per row for small screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .item-list {
+    grid-template-columns: 1fr; /* 1 item per row for extra small screens */
+  }
+}
+
 .item {
-  background-color: #0019a7;
+  background-color: #002f55;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -263,9 +166,31 @@ body {
 }
 
 /* Want to ensure that the aspect ratio remains 1 */
-.item img { 
+.item img {
   width: 100%;
   height: auto;
   display: block;
   border-radius: 8px;
+  object-fit: cover;
+  aspect-ratio: 1 / 1;
+  align-self: flex-end;
+}
+
+.add-items {
+  margin-left: 5%;
+  margin-right: 5%;
+}
+
+.wrapper#manageItems h1 {
+  display: flex;
+  justify-content: center;
+}
+
+.manage-item-link {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  background-color: rgb(25, 25, 150);
+  text-decoration: none;
+  color: white;
 }

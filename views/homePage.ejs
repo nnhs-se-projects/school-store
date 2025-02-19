@@ -5,7 +5,10 @@
 
 <!-- Main Site -->
 
-
+    
+<main>
+  <div class="wrapper">
+  
   <section class="store-info">
     <h1>Naperville North Huskie Store</h1>
     <p>
@@ -31,16 +34,16 @@
   
     <div class = "item-list"> 
       <% items.forEach(function(item) { %>
-        <div class = "item" onclick="window.location.href='/item/' + '<%= item.id %>'">
+        <div class = "item" onclick= "window.location.href='/item/<%= item.id %>'">
+          <img src="<%= item.image %>">
+          <div class = "item-content">
           <h2><%= item.name %></h2>
           <p>Price: $<%= item.price %></p>
           <p>Description: <%= item.description %></p>
-          <img src="<%= item.image %>">
+          </div>
       </div>
       <% }) %>
     </div>
-
- 
 </main>
 
 <!-- /Main Site -->

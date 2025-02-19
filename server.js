@@ -14,7 +14,8 @@ const app = express();
 
 // add middleware to handle JSON in HTTP request bodies (used with
 //  POST commands)
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 // load environment variables from the .env file into process.env
 const dotenv = require("dotenv");

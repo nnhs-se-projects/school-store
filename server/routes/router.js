@@ -67,15 +67,70 @@ route.get("/logout", (req, res) => {
   });
 });
 
+
+route.get("/addItem", isAdmin, (req, res) => {
+  // render the addItem view
+  res.render("addItem");
+});
+
 // displays product page for a specific item
 route.get("/item/:id", async (req, res) => {
   const item = await Item.findById(req.params.id);
   res.render("item", { item });
 });
 
-// directs to the add item page
-route.get("/addItem", isAdmin, async (req, res) => {
-  res.render("addItem");
+route.get("/editItem/:id", isAdmin, async (req, res) => {
+  const item = await Item.findById(req.params.id);
+  const formattedItem = {
+    id: item._id,
+    name: item.name,
+    price: item.price,
+    description: item.description,
+    quantity: item.quantity,
+    image: item.image,
+    size: item.size,
+  };
+  res.render("editItem", { item: formattedItem });
+});
+
+route.get("/manageItems", isAdmin, async (req, res) => {
+  const items = await Item.find();
+
+  const formattedItems = items.map((item) => {
+    return {
+      id: item._id,
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity,
+      description: item.description,
+      image: item.image,
+      size: item.size,
+    };
+  });
+
+  res.render("manageItems", { items: formattedItems });
+});
+
+// route to delete an item by its id
+route.get("/deleteItem/:id", isAdmin, async (req, res) => {
+  await Item.findByIdAndDelete(req.params.id);
+  res.redirect("/manageItems");
+});
+
+
+route.get("/item/:id", async (req, res) => {
+  const item = await Item.findById(req.params.id);
+
+  const formattedItem = {
+    id: item._id,
+    name: item.name,
+    price: item.price,
+    description: item.description,
+    image: item.image,
+    size: item.size,
+  };
+
+  res.render("itemPage", { item: formattedItem });
 });
 
 // delegate all authentication to the auth.js router
