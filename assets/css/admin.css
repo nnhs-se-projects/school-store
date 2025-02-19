@@ -1,3 +1,4 @@
+@import "tailwindcss";
 table {
   display: flex;
   justify-content: center;

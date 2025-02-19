@@ -1,5 +1,5 @@
 /* styling for the authentication page */
-
+@import "tailwindcss";
 .authForm {
   display: flex;
   flex-direction: column;

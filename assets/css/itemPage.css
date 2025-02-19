@@ -1,5 +1,5 @@
 /* Style the Item page so that image is on the left and information such as description and size selectors are on the right*/
-
+@import "tailwindcss";
 .wrapper {
   display: flex;
   flex-direction: row;

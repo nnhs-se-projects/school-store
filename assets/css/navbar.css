@@ -1,4 +1,5 @@
 /* Navbar styling */
+@import "tailwindcss";
 .navbar {
   display: flex;
   justify-content: space-between;

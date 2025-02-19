@@ -6,21 +6,25 @@
     <title>School Store</title>
     <link rel="stylesheet" href="/css/styles.css" />
     <link rel="stylesheet" href="/css/navbar.css" />
-
-    <nav class="navbar">
-      <div onclick="window.location.href='/'" class="logo">Naperville North School Store <img src = "/img/Mascot.png" alt = "Huskie Logo" class = "logo-image"> </div>
-        <ul class="nav-links">
-            <% if ( session && session.isAdmin ) { %>
-            <li><a href="/admin"><strong>View Orders</strong></a></li>
-            <% } %>
-            <li><a href="/#home"><strong>Home</strong></a></li>
-            <li><a href="/#cart"><strong>Cart</strong></a></li>
-            <li><a href="/#contact"><strong>Contact</strong></a></li>
-            <li><a href="/logout"><strong>Logout</strong></a></li>
-        </ul>
-          
-    </nav>
   </head>
-  <body>
-    
-
+  <body class="bg-gray-100 text-gray-900">
+    <nav class="bg-blue-900 p-4">
+      <div class="container mx-auto flex justify-between items-center">
+        <div onclick="window.location.href='/'" class="text-white text-2xl font-bold cursor-pointer">
+          Naperville North School Store
+          <img src="/img/Mascot.png" alt="Huskie Logo" class="inline-block h-10 ml-2">
+        </div>
+        <div class="hamburger text-white text-2xl cursor-pointer md:hidden" onclick="toggleMenu()">☰</div>
+        <ul class="nav-links hidden md:flex space-x-4">
+          <% if (session && session.isAdmin) { %>
+            <li><a href="/admin" class="text-white hover:underline">View Orders</a></li>
+          <% } %>
+          <li><a href="/#home" class="text-white hover:underline">Home</a></li>
+          <li><a href="/#cart" class="text-white hover:underline">Cart</a></li>
+          <li><a href="/#contact" class="text-white hover:underline">Contact</a></li>
+          <li><a href="/logout" class="text-white hover:underline">Logout</a></li>
+        </ul>
+      </div>
+    </nav>
+  </body>
+</html>
