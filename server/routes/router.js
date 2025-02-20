@@ -87,6 +87,22 @@ route.get("/inventory", isAdmin, async (req, res) => {
   });
 })
 
+route.get("/inventoryprint", isAdmin, async (req, res) => {
+  const items = await Item.find();
+
+  const formattedItems = items.map((item) => {
+    return {
+      id: item._id,
+      name: item.name,
+      quantity: item.quantity,
+    };
+  });
+
+  res.render("inventoryprint", {
+    items: formattedItems,
+  });
+})
+
 route.get("/editItem/:id", isAdmin, async (req, res) => {
   const item = await Item.findById(req.params.id);
   const formattedItem = {

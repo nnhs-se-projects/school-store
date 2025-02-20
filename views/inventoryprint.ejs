@@ -1,0 +1,16 @@
+<link rel="stylesheet" href="/css/admin.css">
+
+<body onload="window.print()">
+  <table>
+    <tr>
+      <th> Name </th>
+      <th> Amount Remaining </th>
+    </tr>
+    <% items.forEach(function(item) { %>
+    <tr>
+      <th> <%= item.name %> </th>
+      <th> <%= item.quantity %> </th>
+    </tr>
+    <% }) %>
+  </table>
+</body>
