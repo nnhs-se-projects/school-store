@@ -21,7 +21,7 @@ const ItemSchema = new mongoose.Schema({
     type: String,
   },
   size: {
-    type: String,
+    type: Array,
   },
   // Add other fields as necessary
 });
