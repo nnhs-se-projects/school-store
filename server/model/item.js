@@ -5,23 +5,27 @@ const ItemSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  price: {
-    type: mongoose.Types.Decimal128,
-    required: true,
-  },
-  quantity: {
-    type: Number,
-    required: true,
-    default: 0,
-  },
   description: {
     type: String,
+    default: "",
   },
   image: {
     type: String,
+    default: "",
   },
-  size: {
-    type: Array,
+  sizes: {
+    type: Map,
+    of: {
+      quantity: {
+        type: Number,
+        required: true,
+      },
+      price: {
+        type: Number,
+        required: true,
+      },
+    },
+    default: {},
   },
   // Add other fields as necessary
 });
