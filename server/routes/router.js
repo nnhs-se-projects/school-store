@@ -16,7 +16,7 @@ const Item = require("../model/item");
     res.render("view", { key: value, key: value, ... });
 
 */
-
+// directs to the homepage
 route.get("/", async (req, res) => {
   // get items from the database to display on the homepage
   const items = await Item.find();
@@ -54,7 +54,7 @@ function isAdmin(req, res, next) {
 route.get("/admin", isAdmin, (req, res) => {
   // This will only be reached if the user is an admin
   // console.log("Rendering admin page router");
-  return res.render("admin", { user: req.session.user });
+  return res.render("admin");
 });
 
 // logout route
@@ -67,8 +67,16 @@ route.get("/logout", (req, res) => {
   });
 });
 
-route.get("/addItem", isAdmin, async (req, res) => {
+
+route.get("/addItem", isAdmin, (req, res) => {
+  // render the addItem view
   res.render("addItem");
+});
+
+// displays product page for a specific item
+route.get("/item/:id", async (req, res) => {
+  const item = await Item.findById(req.params.id);
+  res.render("item", { item });
 });
 
 route.get("/editItem/:id", isAdmin, async (req, res) => {
@@ -109,30 +117,6 @@ route.get("/deleteItem/:id", isAdmin, async (req, res) => {
   res.redirect("/manageItems");
 });
 
-route.post("/cart", async (req, res) => {
-  const { googleId, itemId, quantity } = req.body;
-
-  const user = await User.findOne({ googleId });
-
-  if (!user) {
-    return res.status(404).send("User not found");
-  }
-
-  const itemIndex = user.cart.findIndex(
-    (item) => item.itemId.toString() === itemId
-  );
-
-  if (itemIndex > -1) {
-    // If item already exists in the cart, update the quantity
-    user.cart[itemIndex].quantity += quantity;
-  } else {
-    // If item does not exist in the cart, add it
-    user.cart.push({ itemId, quantity });
-  }
-
-  await user.save();
-  res.status(200).send("Item added to cart");
-});
 
 route.get("/item/:id", async (req, res) => {
   const item = await Item.findById(req.params.id);
