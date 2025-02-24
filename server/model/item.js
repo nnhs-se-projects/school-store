@@ -20,9 +20,6 @@ const ItemSchema = new mongoose.Schema({
   image: {
     type: String,
   },
-  size: {
-    type: Array,
-  },
   // Add other fields as necessary
 });
 

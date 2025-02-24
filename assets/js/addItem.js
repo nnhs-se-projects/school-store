@@ -15,7 +15,13 @@ submitButton.addEventListener("click", async () => {
 
     // Display the image
 
-    const item = { name, price, quantity, description, image: base64String };
+    const item = {
+      name,
+      price,
+      quantity,
+      description,
+      image: base64String,
+    };
 
     const response = await fetch("/addItem", {
       method: "POST",

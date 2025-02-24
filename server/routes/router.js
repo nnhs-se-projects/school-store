@@ -143,7 +143,6 @@ route.get("/item/:id", async (req, res) => {
     price: item.price,
     description: item.description,
     image: item.image,
-    size: item.size,
   };
 
   res.render("itemPage", { item: formattedItem });
