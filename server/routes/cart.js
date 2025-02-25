@@ -15,17 +15,25 @@ route.get("/cart", async (req, res) => {
     }
 
     const userCart = [];
-    let warnUser = false;
+    let warnUserOOS = false;
+    let warnUserQuant = false;
+    const maxQuantities = [];
     for (let i = 0; i < user.cart.length; i++) {
       const item = await Item.findById(user.cart[i].itemId);
       if (!item) {
         user.cart.splice(i, 1);
         await user.save();
         i--; // Adjust index after removal
-        warnUser = true; // Item not found in inventory
+        warnUserOOS = true; // Item not found in inventory
         console.log("Item not found in inventory: ", user.cart[i].itemId);
+      } else if (item.quantity < user.cart[i].quantity) {
+        warnUserQuant = true; // Item quantity is less than requested
+        user.cart[i].quantity = item.quantity;
+        maxQuantities.push(item.quantity);
+        await user.save();
       } else {
         console.log("image: ", item);
+        maxQuantities.push(item.quantity);
 
         userCart.push({
           id: item._id,
@@ -37,7 +45,12 @@ route.get("/cart", async (req, res) => {
       }
     }
 
-    res.render("cart", { cart: userCart, warn: warnUser });
+    res.render("cart", {
+      cart: userCart,
+      warnOOS: warnUserOOS,
+      warnQuant: warnUserQuant,
+      maxQuantity: maxQuantities,
+    });
   } catch (error) {
     res.status(500).send("An error occurred while fetching the cart data");
   }
@@ -71,8 +84,6 @@ route.post("/cart/add", async (req, res) => {
     user.cart.push({ itemId, quantity });
   }
 
-  // Update item quantity in inventory
-  item.quantity -= quantity;
   await item.save();
 
   await user.save();
@@ -101,10 +112,12 @@ route.post("/cart/remove", async (req, res) => {
   if (!user) {
     return res.status(404).send("User not found");
   }
+  console.log("user found");
 
   const itemIndex = user.cart.findIndex(
     (cartItem) => cartItem.itemId.toString() === itemId
   );
+  console.log("Item found");
   if (itemIndex > -1) {
     // Remove the item from the cart
     user.cart.splice(itemIndex, 1);

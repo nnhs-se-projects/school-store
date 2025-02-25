@@ -1,12 +1,20 @@
-const warnUserInput = document.getElementById("warning");
+const warnUserOOSInput = document.getElementById("warningOOS");
+const warnUserQuantInput = document.getElementById("warningQuant");
 const removeButton = document.querySelector("button.remove-item");
 const quantityButton = document.querySelector("button.update-quantity");
 const googleId = document.getElementById("googleId").value;
 
-if (warnUserInput.value === "true") {
+if (warnUserOOSInput.value === "true") {
   // If the warning input is present, display the alert
   const message =
     "Warning: One or more items in your cart are out of stock and have been removed. Please check your cart for details.";
+  alert(message);
+}
+
+if (warnUserQuantInput.value === "true") {
+  // If the warning input is present, display the alert
+  const message =
+    "Warning: One or more items in your cart have insufficient quantity in stock. Please check your cart for details.";
   alert(message);
 }
 
