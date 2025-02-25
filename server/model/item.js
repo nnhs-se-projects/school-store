@@ -9,16 +9,16 @@ const ItemSchema = new mongoose.Schema({
     type: mongoose.Types.Decimal128,
     required: true,
   },
-  quantity: {
-    type: Number,
-    required: true,
-    default: 0,
-  },
   description: {
     type: String,
   },
   image: {
     type: String,
+  },
+  sizes: {
+    type: Map,
+    of: Number,
+    default: {},
   },
   // Add other fields as necessary
 });

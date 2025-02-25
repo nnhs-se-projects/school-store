@@ -16,13 +16,14 @@
       <!-- File upload for image input -->
       <input type="file" id="image" name="image" accept="image/*" />
 
-      <label>Does this item come in sizes?</label>
+      <label>Item comes in sizes</label>
       <input
         type="checkbox"
         id="sized-check"
         name="sized-check"
         value="sized"
-        onchange="toggleSizeInput()"
+        onclick="toggleSizeInput()"
+        style="margin-left: 10px"
       />
 
       <div class="generic-size-input">
@@ -33,7 +34,7 @@
       <div id="size-input" style="display: none">
         <div class="size-entry">
           <label for="size">Size Type</label>
-          <input type="text" id="size" name="size[]" value="small" />
+          <input type="text" id="size" name="size[]" value="Small" />
           <label for="size-quantity">Quantity</label>
           <input
             type="number"
@@ -51,19 +52,6 @@
 </main>
 
 <script>
-  function toggleSizeInput() {
-    var sizeInput = document.getElementById("size-input");
-    var genericSizeInput = document.querySelector(".generic-size-input");
-    var checkBox = document.getElementById("sized-check");
-    if (checkBox.checked) {
-      sizeInput.style.display = "block";
-      genericSizeInput.style.display = "none";
-    } else {
-      sizeInput.style.display = "none";
-      genericSizeInput.style.display = "block";
-    }
-  }
-
   function addSizeInput() {
     var sizeInput = document.getElementById("size-input");
     var newSizeEntry = document.createElement("div");
@@ -75,6 +63,19 @@
       <input type="number" name="size-quantity[]" required />
     `;
     sizeInput.insertBefore(newSizeEntry, sizeInput.querySelector("button"));
+  }
+
+  function toggleSizeInput() {
+    const sizeInput = document.getElementById("size-input");
+    const genericSizeInput = document.querySelector(".generic-size-input");
+    const checkBox = document.getElementById("sized-check");
+    if (checkBox.checked) {
+      sizeInput.style.display = "block";
+      genericSizeInput.style.display = "none";
+    } else {
+      sizeInput.style.display = "none";
+      genericSizeInput.style.display = "block";
+    }
   }
 </script>
 
