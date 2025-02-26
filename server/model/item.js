@@ -16,8 +16,8 @@ const ItemSchema = new mongoose.Schema({
     type: String,
   },
   sizes: {
-    type: Map,
-    of: Number,
+    type: Object,
+    required: true,
     default: {},
   },
   // Add other fields as necessary

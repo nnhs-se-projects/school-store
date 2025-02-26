@@ -16,32 +16,31 @@
       <!-- File upload for image input -->
       <input type="file" id="image" name="image" accept="image/*" />
 
-      <label>Item comes in sizes</label>
+      <label>Does this item come in sizes?</label>
       <input
         type="checkbox"
         id="sized-check"
         name="sized-check"
         value="sized"
-        onclick="toggleSizeInput()"
-        style="margin-left: 10px"
+        onchange="toggleSizeInput()"
       />
 
-      <div class="generic-size-input">
-        <label for="quantity">Quantity</label>
-        <input type="number" id="quantity" name="quantity" required />
+      <div id="generic-size-input">
+        <label for="generic-quantity">Quantity</label>
+        <input
+          type="number"
+          id="generic-quantity"
+          name="generic-quantity"
+          required
+        />
       </div>
 
       <div id="size-input" style="display: none">
         <div class="size-entry">
           <label for="size">Size Type</label>
-          <input type="text" id="size" name="size[]" value="Small" />
+          <input type="text" name="size[]" value="small" />
           <label for="size-quantity">Quantity</label>
-          <input
-            type="number"
-            id="size-quantity"
-            name="size-quantity[]"
-            required
-          />
+          <input type="number" name="size-quantity[]" required />
         </div>
         <button type="button" onclick="addSizeInput()">+ Add Size</button>
       </div>
@@ -52,6 +51,19 @@
 </main>
 
 <script>
+  function toggleSizeInput() {
+    var sizeInput = document.getElementById("size-input");
+    var checkBox = document.getElementById("sized-check");
+    var genericSizeInput = document.getElementById("generic-size-input");
+    if (checkBox.checked) {
+      sizeInput.style.display = "block";
+      genericSizeInput.style.display = "none";
+    } else {
+      sizeInput.style.display = "none";
+      genericSizeInput.style.display = "block";
+    }
+  }
+
   function addSizeInput() {
     var sizeInput = document.getElementById("size-input");
     var newSizeEntry = document.createElement("div");
@@ -63,19 +75,6 @@
       <input type="number" name="size-quantity[]" required />
     `;
     sizeInput.insertBefore(newSizeEntry, sizeInput.querySelector("button"));
-  }
-
-  function toggleSizeInput() {
-    const sizeInput = document.getElementById("size-input");
-    const genericSizeInput = document.querySelector(".generic-size-input");
-    const checkBox = document.getElementById("sized-check");
-    if (checkBox.checked) {
-      sizeInput.style.display = "block";
-      genericSizeInput.style.display = "none";
-    } else {
-      sizeInput.style.display = "none";
-      genericSizeInput.style.display = "block";
-    }
   }
 </script>
 

@@ -12,29 +12,32 @@ submitButton.addEventListener("click", async (event) => {
 
   const sizeCheck = document.querySelector("input#sized-check").checked;
 
-  const sizesMap = new Map();
+  const sizesObject = {};
+  // If size check is checked, get the sizes from the size boxes
+  // If size check is not checked, set the sizes equal to what is in the quantity box, parameter is of name "placeholder"
+
   if (sizeCheck) {
+    console.log("Size check is checked");
     const sizeEntries = document.querySelectorAll(".size-entry");
     sizeEntries.forEach((entry) => {
       const size = entry.querySelector("input[name='size[]']").value;
-      const quantity = entry.querySelector(
-        "input[name='size-quantity[]']"
-      ).value;
-      sizesMap.set(size, quantity);
+      const quantity = parseInt(
+        entry.querySelector("input[name='size-quantity[]']").value,
+        10
+      );
+      sizesObject[size] = quantity;
+      console.log(`Size: ${size}, Quantity: ${quantity}`);
     });
   } else {
-    const quantity = document.querySelector("input#quantity").value;
-    sizesMap.set("default", quantity);
+    sizesObject.placeholder = document.querySelector(
+      "input#generic-quantity"
+    ).value;
   }
 
-  console.log("Sizes Map:", sizesMap);
+  console.log("Sizes Object:", sizesObject);
 
   reader.onloadend = async function () {
     const base64String = reader.result;
-    console.log(base64String);
-
-    // Convert the Map to an object for JSON serialization
-    const sizesObject = Object.fromEntries(sizesMap);
 
     const item = {
       name,
