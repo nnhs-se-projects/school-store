@@ -28,9 +28,6 @@
               <option value="<%= q %>" <%= cart[i].quantity === q ? 'selected' : '' %>><%= q %></option>
             <% } %>
           </select>
-          <button class="remove-item" data-id="<%= cart[i].id %>">
-            Remove
-          </button>
         </div>
       </li>
       <% } %>

@@ -1,7 +1,6 @@
 const warnUserOOSInput = document.getElementById("warningOOS");
 const warnUserQuantInput = document.getElementById("warningQuant");
-const removeButton = document.querySelector("button.remove-item");
-const quantityButton = document.querySelector("button.update-quantity");
+const quantitySelectors = document.querySelectorAll("select.quantity-dropdown");
 const googleId = document.getElementById("googleId").value;
 
 if (warnUserOOSInput.value === "true") {
@@ -18,21 +17,25 @@ if (warnUserQuantInput.value === "true") {
   alert(message);
 }
 
-removeButton.addEventListener("click", async () => {
-  const itemId = removeButton.getAttribute("data-id");
-  const response = await fetch("/cart/remove", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      googleId,
-      itemId,
-    }),
+quantitySelectors.forEach((button) => {
+  // Perform actions on each button
+  button.addEventListener("change", async (event) => {
+    const itemId = button.getAttribute("data-id");
+    const quantity = event.target.value;
+
+    const response = await fetch("/cart/updateQuant", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ googleId, itemId, quantity }),
+    });
+
+    if (response.ok) {
+      console.log("Item updated in cart");
+      // Optionally, you can refresh the cart or update the UI here
+    } else {
+      console.error("Failed to update item in cart");
+    }
   });
-  if (response.ok) {
-    window.location.reload();
-  } else {
-    console.error("Error removing item from cart");
-  }
 });

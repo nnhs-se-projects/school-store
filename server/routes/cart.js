@@ -30,11 +30,18 @@ route.get("/cart", async (req, res) => {
         warnUserQuant = true; // Item quantity is less than requested
         user.cart[i].quantity = item.quantity;
         maxQuantities.push(item.quantity);
-        await user.save();
-      } else {
-        console.log("image: ", item);
-        maxQuantities.push(item.quantity);
 
+        await user.save();
+
+        userCart.push({
+          id: item._id,
+          name: item.name,
+          price: item.price,
+          quantity: user.cart[i].quantity,
+          image: item.image,
+        });
+      } else {
+        maxQuantities.push(item.quantity);
         userCart.push({
           id: item._id,
           name: item.name,
@@ -105,26 +112,29 @@ route.post("/cart/add", async (req, res) => {
 // });
 
 // Route to remove an item from the cart
-route.post("/cart/remove", async (req, res) => {
-  const { googleId, itemId } = req.body;
+route.post("/cart/updateQuant", async (req, res) => {
+  const { googleId, itemId, newQuantity } = req.body;
 
   const user = await User.findOne({ googleId });
   if (!user) {
     return res.status(404).send("User not found");
   }
-  console.log("user found");
+
+  const item = await Item.findById(itemId);
+  if (!item) {
+    return res.status(400).send("Item not found");
+  }
 
   const itemIndex = user.cart.findIndex(
     (cartItem) => cartItem.itemId.toString() === itemId
   );
-  console.log("Item found");
   if (itemIndex > -1) {
-    // Remove the item from the cart
-    user.cart.splice(itemIndex, 1);
-    await user.save();
-    res.status(200).send("Item removed from cart");
-  } else {
-    res.status(400).send("Item not found in cart");
+    if (newQuantity <= 0) {
+      // If the new quantity is 0 or less, remove the item from the cart
+      user.cart.splice(itemIndex, 1);
+    }
+    // If item already exists in the cart, update the quantity
+    user.cart[itemIndex].quantity = newQuantity;
   }
 });
 
