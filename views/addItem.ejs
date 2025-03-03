@@ -1,30 +1,97 @@
 <%- include('include/_header') %>
 
-
 <link rel="stylesheet" href="/css/addItem.css" />
 <main> 
   <div class="wrapper">
-  <div class = add-items>
-  <h1>Add Item</h1>
+    <div class="add-items">
+      <h1>Add Item</h1>
 
-    <label for="name">Name</label>
-    <input type="text" id="name" name="name" required />
-    <label for="price">Price</label>
-    <input type="float" id="price" name="price" required />
-    <label for="quantity">Quantity</label>
-    <input type="number" id="quantity" name="quantity" required />
-    <label for="description">Description</label>
-    <input type = "text" id="description" name="description" />
-    <label for = "image">Image</label>
-    <!-- File upload for image input -->
-    <input type = "file" id="image" name="image" accept="image/*" />
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" required />
+      <label for="price">Price</label>
+      <input type="float" id="price" name="price" required />
+      <label for="description">Description</label>
+      <input type="text" id="description" name="description" />
+      <label for="image">Image</label>
+      <!-- File upload for image input -->
+      <input type="file" id="image" name="image" accept="image/*" />
 
-    <input type="submit" class = "submit" value="Add Item" />
+      <label>Does this item come in sizes?</label>
+      <input
+        type="checkbox"
+        id="sized-check"
+        name="sized-check"
+        value="sized"
+        onchange="toggleSizeInput()"
+      />
 
-  <div>
-  <div>
+      <div id="generic-size-input">
+        <label for="generic-quantity">Quantity</label>
+        <input
+          type="number"
+          id="generic-quantity"
+          name="generic-quantity"
+          required
+        />
+      </div>
+
+      <div id="size-input" style="display: none">
+        <div class="size-entry">
+          <label for="size-0">Size Type</label>
+          <input type="text" id="size-0" name="size[]" value="small" />
+          <label for="size-quantity-0">Quantity</label>
+          <input
+            type="number"
+            id="size-quantity-0"
+            name="size-quantity[]"
+            required
+          />
+        </div>
+        <button type="button" id="add-size-button" onclick="addSizeInput()">
+          + Add Size
+        </button>
+      </div>
+
+      <input type="submit" class="submit" value="Add Item" />
+    </div>
+  </div>
 </main>
 
-<script src = "/js/addItem.js"></script>
+<script>
+  function toggleSizeInput() {
+    var sizeInput = document.getElementById("size-input");
+    var checkBox = document.getElementById("sized-check");
+    var genericSizeInput = document.getElementById("generic-size-input");
+    if (checkBox.checked) {
+      sizeInput.style.display = "block";
+      genericSizeInput.style.display = "none";
+    } else {
+      sizeInput.style.display = "none";
+      genericSizeInput.style.display = "block";
+    }
+  }
+
+  function addSizeInput() {
+    var sizeInput = document.getElementById("size-input");
+    var newSizeEntry = document.createElement("div");
+    newSizeEntry.classList.add("size-entry");
+    var sizeIndex = document.querySelectorAll(".size-entry").length;
+    newSizeEntry.innerHTML = `
+      <label for="size-${sizeIndex}">Size Type</label>
+      <input type="text" id="size-${sizeIndex}" name="size[]" value="small" />
+      <label for="size-quantity-${sizeIndex}">Quantity</label>
+      <input type="number" id="size-quantity-${sizeIndex}" name="size-quantity[]" required />
+      <button type="button" class = "remove-size-button" onclick="removeSizeInput(this)">- Remove Size</button>
+    `;
+    var addButton = document.getElementById("add-size-button");
+    sizeInput.insertBefore(newSizeEntry, addButton);
+  }
+
+  function removeSizeInput(button) {
+    button.parentElement.remove();
+  }
+</script>
+
+<script src="/js/addItem.js"></script>
 
 <%- include('include/_footer') %>
