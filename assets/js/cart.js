@@ -21,7 +21,9 @@ quantitySelectors.forEach((button) => {
   // Perform actions on each button
   button.addEventListener("change", async (event) => {
     const itemId = button.getAttribute("data-id");
+    console.log("Item ID:", itemId);
     const quantity = event.target.value;
+    console.log("Quantity:", quantity);
 
     const response = await fetch("/cart/updateQuant", {
       method: "POST",
@@ -33,7 +35,7 @@ quantitySelectors.forEach((button) => {
 
     if (response.ok) {
       console.log("Item updated in cart");
-      // Optionally, you can refresh the cart or update the UI here
+      window.location.reload();
     } else {
       console.error("Failed to update item in cart");
     }

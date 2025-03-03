@@ -113,8 +113,10 @@ route.post("/cart/add", async (req, res) => {
 
 // Route to remove an item from the cart
 route.post("/cart/updateQuant", async (req, res) => {
+  console.log("Updating item quantity in cart");
   const { googleId, itemId, newQuantity } = req.body;
 
+  console.log(newQuantity);
   const user = await User.findOne({ googleId });
   if (!user) {
     return res.status(404).send("User not found");
@@ -128,6 +130,8 @@ route.post("/cart/updateQuant", async (req, res) => {
   const itemIndex = user.cart.findIndex(
     (cartItem) => cartItem.itemId.toString() === itemId
   );
+
+  console.log("item index:" + itemIndex);
   if (itemIndex > -1) {
     if (newQuantity <= 0) {
       // If the new quantity is 0 or less, remove the item from the cart
@@ -136,6 +140,9 @@ route.post("/cart/updateQuant", async (req, res) => {
     // If item already exists in the cart, update the quantity
     user.cart[itemIndex].quantity = newQuantity;
   }
+  await item.save();
+  await user.save();
+  res.status(200).send("Item quantity updated in cart");
 });
 
 module.exports = route;
