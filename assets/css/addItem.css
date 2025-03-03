@@ -6,9 +6,3 @@ input {
   border: 1px solid #ccc;
   box-sizing: border-box;
 }
-
-#sized-check {
-  padding: 12px 20px;
-  width: 5%;
-  margin-bottom: 20px;
-}
