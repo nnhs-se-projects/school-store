@@ -95,6 +95,7 @@ route.get("/inventoryprint", isAdmin, async (req, res) => {
     return {
       id: item._id,
       name: item.name,
+      quantity: item.quantity,
       sizes: item.sizes
     };
   });
