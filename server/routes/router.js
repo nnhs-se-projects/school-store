@@ -67,7 +67,6 @@ route.get("/logout", (req, res) => {
   });
 });
 
-
 route.get("/addItem", isAdmin, (req, res) => {
   // render the addItem view
   res.render("addItem");
@@ -76,7 +75,7 @@ route.get("/addItem", isAdmin, (req, res) => {
 // displays product page for a specific item
 route.get("/item/:id", async (req, res) => {
   const item = await Item.findById(req.params.id);
-  res.render("item", { item });
+  res.render("itemPage", { item });
 });
 
 route.get("/editItem/:id", isAdmin, async (req, res) => {
@@ -116,7 +115,6 @@ route.get("/deleteItem/:id", isAdmin, async (req, res) => {
   await Item.findByIdAndDelete(req.params.id);
   res.redirect("/manageItems");
 });
-
 
 route.get("/item/:id", async (req, res) => {
   const item = await Item.findById(req.params.id);
