@@ -75,6 +75,8 @@ app.use("/auth", require("./server/routes/auth"));
 app.use(require("./server/routes/cart"));
 app.use(require("./server/routes/inventory"));
 
+app.use("/size", require("./server/routes/size"));
+
 // start the server on port 8080
 server.listen(8080, () => {
   console.log("Server started on http://localhost:8080");

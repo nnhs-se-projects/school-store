@@ -2,28 +2,73 @@
 
 <main>
   <div class="wrapper">
-  <div class = add-items>
-  <h1>Add Item</h1>
+    <div class="add-items">
+      <h1>Edit Item</h1>
 
-    <label for="name">Name</label>
-    <input type="text" id="name" name="name" value = "<%- item.name %>" required />
-    <label for="price">Price</label>
-    <input type="float" id="price" name="price" value = "<%- item.price %>" required />
-    <label for="quantity">Quantity</label>
-    <input type="number" id="quantity" name="quantity" value = "<%- item.quantity %>" required />
-    <label for="description">Description</label>
-    <input type = "text" id="description" name="description" value = "<%- item.description %>" />
-    <label for = "image">Image</label>
-    <!-- File upload for image input -->
-    <input type = "file" id="image" name="image" accept="image/*" value = "<%- item.image %>"/>
-    <input type="submit" class = "submit" value="Save Edits"/>
-  <div>
-  <div>
-    <input type = "hidden" class = "itemId" id = "id" value = "<%- item.id %>">
-    
-</main> 
+      <label for="name">Name</label>
+      <input
+        type="text"
+        id="name"
+        name="name"
+        value="<%- item.name %>"
+        required
+      />
+      <label for="price">Price</label>
+      <input
+        type="float"
+        id="price"
+        name="price"
+        value="<%- item.price %>"
+        required
+      />
+      <label for="quantity">Quantity</label>
+      <input
+        type="number"
+        id="quantity"
+        name="quantity"
+        value="<%- item.quantity %>"
+        required
+      />
+      <label for="description">Description</label>
+      <input
+        type="text"
+        id="description"
+        name="description"
+        value="<%- item.description %>"
+      />
+      <label for="image">Image</label>
+      <!-- File upload for image input -->
+      <input
+        type="file"
+        id="image"
+        name="image"
+        accept="image/*"
+        value="<%- item.image %>"
+      />
+      <input type="submit" class="submit" value="Save Edits" />
 
+      <h2>Sizes</h2>
+      <div id="sizes">
+        <% if (item.sizes) { %> <% for (let size in item.sizes) { %>
+        <div class="size-entry">
+          <input type="text" class="size" value="<%= size %>" readonly />
+          <input
+            type="number"
+            class="quantity"
+            value="<%= item.sizes[size] %>"
+          />
+          <button type="button" class="delete-size">Delete</button>
+        </div>
+        <% } %> <% } else { %>
+        <p>No sizes available.</p>
+        <% } %>
+      </div>
+      <button id="add-size" type="button">Add Size</button>
+    </div>
+  </div>
+  <input type="hidden" class="itemId" id="id" value="<%- item.id %>" />
+</main>
 
-<script src="/js/editItem.js"></script> 
+<script src="/js/editItem.js"></script>
 
 <%- include('include/_footer') %>

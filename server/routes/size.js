@@ -2,7 +2,7 @@ const express = require("express");
 const route = express.Router();
 const Item = require("../model/item");
 
-// Route to add a size to an item
+// Route to add or update a size in an item
 route.post("/addSize/:id", async (req, res) => {
   const { size, quantity } = req.body;
   try {
@@ -10,7 +10,7 @@ route.post("/addSize/:id", async (req, res) => {
     if (!item) {
       return res.status(404).json({ message: "Item not found" });
     }
-    item.sizes.push({ size, quantity });
+    item.sizes.set(size, quantity);
     await item.save();
     res.status(200).json(item);
   } catch (error) {
@@ -25,7 +25,7 @@ route.delete("/deleteSize/:id/:size", async (req, res) => {
     if (!item) {
       return res.status(404).json({ message: "Item not found" });
     }
-    item.sizes = item.sizes.filter((s) => s.size !== req.params.size);
+    item.sizes.delete(req.params.size);
     await item.save();
     res.status(200).json(item);
   } catch (error) {
