@@ -72,8 +72,10 @@ app.use((req, res, next) => {
 //  the exported router object is an example of middleware
 app.use("/", require("./server/routes/router"));
 app.use("/auth", require("./server/routes/auth"));
-app.use("/cart", require("./server/routes/cart"));
+app.use(require("./server/routes/cart"));
 app.use(require("./server/routes/inventory"));
+
+app.use("/size", require("./server/routes/size"));
 
 // start the server on port 8080
 server.listen(8080, () => {
