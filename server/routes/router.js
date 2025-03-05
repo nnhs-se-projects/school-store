@@ -71,7 +71,7 @@ route.get("/addItem", isAdmin, async (req, res) => {
   res.render("addItem");
 });
 
-route.get("/inventory", isAdmin, async (req, res) => {
+route.get("/inventorylist", isAdmin, async (req, res) => {
   const items = await Item.find();
 
   const formattedItems = items.map((item) => {
@@ -83,12 +83,12 @@ route.get("/inventory", isAdmin, async (req, res) => {
     };
   });
 
-  res.render("inventory", {
+  res.render("inventorylist", {
     items: formattedItems,
   });
 })
 
-route.get("/inventoryprint", isAdmin, async (req, res) => {
+route.get("/inventorylistprint", isAdmin, async (req, res) => {
   const items = await Item.find();
 
   const formattedItems = items.map((item) => {
@@ -100,7 +100,7 @@ route.get("/inventoryprint", isAdmin, async (req, res) => {
     };
   });
 
-  res.render("inventoryprint", {
+  res.render("inventorylistprint", {
     items: formattedItems,
   });
 })

@@ -8,7 +8,7 @@
   
   <h1>Print</h1>
 
-  <a class="admin-link" href="inventoryprint" id="inventoryprint"><strong>Print</strong></a>
+  <a class="admin-link" href="inventorylistprint" id="inventorylistprint"><strong>Print</strong></a>
 
   <h1>Inventory Spreadsheet</h1>
 
@@ -16,13 +16,14 @@
     <tr>
       <th> Item </th>
       <th> Quantity </th>
-      <th> Sizes </th>
     </tr>
     <% items.forEach(function(item) { %>
     <tr>
       <th> <%= item.name %> </th>
-      <th> <%= item.sizes %> </th>
-      <th> <%= item.sizes %> </th>
+      <% if (item.sizes) { %> <% for (let size in item.sizes) { %>
+        <th> <%= item.sizes[size] %> </th>
+      <% } %>
+      <% } %>
     </tr>
     <% }) %>
   </table>
