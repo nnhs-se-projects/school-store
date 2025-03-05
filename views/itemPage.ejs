@@ -13,9 +13,9 @@
     <div class="size-selector">
       <label for="size">Select size:</label>
       <select id="size" name="size">
-        <option value="small">Small</option>
-        <option value="medium">Medium</option>
-        <option value="Large">Large</option>
+        <% if (item.sizes) { %> <% for (let size in item.sizes) { %>
+        <option value="<%= size %>"><%= size %></option>
+        <% } %> <% }%>
       </select>
     </div>
 

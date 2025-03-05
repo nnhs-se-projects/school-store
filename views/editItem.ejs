@@ -1,5 +1,7 @@
 <%- include('include/_header') %>
 
+<link rel="stylesheet" href="/css/editItem.css" />
+
 <main>
   <div class="wrapper">
     <div class="add-items">
@@ -38,6 +40,7 @@
       />
       <label for="image">Image</label>
       <!-- File upload for image input -->
+
       <input
         type="file"
         id="image"
@@ -45,7 +48,6 @@
         accept="image/*"
         value="<%- item.image %>"
       />
-      <input type="submit" class="submit" value="Save Edits" />
 
       <h2>Sizes</h2>
       <div id="sizes">
@@ -57,13 +59,15 @@
             class="quantity"
             value="<%= item.sizes[size] %>"
           />
-          <button type="button" class="delete-size">Delete</button>
+          <button type="button" class="delete-size">- Remove Size</button>
         </div>
         <% } %> <% } else { %>
         <p>No sizes available.</p>
         <% } %>
       </div>
       <button id="add-size" type="button">Add Size</button>
+
+      <input type="submit" class="submit" value="Save Edits" />
     </div>
   </div>
   <input type="hidden" class="itemId" id="id" value="<%- item.id %>" />

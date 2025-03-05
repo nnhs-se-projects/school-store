@@ -75,7 +75,7 @@ route.get("/addItem", isAdmin, (req, res) => {
 // displays product page for a specific item
 route.get("/item/:id", async (req, res) => {
   const item = await Item.findById(req.params.id);
-  res.render("item", { item });
+  res.render("itemPage", { item });
 });
 
 route.get("/editItem/:id", isAdmin, async (req, res) => {
