@@ -1,23 +1,47 @@
 // js for adding item to a cart
 
-const addToCartButton = document.getElementById("add-to-cart");
-const itemId = document.getElementById("itemId").value;
-const quantity = document.getElementById("quantity").value;
-const googleId = document.getElementById("googleId").value;
+document.addEventListener("DOMContentLoaded", function () {
+  const sizeSelector = document.getElementById("size");
+  const quantitySelector = document.getElementById("quantity");
 
-addToCartButton.addEventListener("click", async () => {
-  console.log("googleID: ", googleId);
-  const response = await fetch("/cart/add", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ googleId, itemId, quantity }),
+  sizeSelector.addEventListener("change", function () {
+    const selectedOption = sizeSelector.options[sizeSelector.selectedIndex];
+    const maxQuantity = parseInt(
+      selectedOption.getAttribute("data-quantity"),
+      10
+    );
+
+    // Clear existing options
+    quantitySelector.innerHTML = "";
+
+    // Add new options based on the selected size's quantity
+    for (let i = 1; i <= Math.min(10, maxQuantity); i++) {
+      const option = document.createElement("option");
+      option.value = i;
+      option.textContent = i;
+      quantitySelector.appendChild(option);
+    }
   });
 
-  if (response.ok) {
-    window.location = "/cart";
-  } else {
-    console.error("error adding item to cart");
-  }
+  const addToCartButton = document.getElementById("add-to-cart");
+  const itemId = document.getElementById("itemId").value;
+  const googleId = document.getElementById("googleId").value;
+
+  addToCartButton.addEventListener("click", async () => {
+    const quantity = document.getElementById("quantity").value;
+    console.log("googleID: ", googleId);
+    const response = await fetch("/cart/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ googleId, itemId, quantity }),
+    });
+
+    if (response.ok) {
+      window.location = "/cart";
+    } else {
+      console.error("error adding item to cart");
+    }
+  });
 });

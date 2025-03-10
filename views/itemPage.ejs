@@ -10,18 +10,22 @@
     <p>Price: $<%= item.price %></p>
     <p>Description: <%= item.description %></p>
 
+    <% if (item.sizes) { %>
     <div class="size-selector">
       <label for="size">Select size:</label>
       <select id="size" name="size">
-        <% item.sizes.forEach((size) => { %>
-        <option value="<%= size %>"><%= size %></option>
-        <% }) %>
+        <% for (let size in item.sizes) { %>
+        <option value="<%= size %>" data-quantity="<%= item.sizes[size] %>">
+          <%= size %>
+        </option>
+        <% } %>
       </select>
+      <% }%>
     </div>
 
     <label for="quantity">Quantity:</label>
     <select id="quantity">
-      <% for (let i = 1; i <= Math.min(10, item.quantity); i++) { %>
+      <% for (let i = 1; i <= Math.min(10, item.sizes[0]); i++) { %>
       <option value="<%= i %>"><%= i %></option>
       <% } %>
     </select>
