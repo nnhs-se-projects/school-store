@@ -1,0 +1,37 @@
+<!-- include header -->
+<%- include('include/_header') %>
+<!-- /include header -->
+
+<link rel="stylesheet" href="/css/admin.css">
+
+<main>
+  
+  <h1>Print</h1>
+
+  <a class="admin-link" href="inventorylistprint" id="inventorylistprint"><strong>Print</strong></a>
+
+  <h1>Inventory Spreadsheet</h1>
+
+  <table>
+    <tr>
+      <th> Item </th>
+      <th> Quantity </th>
+    </tr>
+    <% items.forEach(function(item) { %>
+    <tr>
+      <th> <%= item.name %> </th>
+      <% if (item.sizes) { %> <% for (let size in item.sizes) { %>
+        <th> <%= item.sizes[size] %> </th>
+      <% } %>
+      <% } %>
+    </tr>
+    <% }) %>
+  </table>
+
+</main>
+
+</body>
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->
