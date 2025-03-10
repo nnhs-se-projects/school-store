@@ -12,3 +12,13 @@ input {
   width: 5%;
   margin-bottom: 20px;
 }
+
+.submit {
+  background-color: #002f55;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}

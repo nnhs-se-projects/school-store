@@ -1,7 +1,7 @@
 const express = require("express");
 const route = express.Router();
 
-const User = require("../model/user");
+// const User = require("../model/user");
 const Item = require("../model/item");
 
 /*
@@ -80,15 +80,16 @@ route.get("/item/:id", async (req, res) => {
 
 route.get("/editItem/:id", isAdmin, async (req, res) => {
   const item = await Item.findById(req.params.id);
+  console.log("prehandled sizes", item.sizes);
   const formattedItem = {
     id: item._id,
     name: item.name,
     price: item.price,
     description: item.description,
-    quantity: item.quantity,
     image: item.image,
-    size: item.size,
+    sizes: item.sizes,
   };
+  console.log("grabbed sizes:", formattedItem.sizes);
   res.render("editItem", { item: formattedItem });
 });
 
