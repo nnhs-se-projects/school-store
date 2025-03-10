@@ -9,29 +9,23 @@ body {
   flex-direction: column;
 }
 
-/* Responsive design */
+/* Store front image styling */
 
-@media (max-width: 768px) {
-  .nav-links {
-    flex-direction: column;
-    gap: 10px;
-    display: none; /* Initially hidden */
-    background-color: #333333;
-    padding: 10px;
-    position: absolute;
-    top: 50px;
-    right: 20px;
-    border-radius: 5px;
-  }
+.store-front {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
-  .nav-links.active {
-    display: flex; /* Show on activation */
-  }
-
-  .navbar {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+/* crop the weight room photo so that it is a small sliver */
+.weight-room {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  object-position: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Store info section */
@@ -47,10 +41,6 @@ body {
   max-width: 600px;
   margin: 50px auto;
   background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  flex: 1; /* Pushes the footer to the bottom if there's not enough content */
   padding: 20px;
 }
 
@@ -101,25 +91,6 @@ body {
   transform: translateY(-50%);
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
-  .store-info {
-    padding: 15px;
-  }
-
-  .store-info h1 {
-    font-size: 1.8em;
-  }
-
-  .store-hours h2 {
-    font-size: 1.3em;
-  }
-
-  .store-hours li {
-    font-size: 1em;
-  }
-}
-
 /* Footer styles */
 .site-footer {
   background-color: #333; /* Dark background for contrast */
@@ -158,7 +129,6 @@ body {
   }
 }
 
-/* Item-list styling, want each item to be next to the other one, 4 in each row */
 .item-list {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -166,18 +136,62 @@ body {
   margin: 20px;
 }
 
+@media (max-width: 1200px) {
+  .item-list {
+    grid-template-columns: repeat(
+      3,
+      1fr
+    ); /* 3 items per row for medium screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .item-list {
+    grid-template-columns: repeat(
+      2,
+      1fr
+    ); /* 2 items per row for small screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .item-list {
+    grid-template-columns: 1fr; /* 1 item per row for extra small screens */
+  }
+}
+
 .item {
   background-color: #002f55;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .item:hover {
   transform: translateY(-5px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+/* 
+.item:hover::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0)
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.item:hover::after {
+  opacity: 1;
+} */
 
 .item h2 {
   font-size: 1.5em;
@@ -196,6 +210,9 @@ body {
   height: auto;
   display: block;
   border-radius: 8px;
+  object-fit: cover;
+  aspect-ratio: 1 / 1;
+  align-self: flex-end;
 }
 
 .add-items {

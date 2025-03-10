@@ -1,14 +1,56 @@
 const express = require("express");
 const route = express.Router();
+
 const User = require("../model/user");
 const Item = require("../model/item");
 
-// Route to add items to the cart
-route.post("/add", async (req, res) => {
+// directs to the cart page
+route.get("/cart", async (req, res) => {
+  try {
+    const user = await User.findOne({
+      googleId: req.session.user.googleId,
+    });
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    const userCart = [];
+    let warnUser = false;
+    for (let i = 0; i < user.cart.length; i++) {
+      const item = await Item.findById(user.cart[i].itemId);
+      if (!item) {
+        user.cart.splice(i, 1);
+        await user.save();
+        i--; // Adjust index after removal
+        warnUser = true; // Item not found in inventory
+        console.log("Item not found in inventory: ", user.cart[i].itemId);
+      } else {
+        console.log("image: ", item);
+
+        userCart.push({
+          id: item._id,
+          name: item.name,
+          price: item.price,
+          quantity: user.cart[i].quantity,
+          image: item.image,
+        });
+      }
+    }
+
+    res.render("cart", { cart: userCart, warn: warnUser });
+  } catch (error) {
+    res.status(500).send("An error occurred while fetching the cart data");
+  }
+});
+
+route.post("/cart/add", async (req, res) => {
+  console.log("Adding item to cart");
+  console.log(req.body);
   const { googleId, itemId, quantity } = req.body;
 
   const user = await User.findOne({ googleId });
   if (!user) {
+    console.log("User not found: ", googleId);
     return res.status(404).send("User not found");
   }
 
@@ -22,7 +64,8 @@ route.post("/add", async (req, res) => {
   );
   if (itemIndex > -1) {
     // If item already exists in the cart, update the quantity
-    user.cart[itemIndex].quantity += quantity;
+    user.cart[itemIndex].quantity =
+      parseInt(user.cart[itemIndex].quantity) + parseInt(quantity);
   } else {
     // If item does not exist in the cart, add it
     user.cart.push({ itemId, quantity });
@@ -36,19 +79,22 @@ route.post("/add", async (req, res) => {
   res.status(200).send("Item added to cart");
 });
 
+// Route to add items to the cart
+
 // Route to get cart items
-route.get("/:googleId", async (req, res) => {
-  const user = await User.findOne({ googleId: req.params.googleId }).populate(
-    "cart.itemId"
-  );
-  if (!user) {
-    return res.status(404).send("User not found");
-  }
-  res.json(user.cart);
-});
+// not sure if this is needed or why its here
+// route.get("/:googleId", async (req, res) => {
+//   const user = await User.findOne({ googleId: req.params.googleId }).populate(
+//     "cart.itemId"
+//   );
+//   if (!user) {
+//     return res.status(404).send("User not found");
+//   }
+//   res.json(user.cart);
+// });
 
 // Route to remove an item from the cart
-route.post("/remove", async (req, res) => {
+route.post("/cart/remove", async (req, res) => {
   const { googleId, itemId } = req.body;
 
   const user = await User.findOne({ googleId });
