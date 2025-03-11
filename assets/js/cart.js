@@ -1,30 +1,43 @@
-const warnUserInput = document.getElementById("warning");
-const removeButton = document.querySelector("button.remove-item");
-const quantityButton = document.querySelector("button.update-quantity");
+const warnUserOOSInput = document.getElementById("warningOOS");
+const warnUserQuantInput = document.getElementById("warningQuant");
+const quantitySelectors = document.querySelectorAll("select.quantity-dropdown");
 const googleId = document.getElementById("googleId").value;
 
-if (warnUserInput.value === "true") {
+if (warnUserOOSInput.value === "true") {
   // If the warning input is present, display the alert
   const message =
     "Warning: One or more items in your cart are out of stock and have been removed. Please check your cart for details.";
   alert(message);
 }
 
-removeButton.addEventListener("click", async () => {
-  const itemId = removeButton.getAttribute("data-id");
-  const response = await fetch("/cart/remove", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      googleId,
-      itemId,
-    }),
+if (warnUserQuantInput.value === "true") {
+  // If the warning input is present, display the alert
+  const message =
+    "Warning: One or more items in your cart have insufficient quantity in stock. Please check your cart for details.";
+  alert(message);
+}
+
+quantitySelectors.forEach((button) => {
+  // Perform actions on each button
+  button.addEventListener("change", async (event) => {
+    const itemId = button.getAttribute("data-id");
+    console.log("Item ID:", itemId);
+    const quantity = event.target.value;
+    console.log("Quantity:", quantity);
+
+    const response = await fetch("/cart/updateQuant", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ googleId, itemId, quantity }),
+    });
+
+    if (response.ok) {
+      console.log("Item updated in cart");
+      window.location.reload();
+    } else {
+      console.error("Failed to update item in cart");
+    }
   });
-  if (response.ok) {
-    window.location.reload();
-  } else {
-    console.error("Error removing item from cart");
-  }
 });
