@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const sizeSelector = document.getElementById("size");
   const quantitySelector = document.getElementById("quantity");
 
-  sizeSelector.addEventListener("change", function () {
+  function updateQuantityOptions() {
     const selectedOption = sizeSelector.options[sizeSelector.selectedIndex];
     const maxQuantity = parseInt(
       selectedOption.getAttribute("data-quantity"),
@@ -21,11 +21,20 @@ document.addEventListener("DOMContentLoaded", function () {
       option.textContent = i;
       quantitySelector.appendChild(option);
     }
+  }
+
+  //updates the quantity when the webpage first loads
+  updateQuantityOptions();
+
+  sizeSelector.addEventListener("change", function () {
+    updateQuantityOptions();
   });
 
   const addToCartButton = document.getElementById("add-to-cart");
   const itemId = document.getElementById("itemId").value;
   const googleId = document.getElementById("googleId").value;
+  const size = sizeSelector.value;
+  const sizeIndex = sizeSelector.selectedIndex;
 
   addToCartButton.addEventListener("click", async () => {
     const quantity = document.getElementById("quantity").value;
@@ -35,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ googleId, itemId, quantity }),
+      body: JSON.stringify({ googleId, itemId, quantity, size, sizeIndex }),
     });
 
     if (response.ok) {

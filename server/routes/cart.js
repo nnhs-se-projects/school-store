@@ -20,6 +20,7 @@ route.get("/cart", async (req, res) => {
     const maxQuantities = [];
     for (let i = 0; i < user.cart.length; i++) {
       const item = await Item.findById(user.cart[i].itemId);
+
       if (!item) {
         user.cart.splice(i, 1);
         await user.save();
@@ -29,9 +30,8 @@ route.get("/cart", async (req, res) => {
       } else if (item.quantity < user.cart[i].quantity) {
         warnUserQuant = true; // Item quantity is less than requested
         user.cart[i].quantity = item.quantity;
-        maxQuantities.push(item.quantity);
-
         await user.save();
+        maxQuantities[i] = item.quantity;
 
         userCart.push({
           id: item._id,
@@ -41,7 +41,7 @@ route.get("/cart", async (req, res) => {
           image: item.image,
         });
       } else {
-        maxQuantities.push(item.quantity);
+        maxQuantities[i] = item.quantity;
         userCart.push({
           id: item._id,
           name: item.name,
@@ -51,7 +51,8 @@ route.get("/cart", async (req, res) => {
         });
       }
     }
-
+    console.log("User cart: ", userCart);
+    console.log("Max quantities: ", maxQuantities);
     res.render("cart", {
       cart: userCart,
       warnOOS: warnUserOOS,
@@ -66,7 +67,7 @@ route.get("/cart", async (req, res) => {
 route.post("/cart/add", async (req, res) => {
   console.log("Adding item to cart");
   console.log(req.body);
-  const { googleId, itemId, quantity } = req.body;
+  const { googleId, itemId, quantity, size, sizeIndex } = req.body;
 
   const user = await User.findOne({ googleId });
   if (!user) {
@@ -75,7 +76,7 @@ route.post("/cart/add", async (req, res) => {
   }
 
   const item = await Item.findById(itemId);
-  if (!item || item.quantity < quantity) {
+  if (!item || item.sizes[sizeIndex] < quantity) {
     return res.status(400).send("Item not available or insufficient quantity");
   }
 
@@ -88,7 +89,7 @@ route.post("/cart/add", async (req, res) => {
       parseInt(user.cart[itemIndex].quantity) + parseInt(quantity);
   } else {
     // If item does not exist in the cart, add it
-    user.cart.push({ itemId, quantity });
+    user.cart.push({ itemId, quantity, size, sizeIndex });
   }
 
   await item.save();
