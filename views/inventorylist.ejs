@@ -16,14 +16,21 @@
     <tr>
       <th> Item </th>
       <th> Quantity </th>
-      <th> palce </th>
+      <th> Placeholder </th>
+      <th> Placeholder </th>
     </tr>
     <% items.forEach(function(item) { %>
     <tr>
       <th> <%= item.name %> </th>
-      <% if (item.sizes) { %> <% for (let size in item.sizes) { %>
-        <th> <%= item.sizes[size] %> </th>
-      <% } %>
+      <% var num = 0 %> 
+      <% if (item.sizes) { %> 
+        <% for (let size in item.sizes) { %>
+          <% num += item.sizes[size] %>
+        <% } %>
+        <th> <%= num %> </th>
+        <% for (let size in item.sizes) { %>
+          <th> <% item.sizes[size] =%> </th>
+        <% } %>
       <% } %>
     </tr>
     <% }) %>
