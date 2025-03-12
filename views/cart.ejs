@@ -29,7 +29,7 @@
             data-id="<%= cart[i].id %>"
           >
             <% for (let q = 0; q < Math.min(10, maxQuantity[i]) + 1; q++) { %>
-            <option value="<%= q %>"><%= q %></option>
+            <option value="<%= q %>" <%= q === cart[i].quantity ? 'selected' : '' %>><%= q %></option>
             <% } %>
           </select>
         </div>

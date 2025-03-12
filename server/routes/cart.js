@@ -31,21 +31,23 @@ route.get("/cart", async (req, res) => {
         warnUserQuant = true; // Item quantity is less than requested
         user.cart[i].quantity = item.quantity;
         await user.save();
-        maxQuantities[i] = item.quantity;
+        maxQuantities[i] = item.sizes[user.cart[i].size];
 
         userCart.push({
           id: item._id,
           name: item.name,
           price: item.price,
+          size: user.cart[i].size,
           quantity: user.cart[i].quantity,
           image: item.image,
         });
       } else {
-        maxQuantities[i] = item.quantity;
+        maxQuantities[i] = item.sizes[user.cart[i].size];
         userCart.push({
           id: item._id,
           name: item.name,
           price: item.price,
+          size: item.sizes[user.cart[i].sizeIndex],
           quantity: user.cart[i].quantity,
           image: item.image,
         });

@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  //updates the quantity when the webpage first loads
+  // updates the quantity when the webpage first loads
   updateQuantityOptions();
 
   sizeSelector.addEventListener("change", function () {
