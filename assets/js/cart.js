@@ -25,6 +25,15 @@ quantitySelectors.forEach((button) => {
     console.log("Item ID:", itemId);
     const quantity = event.target.value;
     console.log("Quantity:", quantity);
+    if (quantity === "0") {
+      const confirmRemoval = confirm(
+        "Are you sure you want to remove this item from the cart?"
+      );
+      if (!confirmRemoval) {
+        event.target.value = button.getAttribute("data-original-quantity");
+        return;
+      }
+    }
 
     const response = await fetch("/cart/updateQuant", {
       method: "POST",

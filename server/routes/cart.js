@@ -139,9 +139,10 @@ route.post("/cart/updateQuant", async (req, res) => {
     if (quantity <= 0) {
       // If the new quantity is 0 or less, remove the item from the cart
       user.cart.splice(itemIndex, 1);
+    } else {
+      // If item already exists in the cart, update the quantity
+      user.cart[itemIndex].quantity = quantity;
     }
-    // If item already exists in the cart, update the quantity
-    user.cart[itemIndex].quantity = quantity;
   }
 
   await user.save();
