@@ -1,0 +1,29 @@
+img {
+  width: 20%;
+  height: auto;
+}
+
+h1 {
+  font-size: 2em;
+  color: #333;
+  text-align: center;
+}
+
+ul.cart-items {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  border: solid, black, 2px;
+}
+
+li.cart-item {
+  display: flex;
+  align-items: center;
+}
+
+.cart-item-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 1em;
+}
