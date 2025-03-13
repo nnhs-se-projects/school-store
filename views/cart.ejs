@@ -21,7 +21,6 @@
           />
           <div class="cart-item-content">
             <h2><%= cart[i].name %></h2>
-            <p><%= cart[i].description %></p>
             <div class="cart-item-actions">
               <label for="quantity-<%= cart[i].id %>">Quantity:</label>
               <select
@@ -34,6 +33,12 @@
                 <option value="<%= q %>" <%= q === cart[i].quantity ? 'selected' : '' %>><%= q %></option>
                 <% } %>
               </select>
+                <!-- Button that display quantity selected and can increment/decrease the quantity the user wants to select of each item-->
+                <div class="quantity-button">
+                  <span class="quantity-button-within" id="decrease-<%= cart[i].id %>" data-id="<%= cart[i].id %>">-</span>
+                  <span class ="quantity-selected"><%= cart[i].quantity %></span>
+                  <span class="quantity-button-within" id="increase-<%= cart[i].id %>" data-id="<%= cart[i].id %>">+</span>
+                </div>
             </div>
           </div>
           <% total += cart[i].price * cart[i].quantity; %>
@@ -54,6 +59,7 @@
     <input type="hidden" id="googleId" value="<%= session.user.googleId %>" />
   </div>
 </main>
+
 
 <!-- /Main Site -->
 
