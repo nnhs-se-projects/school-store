@@ -17,6 +17,7 @@ if (warnUserQuantInput.value === "true") {
   alert(message);
 }
 
+console.log(quantitySelectors);
 quantitySelectors.forEach((button) => {
   // Perform actions on each button
   button.addEventListener("change", async (event) => {
