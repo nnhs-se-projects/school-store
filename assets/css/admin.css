@@ -1,25 +1,38 @@
 table {
+  border-collapse: collapse;
   display: flex;
   justify-content: center;
-  color: black;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  margin-bottom: 20px;
 }
 
-th,
+th {
+  border: 2px solid;
+  color: #FF4800;
+  font-size: 20px;
+  width: 200px;
+  height: 40px;
+}
+
 tr {
   border: 2px solid;
-  color: black;
-  /* padding: 8px; */
-  background-color: lightgrey;
+  color: #FF4800;
+  font-family: Arial, sans-serif;
+  background-color: #dfdfdf;
 }
 
 h1 {
   display: flex;
+  font-size: 4em;
+  color: #FF4800;
+  font-family: Arial, sans-serif;
   justify-content: center;
 }
 
 /* link styling */
 a.admin-link {
-  background-color: #002f55;
+  background-color: #01447a;
   padding: 20px;
   border-radius: 5px;
   margin-right: 35%;
@@ -27,7 +40,7 @@ a.admin-link {
   display: flex;
   color: rgb(255, 255, 255);
   justify-content: center;
-  margin-top: 5%;
+  margin-top: 10px;
 }
 
 a.admin-link#editItem {
@@ -41,4 +54,8 @@ a.admin-link#editItem:hover {
 
 a.admin-link#addItem:hover {
   background-color: #01447a;
+}
+
+a.admin-link#inventoryprint {
+  background-color: #01447a
 }

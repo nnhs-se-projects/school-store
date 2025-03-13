@@ -31,21 +31,23 @@ route.get("/cart", async (req, res) => {
         warnUserQuant = true; // Item quantity is less than requested
         user.cart[i].quantity = item.quantity;
         await user.save();
-        maxQuantities[i] = item.quantity;
+        maxQuantities[i] = item.sizes[user.cart[i].size];
 
         userCart.push({
           id: item._id,
           name: item.name,
           price: item.price,
+          size: user.cart[i].size,
           quantity: user.cart[i].quantity,
           image: item.image,
         });
       } else {
-        maxQuantities[i] = item.quantity;
+        maxQuantities[i] = item.sizes[user.cart[i].size];
         userCart.push({
           id: item._id,
           name: item.name,
           price: item.price,
+          size: item.sizes[user.cart[i].sizeIndex],
           quantity: user.cart[i].quantity,
           image: item.image,
         });
@@ -115,9 +117,9 @@ route.post("/cart/add", async (req, res) => {
 // Route to remove an item from the cart
 route.post("/cart/updateQuant", async (req, res) => {
   console.log("Updating item quantity in cart");
-  const { googleId, itemId, newQuantity } = req.body;
+  const { googleId, itemId, quantity } = req.body;
 
-  console.log(newQuantity);
+  console.log(quantity);
   const user = await User.findOne({ googleId });
   if (!user) {
     return res.status(404).send("User not found");
@@ -134,14 +136,14 @@ route.post("/cart/updateQuant", async (req, res) => {
 
   console.log("item index:" + itemIndex);
   if (itemIndex > -1) {
-    if (newQuantity <= 0) {
+    if (quantity <= 0) {
       // If the new quantity is 0 or less, remove the item from the cart
       user.cart.splice(itemIndex, 1);
     }
     // If item already exists in the cart, update the quantity
-    user.cart[itemIndex].quantity = newQuantity;
+    user.cart[itemIndex].quantity = quantity;
   }
-  await item.save();
+
   await user.save();
   res.status(200).send("Item quantity updated in cart");
 });

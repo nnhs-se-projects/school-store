@@ -2,41 +2,41 @@
 <%- include('include/_header') %>
 <!-- /include header -->
 
-<!-- Main Site -->
+<link rel="stylesheet" href="/css/admin.css">
 
 <main>
-  <div class="wrapper">
-    <link rel="stylesheet" href="/css/admin.css" />
+  <h1><b>Manage Inventory</b></h1>
 
-    <h1>Student Orders</h1>
-    <table>
-      <tr>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Order</th>
-        <th>Pickup Period</th>
-        <th>del</th>
-      </tr>
-
-      <!-- Once the list of orders and info is made, we could use a for loop to create the rest of the list -->
-
-      <tr>
-        <th>Benjamin Pozzi</th>
-        <th>bmpozzi@stu.naperville203.org</th>
-        <th>2 locks, 15 shirts</th>
-        <th>4th period</th>
-      </tr>
-
-      <!-- The for loop would go between these two comment lines -->
-    </table>
-
+  <div>
     <a class="admin-link" href="addItem" id="addItem"
       ><strong>Add Item</strong></a
     >
     <a class="admin-link" href="manageItems" id="editItem"
       ><strong>Manage Items</strong></a
     >
+    <a class="admin-link" href="inventorylist" id="inventorylist"
+      ><strong>View Inventory</strong></a
+    >
   </div>
+
+  <h1>Student Orders</h1>
+
+  <table>
+    <tr>
+      <th> Name </th>
+      <th> Email </th>
+      <th> Order </th>
+      <th> Pickup time </th>
+      <th> Delete </th>
+    </tr>
+    <tr>
+      <th> Benjamin </th>
+      <th> email.com </th>
+      <th> a shirt </th>
+      <th> 5th period</th>
+    </tr>
+  </table>
+
 </main>
 
 <!-- /Main Site -->
