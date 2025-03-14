@@ -33,10 +33,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const addToCartButton = document.getElementById("add-to-cart");
   const itemId = document.getElementById("itemId").value;
   const googleId = document.getElementById("googleId").value;
-  const size = sizeSelector.value;
-  const sizeIndex = sizeSelector.selectedIndex;
 
   addToCartButton.addEventListener("click", async () => {
+    const size = sizeSelector.value;
+    const sizeIndex = sizeSelector.selectedIndex;
     const quantity = document.getElementById("quantity").value;
     console.log("googleID: ", googleId);
     const response = await fetch("/cart/add", {

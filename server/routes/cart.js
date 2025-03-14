@@ -47,7 +47,7 @@ route.get("/cart", async (req, res) => {
           id: item._id,
           name: item.name,
           price: item.price,
-          size: item.sizes[user.cart[i].sizeIndex],
+          size: user.cart[i].size,
           quantity: user.cart[i].quantity,
           image: item.image,
         });
@@ -85,7 +85,7 @@ route.post("/cart/add", async (req, res) => {
   const itemIndex = user.cart.findIndex(
     (cartItem) => cartItem.itemId.toString() === itemId
   );
-  if (itemIndex > -1) {
+  if (itemIndex > -1 && user.cart[itemIndex].size === size) {
     // If item already exists in the cart, update the quantity
     user.cart[itemIndex].quantity =
       parseInt(user.cart[itemIndex].quantity) + parseInt(quantity);
