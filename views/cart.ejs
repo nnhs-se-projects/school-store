@@ -25,10 +25,9 @@
             <div class="cart-item-actions">
               <label for="quantity-<%= cart[i].id %>">Quantity:</label>
               <select
-                id="quantity-<%= cart[i].id %>"
                 class="quantity-dropdown"
-                data-id="<%= cart[i].id %>"
                 data-original-quantity="<%= cart[i].quantity %>"
+                data-index="<%= i %>"
               >
                 <% for (let q = 0; q < Math.min(10, maxQuantity[i]) + 1; q++) {
                 %>
