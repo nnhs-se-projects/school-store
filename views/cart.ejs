@@ -4,6 +4,8 @@
 
 <!-- Main Site -->
 
+<link href="/css/cart.css" rel="stylesheet" />
+
 <main>
   <div class="wrapper">
     <h1>Cart</h1>
@@ -11,27 +13,37 @@
     <ul class="cart-list">
       <% for (let i = 0; i < cart.length; i++) { %>
       <li class="cart-item">
-        <div
-          class="cart-item-details"
-          onclick="window.location.href='/item/' + '<%= cart[i].id %>'"
-        >
-          <h2><%= cart[i].name %></h2>
-          <img src="<%= cart[i].image %>" alt="<%= cart[i].name %>" />
-          <p><%= cart[i].description %></p>
+        <div class="cart-item-details">
+          <img
+            src="<%= cart[i].image %>"
+            alt="<%= cart[i].name %>"
+            onclick="window.location.href = '/item/' + '<%= cart[i].id %>' "
+          />
+          <div class="cart-item-content">
+            <h2><%= cart[i].name %></h2>
+            <p>Size: <%= cart[i].size %></p>
+            <div class="cart-item-actions">
+              <label for="quantity-<%= cart[i].id %>">Quantity:</label>
+              <select
+                class="quantity-dropdown"
+                data-original-quantity="<%= cart[i].quantity %>"
+                data-index="<%= i %>"
+              >
+                <% for (let q = 0; q < Math.min(10, maxQuantity[i]) + 1; q++) {
+                %>
+                <option value="<%= q %>" <%= q === cart[i].quantity ? 'selected' : '' %>><%= q %></option>
+                <% } %>
+              </select>
+                <!-- Button that display quantity selected and can increment/decrease the quantity the user wants to select of each item-->
+                <div class="quantity-button">
+                  <span class="quantity-button-within" id="decrease-<%= cart[i].id %>" data-id="<%= cart[i].id %>">-</span>
+                  <span class ="quantity-selected"><%= cart[i].quantity %></span>
+                  <span class="quantity-button-within" id="increase-<%= cart[i].id %>" data-id="<%= cart[i].id %>">+</span>
+                </div>
+            </div>
+          </div>
           <% total += cart[i].price * cart[i].quantity; %>
           <p>Total: $<%= (cart[i].price * cart[i].quantity).toFixed(2) %></p>
-        </div>
-        <div class="cart-item-actions">
-          <label for="quantity-<%= cart[i].id %>">Quantity:</label>
-          <select
-            id="quantity-<%= cart[i].id %>"
-            class="quantity-dropdown"
-            data-id="<%= cart[i].id %>"
-          >
-            <% for (let q = 0; q < Math.min(10, maxQuantity[i]) + 1; q++) { %>
-            <option value="<%= q %>" <%= q === cart[i].quantity ? 'selected' : '' %>><%= q %></option>
-            <% } %>
-          </select>
         </div>
       </li>
       <% } %>
@@ -48,6 +60,7 @@
     <input type="hidden" id="googleId" value="<%= session.user.googleId %>" />
   </div>
 </main>
+
 
 <!-- /Main Site -->
 

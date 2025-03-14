@@ -1,0 +1,39 @@
+.cart-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Align items to the left */
+  flex-direction: row;
+  border: solid 1px #ccc; /* Optional: border around each item */
+  margin: 10px 0; /* Space between items */
+}
+
+.cart-item img {
+  width: 200px; /* Set a fixed width for the image */
+  height: auto; /* Set a fixed height for the image */
+  object-fit: cover; /* Ensure the image covers the area */
+  margin-right: 20px; /* Add some space between the image and the details */
+}
+
+.cart-item-details {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.cart-item-details h1 {
+  font-size: 1.5em;
+  color: #333;
+  margin: 0;
+}
+
+.cart-item-details p {
+  margin: 5px 0;
+  color: #555;
+}
+
+.cart-item-content {
+  display: flex;
+  justify-content: space-between; /* Space between image and details */
+  width: 100%; /* Ensure it takes full width */
+  flex-direction: column;
+}
