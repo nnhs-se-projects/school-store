@@ -44,3 +44,9 @@ input {
   width: 100%;
   gap: 20px;
 }
+
+.item-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}

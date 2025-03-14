@@ -72,11 +72,47 @@ route.get("/addItem", isAdmin, (req, res) => {
   res.render("addItem");
 });
 
+
+route.get("/inventorylist", isAdmin, async (req, res) => {
+  const items = await Item.find();
+
+  const formattedItems = items.map((item) => {
+    return {
+      id: item._id,
+      name: item.name,
+      quantity: item.quantity,
+      sizes: item.sizes
+    };
+  });
+
+  res.render("inventorylist", {
+    items: formattedItems,
+  });
+})
+
+route.get("/inventorylistprint", isAdmin, async (req, res) => {
+  const items = await Item.find();
+
+  const formattedItems = items.map((item) => {
+    return {
+      id: item._id,
+      name: item.name,
+      quantity: item.quantity,
+      sizes: item.sizes
+    };
+  });
+
+  res.render("inventorylistprint", {
+    items: formattedItems,
+  });
+})
+
 // displays product page for a specific item
 route.get("/item/:id", async (req, res) => {
   const item = await Item.findById(req.params.id);
   res.render("itemPage", { item });
 });
+
 
 route.get("/editItem/:id", isAdmin, async (req, res) => {
   const item = await Item.findById(req.params.id);

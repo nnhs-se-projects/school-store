@@ -23,29 +23,53 @@ submitButton.addEventListener("click", async () => {
   console.log(sizes);
 
   reader.onloadend = async function () {
-    base64String = reader.result;
-    const item = {
-      name,
-      price,
-      quantity,
-      description,
-      image: base64String,
-      sizes,
+    const img = new Image();
+    img.src = reader.result;
+
+    img.onload = async function () {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      // Set canvas size to:
+      const height = 600;
+      const width = 600;
+
+      canvas.width = width;
+      canvas.height = height;
+
+      // Calculate the cropping area
+      const minSize = Math.min(img.width, img.height);
+      const cropX = (img.width - minSize) / 2;
+      const cropY = (img.height - minSize) / 2;
+
+      // Draw the cropped and resized image onto the canvas
+      ctx.drawImage(img, cropX, cropY, minSize, minSize, 0, 0, width, height);
+
+      base64String = canvas.toDataURL("image/jpeg");
+
+      const item = {
+        name,
+        price,
+        quantity,
+        description,
+        image: base64String,
+        sizes,
+      };
+
+      const response = await fetch("/editItem/" + id, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ item }),
+      });
+
+      if (response.ok) {
+        window.location = "/manageItems";
+      } else {
+        console.error("error creating entry");
+      }
     };
-
-    const response = await fetch("/editItem/" + id, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ item }),
-    });
-
-    if (response.ok) {
-      window.location = "/manageItems";
-    } else {
-      console.error("error creating entry");
-    }
   };
 
   if (file) {

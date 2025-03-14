@@ -1,6 +1,6 @@
 <%- include('include/_header') -%>
 
-<link rel="stylesheet" href="/css/itemPage.css" />
+<!-- <link rel="stylesheet" href="/css/itemPage.css" /> -->
 
 <div class="wrapper">
   <img class="item-image" src="<%= item.image %>" />
@@ -10,34 +10,32 @@
     <p>Price: $<%= item.price %></p>
     <p>Description: <%= item.description %></p>
 
-    <% if (item.sizes.placeholder === undefined) { %>
+    <% if (item.sizes) { %> <% if (item.sizes.placeholder === undefined) { %>
     <div class="size-selector">
       <label for="size">Select size:</label>
       <select id="size" name="size">
         <% for (let size in item.sizes) { %>
-        <option value="<%= size %>"><%= size %></option>
+        <option value="<%= size %>" data-quantity="<%= item.sizes[size] %>">
+          <%= size %>
+        </option>
         <% } %>
       </select>
+      <% }%>
     </div>
     <% } %>
 
-    <label>Quantity</label>
-    <input
-      class="quantity"
-      type="number"
-      name="quantity"
-      value="1"
-      min="1"
-      max="100"
-    />
-    <input
-      type="submit"
-      id="add-to-cart-button"
-      class="submit"
-      value="Add to Cart"
-    />
+    <label for="quantity">Quantity:</label>
+    <select id="quantity">
+      <% for (let i = 1; i <= Math.min(10, item.sizes[0]); i++) { %>
+      <option value="<%= i %>"><%= i %></option>
+      <% } %>
+    </select>
+    <input type="submit" id="add-to-cart" class="submit" value="Add to Cart" />
   </div>
-  <input type="hidden" id="item-id" value="<%= item._id %>" />
 </div>
+<input type="hidden" id="itemId" value="<%= item.id %>" />
+<input type="hidden" id="googleId" value="<%= session.user.googleId %>" />
+
+<script src="/js/itemPage.js"></script>
 
 <%- include('include/_footer') -%>

@@ -10,10 +10,10 @@
     <nav class="navbar">
       <div onclick="window.location.href='/'" class="logo">Naperville North School Store <img src = "/img/Mascot.png" alt = "Huskie Logo" class = "logo-image"> </div>
         <ul class="nav-links">
+            <li><a href="/"><strong>Home</strong></a></li>
             <% if ( session && session.isAdmin ) { %>
             <li><a href="/admin"><strong>View Orders</strong></a></li>
             <% } %>
-            <li><a href="/"><strong>Home</strong></a></li>
             <li><a href="/cart"><strong>Cart</strong></a></li>
             <li><a href="/#contact"><strong>Contact</strong></a></li>
             <li><a href="/logout"><strong>Logout</strong></a></li>
