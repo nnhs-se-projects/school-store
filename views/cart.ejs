@@ -34,6 +34,7 @@
                     class="quantity-button-within"
                     id="decrease"
                     data-id="<%= cart[i].id %>"
+                    data-index="<%= i %>"
                     >-</span
                   >
                   <span class="quantity-selected"><%= cart[i].quantity %></span>
@@ -41,6 +42,7 @@
                     class="quantity-button-within"
                     id="increase"
                     data-id="<%= cart[i].id %>"
+                    data-index="<%= i %>"
                     >+</span
                   >
                 </div>
@@ -50,6 +52,7 @@
                 class="remove-button"
                 id="remove"
                 data-id="<%= cart[i].id %>"
+                data-index="<%= i %>"
               >
                 Remove
               </button>
