@@ -37,3 +37,60 @@
   width: 100%; /* Ensure it takes full width */
   flex-direction: column;
 }
+
+.cart-item-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  gap: 100%;
+}
+
+.quantity-button-label {
+  display: flex;
+  flex-direction: column;
+}
+
+.quantity-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+}
+
+.quantity-button-within {
+  position: relative;
+  z-index: 10;
+  cursor: pointer;
+}
+.quantity-button-within#decrease {
+  background-color: red;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  border: solid, 1px, black;
+}
+
+.quantity-button-within#increase {
+  background-color: green;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  border: solid, 1px, black;
+}
+
+.remove-button {
+  width: 100px; /* Set desired width */
+  height: 50px; /* Set desired height */
+  padding: 10px; /* Adjust padding if needed */
+  border: none; /* Remove default border */
+  background-color: rgb(255, 98, 98); /* Set background color */
+  cursor: pointer; /* Change cursor on hover */
+  font-weight: bold; /* Make text bold */
+  color: white; /* Set text color */
+}

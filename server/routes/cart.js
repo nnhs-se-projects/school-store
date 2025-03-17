@@ -115,6 +115,7 @@ route.post("/cart/add", async (req, res) => {
 // });
 
 // Route to remove an item from the cart
+
 route.post("/cart/updateQuant", async (req, res) => {
   console.log("Updating item quantity in cart");
   const { googleId, itemId, quantity } = req.body;
@@ -147,6 +148,24 @@ route.post("/cart/updateQuant", async (req, res) => {
 
   await user.save();
   res.status(200).send("Item quantity updated in cart");
+});
+
+route.post("/cart/remove", async (req, res) => {
+  const { googleId, itemId } = req.body;
+  const user = await User.findOne({ googleId });
+  if (!user) {
+    return res.status(404).send("User not found");
+  }
+
+  const itemIndex = user.cart.findIndex(
+    (cartItem) => cartItem.itemId.toString() === itemId
+  );
+  if (itemIndex > -1) {
+    user.cart.splice(itemIndex, 1);
+  }
+
+  await user.save();
+  res.status(200).send("Item removed from cart");
 });
 
 module.exports = route;

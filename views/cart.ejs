@@ -21,25 +21,37 @@
           />
           <div class="cart-item-content">
             <h2><%= cart[i].name %></h2>
+
             <div class="cart-item-actions">
-              <label for="quantity-<%= cart[i].id %>">Quantity:</label>
-              <select
-                id="quantity-<%= cart[i].id %>"
-                class="quantity-dropdown"
-                data-id="<%= cart[i].id %>"
-                data-original-quantity="<%= cart[i].quantity %>"
-              >
-                <% for (let q = 0; q < Math.min(10, maxQuantity[i]) + 1; q++) {
-                %>
-                <option value="<%= q %>" <%= q === cart[i].quantity ? 'selected' : '' %>><%= q %></option>
-                <% } %>
-              </select>
-                <!-- Button that display quantity selected and can increment/decrease the quantity the user wants to select of each item-->
+              <!-- Button that display quantity selected and can increment/decrease the quantity the user wants to select of each item-->
+              <div class="quantity-button-label">
+                <label for="quantity-<%= cart[i].id %>"
+                  ><strong>Quantity:</strong></label
+                >
                 <div class="quantity-button">
-                  <span class="quantity-button-within" id="decrease-<%= cart[i].id %>" data-id="<%= cart[i].id %>">-</span>
-                  <span class ="quantity-selected"><%= cart[i].quantity %></span>
-                  <span class="quantity-button-within" id="increase-<%= cart[i].id %>" data-id="<%= cart[i].id %>">+</span>
+                  <span
+                    class="quantity-button-within"
+                    id="decrease"
+                    data-id="<%= cart[i].id %>"
+                    >-</span
+                  >
+                  <span class="quantity-selected"><%= cart[i].quantity %></span>
+                  <span
+                    class="quantity-button-within"
+                    id="increase"
+                    data-id="<%= cart[i].id %>"
+                    >+</span
+                  >
                 </div>
+              </div>
+
+              <button
+                class="remove-button"
+                id="remove"
+                data-id="<%= cart[i].id %>"
+              >
+                Remove
+              </button>
             </div>
           </div>
           <% total += cart[i].price * cart[i].quantity; %>
@@ -60,7 +72,6 @@
     <input type="hidden" id="googleId" value="<%= session.user.googleId %>" />
   </div>
 </main>
-
 
 <!-- /Main Site -->
 
