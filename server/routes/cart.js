@@ -147,4 +147,28 @@ route.post("/cart/updateQuant", async (req, res) => {
   res.status(200).send("Item quantity updated in cart");
 });
 
+route.post("/cart/order", async (req, res) => {
+  console.log("Placing order");
+  const { googleId, pickUpDate, pickUpPeriod, totalCost } = req.body;
+
+  const user = await User.findOne({ googleId });
+
+  if (!user) {
+    return res.status(404).send("User not found");
+  }
+
+  
+
+  const order = {
+    name: user.name,
+    email: user.email,
+    date:
+    period: 
+    totalPrice: totalCost,
+    orderNumber: 
+    orderStatus: "pending",
+    items: user.cart,
+  };
+});
+
 module.exports = route;
