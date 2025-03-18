@@ -10,7 +10,7 @@
     <nav class="navbar">
       <div onclick="window.location.href='/'" class="logo">Naperville North School Store <img src = "/img/Mascot.png" alt = "Huskie Logo" class = "logo-image"> </div>
         <ul class="nav-links">
-            <% if ( session && session.isAdmin ) { %>
+            <% if ( session && session.clearance >= 3 ) { %>
             <li><a href="/admin"><strong>View Orders</strong></a></li>
             <% } %>
             <li><a href="/"><strong>Home</strong></a></li>
