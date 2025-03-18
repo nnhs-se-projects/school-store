@@ -149,3 +149,4 @@ route.post("/cart/updateQuant", async (req, res) => {
 });
 
 module.exports = route;
+ 

@@ -16,7 +16,9 @@ body {
   height: auto;
   display: block;
   margin: 0 auto;
+  object-fit: cover;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  clip-path: inset(0 0 10% 0);
 }
 
 /* crop the weight room photo so that it is a small sliver */
