@@ -46,16 +46,6 @@ app.use("/js", express.static("assets/js"));
 
 // app.use takes a function that is added to the chain of a request.
 //  When we call next(), it goes to the next function in the chain.
-app.use((req, res, next) => {
-  // if the student is not already logged in, redirect all requests to the
-  //  authentication page
-  if (req.session.email === undefined && !req.path.startsWith("/auth")) {
-    res.redirect("/auth/");
-    return;
-  }
-
-  next();
-});
 
 // create the HTTP server
 const server = http.createServer(app);

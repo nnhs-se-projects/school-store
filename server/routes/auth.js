@@ -6,6 +6,7 @@
 
 const express = require("express");
 const route = express.Router();
+const Item = require("../model/item");
 
 const { adminEmails } = require("../../whitelist.json");
 
@@ -28,10 +29,6 @@ async function verify(token) {
   console.log("isAdmin: ", isAdmin);
   return { googleId: sub, email, name, isAdmin };
 }
-
-route.get("/", (req, res) => {
-  res.render("auth");
-});
 
 route.post("/", async (req, res) => {
   try {
