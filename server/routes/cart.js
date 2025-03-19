@@ -3,6 +3,7 @@ const route = express.Router();
 
 const User = require("../model/user");
 const Item = require("../model/item");
+const Order = require("../model/order");
 
 // directs to the cart page
 route.get("/cart", async (req, res) => {
@@ -147,6 +148,16 @@ route.post("/cart/updateQuant", async (req, res) => {
   res.status(200).send("Item quantity updated in cart");
 });
 
+route.get("/cart/checkout", async (req, res) => {
+  const user = await User.findOne({
+    googleId: req.session.user.googleId,
+  });
+  if (!user) {
+    return res.status(404).send("User not found");
+  }
+  res.render("checkoutPage", { cart: user.cart });
+});
+
 route.post("/cart/order", async (req, res) => {
   console.log("Placing order");
   const { googleId, pickUpDate, pickUpPeriod, totalCost } = req.body;
@@ -157,18 +168,31 @@ route.post("/cart/order", async (req, res) => {
     return res.status(404).send("User not found");
   }
 
-  
+  // date format : MM/DD/YYYY
+
+  // generate order number
+  const orderNum = Math.floor(Math.random() * 1000000);
 
   const order = {
     name: user.name,
     email: user.email,
-    date:
-    period: 
+    date: pickUpDate,
+    period: pickUpPeriod,
     totalPrice: totalCost,
-    orderNumber: 
+    orderNumber: orderNum,
     orderStatus: "pending",
     items: user.cart,
   };
+
+  const newOrder = new Order(order);
+  await newOrder.save();
+  user.cart = [];
+  await user.save();
+  res.status(200).send("Order placed");
+
+  // send email to user
+
+  // send email to admin
 });
 
 module.exports = route;
