@@ -39,7 +39,7 @@
         <option value="6">6th</option>
       </select>
     </div>
-    <button id="checkout-button" class="checkout-button" onclick="window.location.href='/cart/checkout'">Place Order</button>
+    <button id="checkout-button" class="checkout-button" >Place Order</button>
     <input type="hidden" id="googleId" value="<%= session.user.googleId %>" />
   </div>
 </main>
@@ -47,7 +47,7 @@
 
 <!-- /Main Site -->
 
-<script src="/js/cart.js"></script>
+<script src="/js/checkout.js"></script>
 
 <!-- include footer -->
 <%- include('include/_footer') %>
