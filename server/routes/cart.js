@@ -4,8 +4,19 @@ const route = express.Router();
 const User = require("../model/user");
 const Item = require("../model/item");
 
+function isStudent(req, res, next) {
+  // check if the session exists (user is logged in), and if they are an admin
+  if (req.session && req.session.clearance >= 2) {
+    return next(); // Allow access to the next middleware or route
+  } else {
+    return res
+      .status(403)
+      .send("Forbidden: You must be a student to access this page.");
+  }
+}
+
 // directs to the cart page
-route.get("/cart", async (req, res) => {
+route.get("/cart", isStudent, async (req, res) => {
   try {
     const user = await User.findOne({
       googleId: req.session.user.googleId,

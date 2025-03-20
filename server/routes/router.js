@@ -43,7 +43,7 @@ route.get("/", async (req, res) => {
 
 function isAdmin(req, res, next) {
   // check if the session exists (user is logged in), and if they are an admin
-  if (req.session && req.session.isAdmin) {
+  if (req.session && req.session.clearance >= 4) {
     return next(); // Allow access to the next middleware or route
   } else {
     return res
@@ -52,8 +52,30 @@ function isAdmin(req, res, next) {
   }
 }
 
+function isVolunteer(req, res, next) {
+  // check if the session exists (user is logged in), and if they are an volunteer or admin
+  if (req.session && req.session.clearance >= 3) {
+    return next(); // Allow access to the next middleware or route
+  } else {
+    return res
+      .status(403)
+      .send("Forbidden: You do not have access to this page.");
+  }
+}
+
+function isStudent(req, res, next) {
+  // check if the session exists (user is logged in), and if they are an admin
+  if (req.session && req.session.clearance >= 2) {
+    return next(); // Allow access to the next middleware or route
+  } else {
+    return res
+      .status(403)
+      .send("Forbidden: You must be a student to access this page.");
+  }
+}
+
 // uses the isAdmin middleware before rendering the page
-route.get("/admin", isAdmin, (req, res) => {
+route.get("/admin", isVolunteer, (req, res) => {
   // This will only be reached if the user is an admin
   // console.log("Rendering admin page router");
   return res.render("admin");
@@ -110,7 +132,7 @@ route.get("/inventorylistprint", isAdmin, async (req, res) => {
 });
 
 // displays product page for a specific item
-route.get("/item/:id", async (req, res) => {
+route.get("/item/:id", isStudent, async (req, res) => {
   const item = await Item.findById(req.params.id);
   res.render("itemPage", { item });
 });
@@ -152,20 +174,6 @@ route.get("/manageItems", isAdmin, async (req, res) => {
 route.get("/deleteItem/:id", isAdmin, async (req, res) => {
   await Item.findByIdAndDelete(req.params.id);
   res.redirect("/manageItems");
-});
-
-route.get("/item/:id", async (req, res) => {
-  const item = await Item.findById(req.params.id);
-
-  const formattedItem = {
-    id: item._id,
-    name: item.name,
-    price: item.price,
-    description: item.description,
-    image: item.image,
-  };
-
-  res.render("itemPage", { item: formattedItem });
 });
 
 // delegate all authentication to the auth.js router
