@@ -155,7 +155,23 @@ route.get("/cart/checkout", async (req, res) => {
   if (!user) {
     return res.status(404).send("User not found");
   }
-  res.render("checkoutPage", { cart: user.cart });
+
+  const cartItems = [];
+  for (let i = 0; i < user.cart.length; i++) {
+    const item = await Item.findById(user.cart[i].itemId);
+    if (item) {
+      cartItems.push({
+        id: item._id,
+        name: item.name,
+        price: item.price,
+        size: user.cart[i].size,
+        quantity: user.cart[i].quantity,
+        image: item.image,
+      });
+    }
+  }
+
+  res.render("checkoutPage", { cart: cartItems });
 });
 
 route.post("/cart/order", async (req, res) => {
