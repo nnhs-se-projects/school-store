@@ -6,7 +6,6 @@
 
 const express = require("express");
 const route = express.Router();
-const Item = require("../model/item");
 
 const { adminEmails } = require("../../whitelist.json");
 
@@ -45,16 +44,6 @@ route.post("/", async (req, res) => {
     req.session.email = email;
     req.session.isAdmin = isAdmin;
     req.session.user = user;
-    /** 
-    const newItem = new Item({
-      name: "Shirt",
-      price: 11.8,
-      quantity: 11,
-      description: "A shirt",
-      image: "shirt.jpg",
-    });
-    await newItem.save();
-    */
 
     req.session.save((err) => {
       if (err) {

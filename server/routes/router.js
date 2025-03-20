@@ -33,6 +33,8 @@ route.get("/", async (req, res) => {
     };
   });
 
+  console.log(req.session);
+
   // render the homePage view and pass the items to it
   res.render("homePage", {
     items: formattedItems,
@@ -63,6 +65,7 @@ route.get("/logout", (req, res) => {
     if (err) {
       return res.status(500).send("Failed to log out");
     }
+    // res.clearCookie("connect.sid"); // Clear the session cookie
     res.redirect("/");
   });
 });
@@ -72,7 +75,6 @@ route.get("/addItem", isAdmin, (req, res) => {
   res.render("addItem");
 });
 
-
 route.get("/inventorylist", isAdmin, async (req, res) => {
   const items = await Item.find();
 
@@ -81,14 +83,14 @@ route.get("/inventorylist", isAdmin, async (req, res) => {
       id: item._id,
       name: item.name,
       quantity: item.quantity,
-      sizes: item.sizes
+      sizes: item.sizes,
     };
   });
 
   res.render("inventorylist", {
     items: formattedItems,
   });
-})
+});
 
 route.get("/inventorylistprint", isAdmin, async (req, res) => {
   const items = await Item.find();
@@ -98,21 +100,20 @@ route.get("/inventorylistprint", isAdmin, async (req, res) => {
       id: item._id,
       name: item.name,
       quantity: item.quantity,
-      sizes: item.sizes
+      sizes: item.sizes,
     };
   });
 
   res.render("inventorylistprint", {
     items: formattedItems,
   });
-})
+});
 
 // displays product page for a specific item
 route.get("/item/:id", async (req, res) => {
   const item = await Item.findById(req.params.id);
   res.render("itemPage", { item });
 });
-
 
 route.get("/editItem/:id", isAdmin, async (req, res) => {
   const item = await Item.findById(req.params.id);
