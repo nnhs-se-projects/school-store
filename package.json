@@ -1,7 +1,7 @@
 {
-  "name": "journal",
+  "name": "School Store",
   "version": "1.0.0",
-  "description": "application to record examples of applying the various Habits of Mind",
+  "description": "Store for students to be able to schedule times to pick up goods online",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -11,7 +11,7 @@
     "crud",
     "mongodb"
   ],
-  "author": "gcschmit",
+  "author": "Kieran Neil, James Carsello, Owen Hoag, Benjamin Pozzi",
   "license": "ISC",
   "devDependencies": {
     "eslint": "^8.56.0",
@@ -24,11 +24,12 @@
   "dependencies": {
     "dotenv": "^16.3.1",
     "ejs": "^3.1.9",
-    "express": "^4.18.2",
+    "express": "^4.21.2",
     "express-session": "^1.18.1",
     "google-auth-library": "^9.4.1",
     "mongoose": "^7.8.4",
     "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
     "nodemon": "^3.0.2",
     "socket.io": "^4.7.5"
   }

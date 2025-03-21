@@ -1,4 +1,6 @@
 const express = require("express");
+const multer = require("multer")
+const upload = multer({ dest: 'uploads/' })
 const route = express.Router();
 
 // const User = require("../model/user");
@@ -72,7 +74,7 @@ route.get("/addItem", isAdmin, (req, res) => {
   res.render("addItem");
 });
 
-
+// routes for getting admin inventory pages
 route.get("/inventorylist", isAdmin, async (req, res) => {
   const items = await Item.find();
 
