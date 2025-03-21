@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ googleId }),
+      body: JSON.stringify({ googleId, pickUpDate, pickUpPeriod, totalCost }),
     });
 
     if (response.ok) {
