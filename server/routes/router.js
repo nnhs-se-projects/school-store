@@ -63,14 +63,28 @@ function isVolunteer(req, res, next) {
   }
 }
 
+// function isStudent(req, res, next) {
+//   // check if the session exists (user is logged in), and if they are an admin
+//   if (req.session && req.session.clearance >= 2) {
+//     return next(); // Allow access to the next middleware or route
+//   } else {
+//     return res
+//       .status(403)
+//       .send("Forbidden: You must be a student to access this page.");
+//   }
+// }
+
 function isStudent(req, res, next) {
   // check if the session exists (user is logged in), and if they are an admin
   if (req.session && req.session.clearance >= 2) {
     return next(); // Allow access to the next middleware or route
   } else {
-    return res
-      .status(403)
-      .send("Forbidden: You must be a student to access this page.");
+    return res.status(403).send(`
+        <script>
+          alert("Forbidden: You must be a student to access this page.");
+          window.location.href = "/"; // Redirect to the homepage or another page
+        </script>
+      `);
   }
 }
 

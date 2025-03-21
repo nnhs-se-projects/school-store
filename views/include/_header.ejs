@@ -30,7 +30,11 @@
             <% if ( session && session.clearance >= 3 ) { %>
             <li><a href="/admin"><strong>View Orders</strong></a></li>
             <% } %>
-            <li><a href="/cart"><strong>Cart</strong></a></li>
+            <% if (session && session.clearance >= 2) { %>
+              <li><a href="/cart"><strong>Cart</strong></a></li>
+            <% } else { %>
+              <li><button class = "cart-button" id="alert-button"><strong>Cart</strong></button></li>
+            <% } %>
             <li><a href="/#contact"><strong>Contact</strong></a></li>
             <% if ( session.email) { %>
             <li><a href="/logout"><strong>Logout</strong></a></li>

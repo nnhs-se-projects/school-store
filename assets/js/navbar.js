@@ -5,6 +5,13 @@
  */
 
 // eslint-disable-next-line no-unused-vars
+
+const cartButton = document.querySelector("#alert-button");
+
+cartButton.addEventListener("click", () => {
+  alert("You need to log in before you can access the cart page");
+});
+
 async function handleCredentialResponse(res) {
   await fetch("/auth", {
     // send the googleUser's id_token which has all the data we want to the server with a POST request
