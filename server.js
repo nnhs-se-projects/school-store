@@ -49,10 +49,14 @@ app.use("/js", express.static("assets/js"));
 app.use((req, res, next) => {
   // if the student is not already logged in, redirect all requests to the
   //  authentication page
-  if (req.session.email === undefined && !req.path.startsWith("/auth")) {
-    res.redirect("/auth/");
-    return;
+  if (req.session.clearance === undefined) {
+    req.session.clearance = 0;
   }
+
+  // if (req.session.email === undefined && !req.path.startsWith("/auth")) {
+  //   res.redirect("/auth/");
+  //   return;
+  // }
 
   next();
 });

@@ -7,19 +7,45 @@
     <link rel="stylesheet" href="/css/styles.css" />
     <link rel="stylesheet" href="/css/navbar.css" />
 
+    <!-- Google Sign-In Script -->
+     <script src = "https://accounts.google.com/gsi/client" async defer></script>
+     <script>
+      window.onload = function () {
+        google.accounts.id.initialize({
+          client_id: "1022838194773-p8g5ac0qr11mfko61qurgnqdb9jitpjf.apps.googleusercontent.com",
+          callback: handleCredentialResponse,
+        });
+
+        google.accounts.id.renderButton(
+          document.getElementById("login-button"), //Target the login button
+          { theme: "outline", size: "large"} // Customize the button style
+        );
+      };
+     </script>
+
     <nav class="navbar">
       <div onclick="window.location.href='/'" class="logo">Naperville North School Store <img src = "/img/Mascot.png" alt = "Huskie Logo" class = "logo-image"> </div>
         <ul class="nav-links">
             <li><a href="/"><strong>Home</strong></a></li>
-            <% if ( session && session.isAdmin ) { %>
+            <% if ( session && session.clearance >= 3 ) { %>
             <li><a href="/admin"><strong>View Orders</strong></a></li>
             <% } %>
-            <li><a href="/cart"><strong>Cart</strong></a></li>
+            <% if (session && session.clearance >= 2) { %>
+              <li><a href="/cart"><strong>Cart</strong></a></li>
+            <% } else { %>
+              <li><button class = "cart-button" id="alert-button"><strong>Cart</strong></button></li>
+            <% } %>
             <li><a href="/#contact"><strong>Contact</strong></a></li>
+            <% if ( session.email) { %>
             <li><a href="/logout"><strong>Logout</strong></a></li>
+            <% } else { %>
+            <li><button id = "login-button"><strong>Login</strong></button></li>
+            <% } %> 
         </ul>
           
     </nav>
   </head>
   <body>
+
+    <script src = "/js/navbar.js"></script>
     
