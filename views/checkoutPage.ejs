@@ -41,6 +41,7 @@
     </div>
     <button id="checkout-button" class="checkout-button" >Place Order</button>
     <input type="hidden" id="googleId" value="<%= session.user.googleId %>" />
+    <input type="hidden" id="total-cost" value="<%= total.toFixed(2) %>" />
   </div>
 </main>
 

@@ -200,8 +200,15 @@ route.post("/cart/order", async (req, res) => {
     items: user.cart,
   };
 
+  console.log("Order details:", order);
+
   const newOrder = new Order(order);
-  await newOrder.save();
+  try {
+    await newOrder.save();
+  } catch (error) {
+    console.error("Error saving order:", error);
+    return res.status(500).send("Error placing order");
+  }
   user.cart = [];
   await user.save();
   res.status(200).send("Order placed");
@@ -209,6 +216,10 @@ route.post("/cart/order", async (req, res) => {
   // send email to user
 
   // send email to admin
+});
+
+route.get("/cart/confirmation", async (req, res) => {
+  res.render("confirmationPage");
 });
 
 module.exports = route;
