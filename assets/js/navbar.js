@@ -6,7 +6,7 @@
 
 // eslint-disable-next-line no-unused-vars
 
-const cartButton = document.querySelector("#alert-button");
+const cartButton = document.querySelector(".cart-button");
 
 cartButton.addEventListener("click", () => {
   alert("You need to log in before you can access the cart page");

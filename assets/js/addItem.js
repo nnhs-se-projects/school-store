@@ -79,7 +79,7 @@ submitButton.addEventListener("click", async (event) => {
       });
 
       if (response.ok) {
-        window.location = "/admin";
+        window.location = "/manageItems";
       } else {
         console.error("error creating entry");
       }
