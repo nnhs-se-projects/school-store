@@ -4,6 +4,7 @@ const route = express.Router();
 const User = require("../model/user");
 const Item = require("../model/item");
 const Order = require("../model/order");
+const nodemailer = require("nodemailer");
 
 // directs to the cart page
 route.get("/cart", async (req, res) => {
@@ -214,6 +215,31 @@ route.post("/cart/order", async (req, res) => {
   res.status(200).send("Order placed");
 
   // send email to user
+  // Configure the transporter
+  console.log(process.env.EMAIL_PASSWORD);
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "kieranhome8@gmail.com", // Replace with your email
+      pass: process.env.EMAIL_PASSWORD, // Replace with your email password or app password
+    },
+  });
+  const userEmailText = `Thank you for your order, ${user.name}!\n\nPlease bring CASH to the school store to pay for your order at your designated date and period.\n\nYour order number is ${orderNum}.\nPickup Date: ${pickUpDate}\nPickup Period: ${pickUpPeriod}\nCost: $${totalCost}\n\nWe appreciate your business!`;
+
+  // Email details
+  const userMailOptions = {
+    from: "kieranhome8@gmail.com", // Replace with your email
+    to: user.email, // Send to the user's email
+    subject: "NNHS School Store Order Confirmation",
+    text: userEmailText,
+  };
+
+  try {
+    await transporter.sendMail(userMailOptions);
+    console.log("Order confirmation email sent to user");
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
 
   // send email to admin
 });
