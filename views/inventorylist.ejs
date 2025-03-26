@@ -14,13 +14,19 @@
 
   <table>
     <tr>
-      <th colspan = "10"> Items & Quantities </th>
+      <th colspan = "10"> Items & Quantities </th> <!-- The colspan is set to 10 to make sure that the top row stretches over all of the columns -->
     </tr>
     <% items.forEach(function(item) { %>
     <tr>
       <th> <%= item.name %> </th>
-      <% if (item.sizes) { %> <% for (let size in item.sizes) { %>
-        <th> <%= size + ": " + item.sizes[size] %> </th>
+      <% if (item.sizes) { %> 
+        <% for (let size in item.sizes) { %>
+          <% if (size == "placeholder") { %>
+            <th> <%= item.sizes[size] %> </th>
+          <% } %>
+          <% if (size != "placeholder") { %>
+            <th> <%= size + ": " + item.sizes[size] %> </th>
+          <% } %>
       <% } %>
       <% } %>
     </tr>
