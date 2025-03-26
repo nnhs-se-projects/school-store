@@ -3,15 +3,13 @@
 <body onload="window.print()">
   <table>
     <tr>
-      <th> Item </th>
-      <th> Quantity </th>
-      <th> palce </th>
+      <th colspan = "10"> Items & Quantities </th>
     </tr>
     <% items.forEach(function(item) { %>
     <tr>
       <th> <%= item.name %> </th>
       <% if (item.sizes) { %> <% for (let size in item.sizes) { %>
-        <th> <%= item.sizes[size] %> </th>
+        <th> <%= size + ": " + item.sizes[size] %> </th>
       <% } %>
       <% } %>
     </tr>

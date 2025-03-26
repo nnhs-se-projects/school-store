@@ -14,26 +14,17 @@
 
   <table>
     <tr>
-      <th> Item </th>
-      <th> Quantity </th>
-      <th> Placeholder </th>
-      <th> Placeholder </th>
+      <th colspan = "10"> Items & Quantities </th>
     </tr>
-    <!-- <% items.forEach(function(item) { %>
+    <% items.forEach(function(item) { %>
     <tr>
       <th> <%= item.name %> </th>
-      <% var num = 0 %> 
-      <% if (item.sizes) { %> 
-        <% for (let size in item.sizes) { %>
-          <% num += item.sizes[size] %>
-        <% } %>
-        <th> <%= num %> </th> 
-        <% for (let size in item.sizes) { %>
-          <th> <% item.sizes[size] =%> </th>
-        <% } %>
+      <% if (item.sizes) { %> <% for (let size in item.sizes) { %>
+        <th> <%= size + ": " + item.sizes[size] %> </th>
+      <% } %>
       <% } %>
     </tr>
-    <% }) %> -->
+    <% }) %>
   </table>
 
 </main>
