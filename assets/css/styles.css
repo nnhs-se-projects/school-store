@@ -1,3 +1,10 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Full height */
+  color: #002f55;
+}
+
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -31,13 +38,6 @@ body {
 }
 
 /* Store info section */
-
-.wrapper {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh; /* Full height */
-  color: #002f55;
-}
 
 .store-info {
   max-width: 600px;
@@ -91,44 +91,6 @@ body {
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-}
-
-/* Footer styles */
-.site-footer {
-  background-color: #333; /* Dark background for contrast */
-  color: #fff; /* White text */
-  padding: 20px 0;
-  text-align: center;
-  font-size: 1em;
-}
-
-.footer-content {
-  margin-bottom: 10px;
-}
-
-.footer-content p {
-  margin: 5px 0;
-  color: #ff4800;
-}
-
-.footer-content strong {
-  color: #ffffff; /* Accent color for labels */
-}
-
-.footer-bottom {
-  font-size: 0.9em;
-  color: #ff4800; /* Lighter color for less emphasis */
-}
-
-.footer-bottom p {
-  margin: 0;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .site-footer {
-    font-size: 0.9em;
-  }
 }
 
 .item-list {
@@ -275,4 +237,17 @@ body {
   to {
     opacity: 1;
   }
+}
+
+button {
+  background-color: #002f55;
+  font-size: 15px;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: auto;
+  display: flex;
+  border-radius: 8px;
 }

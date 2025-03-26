@@ -109,7 +109,7 @@ h1 {
 
 .remove-button {
   width: 100px; /* Set desired width */
-  height: 50px; /* Set desired height */
+  height: 40px; /* Set desired height */
   padding: 10px; /* Adjust padding if needed */
   border: none; /* Remove default border */
   background-color: rgb(255, 98, 98); /* Set background color */
@@ -118,6 +118,7 @@ h1 {
   color: white; /* Set text color */
   border: solid, 1px, black;
   border-radius: 5px; /* Optional: add rounded corners */
+  align-items: center;
 }
 
 .cart-summary {
@@ -136,9 +137,10 @@ h1 {
   border: none; /* Remove default border */
   cursor: pointer; /* Change cursor on hover */
   font-weight: bold; /* Make text bold */
-  color: black; /* Set text color */
   border: solid, 1px, black;
   border-radius: 5px; /* Optional: add rounded corners */
+  justify-content: center;
+  align-items: center;
 }
 
 /* Ensure the cart-item layout adapts for smaller screens */
