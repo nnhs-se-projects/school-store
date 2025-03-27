@@ -189,13 +189,24 @@ body {
   justify-content: center;
 }
 
+.item-link-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
 .manage-item-link {
   display: flex;
   justify-content: center;
   margin-top: 20px;
-  background-color: rgb(25, 25, 150);
+  background-color: rgb(255, 255, 255);
+  border-radius: 8px;
+  padding: 10px 20px;
+  width: 85%;
   text-decoration: none;
-  color: white;
+  color: rgb(0, 0, 0);
 }
 
 #item-add {

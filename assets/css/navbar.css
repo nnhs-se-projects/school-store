@@ -10,6 +10,12 @@
   height: auto;
 }
 
+li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .navbar .logo {
   font-size: 1.5em;
   font-weight: bold;
@@ -50,7 +56,6 @@
   position: relative;
   text-decoration: none;
   color: #ffffff;
-  border-radius: 4px;
   padding: 0 10px;
 }
 
@@ -96,6 +101,14 @@
   }
 }
 
+button {
+  height: 40px; /* Adjust height to match the navbar items */
+  width: auto; /* Allow width to adjust based on content */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .navbar-button {
   background-color: transparent;
   color: #ffffff;
@@ -110,22 +123,4 @@
   font-family: inherit; /* Use the same font as the parent element */
   font-size: inherit; /* Match the font size of the parent */
   font-weight: inherit; /* Match the font weight of the parent */
-}
-
-button:after {
-  content: "";
-  position: absolute;
-  background-color: #ffffff;
-  height: 3px;
-  width: 0;
-  left: 50%;
-  bottom: -10px;
-  transition: width 0.3s ease, left 0.3s ease;
-  transform: translateX(-50%);
-}
-
-button:hover:after {
-  width: 100%;
-  left: 50%;
-  transform: translateX(-50%);
 }
