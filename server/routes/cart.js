@@ -100,7 +100,7 @@ route.post("/cart/add", async (req, res) => {
       parseInt(user.cart[itemIndex].quantity) + parseInt(quantity);
   } else {
     // If item does not exist in the cart, add it
-    user.cart.push({ itemId, quantity, size, sizeIndex });
+    user.cart.push({ itemId, quantity, size, sizeIndex, name: item.name });
   }
 
   await item.save();
@@ -185,8 +185,6 @@ route.post("/cart/order", async (req, res) => {
     return res.status(404).send("User not found");
   }
 
-  // date format : MM/DD/YYYY
-
   // generate order number
   const orderNum = Math.floor(Math.random() * 1000000);
 
@@ -224,7 +222,7 @@ route.post("/cart/order", async (req, res) => {
       pass: process.env.EMAIL_PASSWORD, // Replace with your email password or app password
     },
   });
-  const userEmailText = `Thank you for your order, ${user.name}!\n\nPlease bring CASH to the school store to pay for your order at your designated date and period.\n\nYour order number is ${orderNum}.\nPickup Date: ${pickUpDate}\nPickup Period: ${pickUpPeriod}\nCost: $${totalCost}\n\nWe appreciate your business!`;
+  const userEmailText = `Thank you for your order, ${user.name}!\n\nPlease bring CASH as well as your student ID to the school store to pay for your order at your designated date and period.\n\nYour order number is ${orderNum}.\nPickup Date: ${pickUpDate}\nPickup Period: ${pickUpPeriod}\nCost: $${totalCost}\n\nWe appreciate your business!`;
 
   // Email details
   const userMailOptions = {
@@ -241,7 +239,32 @@ route.post("/cart/order", async (req, res) => {
     console.error("Error sending email:", error);
   }
 
+  const volunteerMailText =
+    `New order received!\n\n` +
+    printOrder(order) +
+    `\n\nPlease check the order panel for more details.`;
+  function printOrder(order) {
+    let orderDetails = `Student: ${order.name}\nEmail: ${order.email}\nPickup Date: ${order.date}\nPickup Period: ${order.period}\nTotal Cost: $${order.totalPrice}\nItems:\n`;
+    for (let i = 0; i < order.items.length; i++) {
+      orderDetails += `- ${order.items[i].quantity} x ${order.items[i].size} ${order.items[i].name}\n`;
+    }
+    return orderDetails;
+  }
+
   // send email to admin
+  const volunteerMailOptions = {
+    from: "kieranhome8@gmail.com",
+    to: "kieranhome8@gmail.com",
+    subject: "New Order Received",
+    text: volunteerMailText,
+  };
+
+  try {
+    await transporter.sendMail(volunteerMailOptions);
+    console.log("Order notification email sent to admin");
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
 });
 
 route.get("/cart/confirmation", async (req, res) => {

@@ -49,6 +49,10 @@ const OrderSchema = new mongoose.Schema({
         type: Number,
         required: false,
       },
+      name: {
+        type: String,
+        required: false,
+      },
     },
   ],
   // Add other fields as necessary
