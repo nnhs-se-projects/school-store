@@ -6,7 +6,6 @@ submitButton.addEventListener("click", async () => {
   const id = document.querySelector("input#id").value;
   const name = document.querySelector("input#name").value;
   const price = document.querySelector("input#price").value;
-  const quantity = document.querySelector("input#quantity").value;
   const description = document.querySelector("input#description").value;
   const imageInput = document.querySelector("input#image");
   const file = imageInput.files[0];
@@ -50,7 +49,6 @@ submitButton.addEventListener("click", async () => {
       const item = {
         name,
         price,
-        quantity,
         description,
         image: base64String,
         sizes,
@@ -79,7 +77,6 @@ submitButton.addEventListener("click", async () => {
     const item = {
       name,
       price,
-      quantity,
       description,
       image: base64String,
       sizes,

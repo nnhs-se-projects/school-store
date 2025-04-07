@@ -8,9 +8,11 @@
 
 const cartButton = document.querySelector("#alert-button");
 
-cartButton.addEventListener("click", () => {
-  alert("You need to log in before you can access the cart page");
-});
+if (cartButton) {
+  cartButton.addEventListener("click", () => {
+    alert("You need to log in before you can access the cart page");
+  });
+}
 
 async function handleCredentialResponse(res) {
   await fetch("/auth", {
