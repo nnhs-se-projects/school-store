@@ -29,9 +29,10 @@ submitButton.addEventListener("click", async (event) => {
       console.log(`Size: ${size}, Quantity: ${quantity}`);
     });
   } else {
-    sizesObject.placeholder = document.querySelector(
-      "input#generic-quantity"
-    ).value;
+    sizesObject.placeholder = parseInt(
+      document.querySelector("input#generic-quantity").value,
+      10
+    );
   }
 
   console.log("Sizes Object:", sizesObject);
