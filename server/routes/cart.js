@@ -212,6 +212,14 @@ route.post("/cart/order", async (req, res) => {
   await user.save();
   res.status(200).send("Order placed");
 
+  function printOrder(order) {
+    let orderDetails = `Student: ${order.name}\nEmail: ${order.email}\nPickup Date: ${order.date}\nPickup Period: ${order.period}\nTotal Cost: $${order.totalPrice}\nItems:\n`;
+    for (let i = 0; i < order.items.length; i++) {
+      orderDetails += `- ${order.items[i].quantity} x ${order.items[i].size} ${order.items[i].name}\n`;
+    }
+    return orderDetails;
+  }
+
   // send email to user
   // Configure the transporter
   console.log(process.env.EMAIL_PASSWORD);
@@ -222,7 +230,10 @@ route.post("/cart/order", async (req, res) => {
       pass: process.env.EMAIL_PASSWORD, // Replace with your email password or app password
     },
   });
-  const userEmailText = `Thank you for your order, ${user.name}!\n\nPlease bring CASH as well as your student ID to the school store to pay for your order at your designated date and period.\n\nYour order number is ${orderNum}.\nPickup Date: ${pickUpDate}\nPickup Period: ${pickUpPeriod}\nCost: $${totalCost}\n\nWe appreciate your business!`;
+  const userEmailText =
+    `Thank you for your order, ${user.name}!\n\nPlease bring CASH as well as your student ID to the school store to pay for your order at your designated date and period.\n\n` +
+    printOrder(order) +
+    `We appreciate your business!`;
 
   // Email details
   const userMailOptions = {
@@ -243,13 +254,6 @@ route.post("/cart/order", async (req, res) => {
     `New order received!\n\n` +
     printOrder(order) +
     `\n\nPlease check the order panel for more details.`;
-  function printOrder(order) {
-    let orderDetails = `Student: ${order.name}\nEmail: ${order.email}\nPickup Date: ${order.date}\nPickup Period: ${order.period}\nTotal Cost: $${order.totalPrice}\nItems:\n`;
-    for (let i = 0; i < order.items.length; i++) {
-      orderDetails += `- ${order.items[i].quantity} x ${order.items[i].size} ${order.items[i].name}\n`;
-    }
-    return orderDetails;
-  }
 
   // send email to admin
   const volunteerMailOptions = {
