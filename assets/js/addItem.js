@@ -1,4 +1,4 @@
-import convert from "heic-convert";
+import heic2any from "heic2any";
 
 const submitButton = document.querySelector("input.submit");
 
@@ -43,12 +43,11 @@ submitButton.addEventListener("click", async (event) => {
     img.src = reader.result;
 
     img.onload = async function () {
-      print("Image loaded successfully");
+      console.log("Image loaded successfully");
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
 
       // Set canvas size to:
-
       const height = 600;
       const width = 600;
 
@@ -100,17 +99,10 @@ submitButton.addEventListener("click", async (event) => {
 
       if (fileExtension === "heic") {
         try {
-          // Convert the HEIC file to JPEG using heic-convert
-          const arrayBuffer = await file.arrayBuffer();
-          const convertedBuffer = await convert({
-            buffer: arrayBuffer, // Input file as ArrayBuffer
-            format: "JPEG", // Output format
-            quality: 1, // Quality (1 = best)
-          });
-
-          // Create a Blob from the converted buffer
-          const convertedBlob = new Blob([convertedBuffer], {
-            type: "image/jpeg",
+          // Convert the HEIC file to JPEG using heic2any
+          const convertedBlob = await heic2any({
+            blob: file, // Input file as a Blob
+            toType: "image/jpeg", // Output format
           });
 
           // Read the converted Blob as a Data URL
