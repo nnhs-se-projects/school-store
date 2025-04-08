@@ -208,12 +208,20 @@ route.post("/cart/order", async (req, res) => {
     console.error("Error saving order:", error);
     return res.status(500).send("Error placing order");
   }
+
+  const unformattedDate = new Date(order.date);
+  const date = unformattedDate.toLocaleDateString("en-US", {
+    month: "2-digit",
+    day: "2-digit",
+    year: "2-digit",
+  });
+
   user.cart = [];
   await user.save();
   res.status(200).send("Order placed");
 
   function printOrder(order) {
-    let orderDetails = `Student: ${order.name}\nEmail: ${order.email}\nPickup Date: ${order.date}\nPickup Period: ${order.period}\nTotal Cost: $${order.totalPrice}\nItems:\n`;
+    let orderDetails = `Student: ${order.name}\nEmail: ${order.email}\nPickup Date: ${date}\nPickup Period: ${order.period}\nTotal Cost: $${order.totalPrice}\nItems:\n`;
     for (let i = 0; i < order.items.length; i++) {
       orderDetails += `- ${order.items[i].quantity} x ${order.items[i].size} ${order.items[i].name}\n`;
     }
@@ -230,6 +238,7 @@ route.post("/cart/order", async (req, res) => {
       pass: process.env.EMAIL_PASSWORD, // Replace with your email password or app password
     },
   });
+
   const userEmailText =
     `Thank you for your order, ${user.name}!\n\nPlease bring CASH as well as your student ID to the school store to pay for your order at your designated date and period.\n\n` +
     printOrder(order) +
