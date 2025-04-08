@@ -16,6 +16,13 @@ body {
   flex-direction: column;
 }
 
+h3 {
+  color: #ffffff;
+  font-size: 1.2em;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
 /* Store front image styling */
 
 .store-front {
@@ -201,12 +208,12 @@ body {
   display: flex;
   justify-content: center;
   margin-top: 20px;
-  background-color: rgb(255, 255, 255);
-  border-radius: 8px;
+  background-color: rgb(24, 97, 255);
+  border-radius: 2px;
   padding: 10px 20px;
   width: 85%;
   text-decoration: none;
-  color: rgb(0, 0, 0);
+  color: white;
 }
 
 #item-add {

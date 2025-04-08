@@ -12,30 +12,26 @@ submitButton.addEventListener("click", async (event) => {
 
   const sizeCheck = document.querySelector("input#sized-check").checked;
 
-  const sizesObject = {};
+  const sizes = {};
+
   // If size check is checked, get the sizes from the size boxes
   // If size check is not checked, set the sizes equal to what is in the quantity box, parameter is of name "placeholder"
 
   if (sizeCheck) {
-    console.log("Size check is checked");
-    const sizeEntries = document.querySelectorAll(".size-entry");
-    sizeEntries.forEach((entry) => {
-      const size = entry.querySelector("input[name='size[]']").value;
-      const quantity = parseInt(
-        entry.querySelector("input[name='size-quantity[]']").value,
-        10
-      );
-      sizesObject[size] = quantity;
-      console.log(`Size: ${size}, Quantity: ${quantity}`);
+    document.querySelectorAll(".size-entry").forEach((entry) => {
+      const size = entry.querySelector(".size").value;
+      const quantity = entry.querySelector(".quantity").value;
+      sizes[size] = parseInt(quantity, 10);
+      console.log(sizes[size]);
     });
   } else {
-    sizesObject.placeholder = parseInt(
+    sizes.placeholder = parseInt(
       document.querySelector("input#generic-quantity").value,
       10
     );
   }
 
-  console.log("Sizes Object:", sizesObject);
+  console.log("Sizes Object:", sizes);
 
   reader.onloadend = async function () {
     const img = new Image();
@@ -68,7 +64,7 @@ submitButton.addEventListener("click", async (event) => {
         price,
         description,
         image: base64String,
-        sizes: sizesObject,
+        sizes,
       };
 
       const response = await fetch("/addItem", {
@@ -93,3 +89,55 @@ submitButton.addEventListener("click", async (event) => {
     console.error("No file selected");
   }
 });
+
+const addSizeButton = document.querySelector("button#add-size");
+const sizesContainer = document.querySelector(".size-entry");
+
+addSizeButton.addEventListener("click", (event) => {
+  alert("Size added");
+  const sizeEntry = document.createElement("div");
+  sizeEntry.classList.add("size-entry");
+
+  const sizeInput = document.createElement("input");
+  sizeInput.type = "text";
+  sizeInput.classList.add("size");
+  sizeInput.placeholder = "Size";
+
+  const quantityInput = document.createElement("input");
+  quantityInput.type = "number";
+  quantityInput.classList.add("quantity");
+  quantityInput.placeholder = "Quantity";
+
+  const deleteButton = document.createElement("button");
+  deleteButton.type = "button";
+  deleteButton.classList.add("delete-size");
+  deleteButton.textContent = "Delete";
+  deleteButton.addEventListener("click", () => {
+    sizeEntry.remove();
+  });
+
+  sizeEntry.appendChild(sizeInput);
+  sizeEntry.appendChild(quantityInput);
+  sizeEntry.appendChild(deleteButton);
+
+  sizesContainer.appendChild(sizeEntry);
+});
+
+document.querySelectorAll(".delete-size").forEach((button) => {
+  button.addEventListener("click", (e) => {
+    e.target.closest(".size-entry").remove();
+  });
+});
+
+function toggleSizeInput() {
+  const sizeInput = document.getElementById("size-input");
+  const checkBox = document.getElementById("sized-check");
+  const genericSizeInput = document.getElementById("generic-size-input");
+  if (checkBox.checked) {
+    sizeInput.style.display = "block";
+    genericSizeInput.style.display = "none";
+  } else {
+    sizeInput.style.display = "none";
+    genericSizeInput.style.display = "block";
+  }
+}

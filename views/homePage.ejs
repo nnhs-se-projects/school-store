@@ -37,14 +37,13 @@
 
 
   <% if (session && session.clearance >= 2) { %>
-
     <div class = "item-list"> 
       <% items.forEach(function(item) { %>
         <div class = "item" onclick= "window.location.href='/item/<%= item.id %>'">
           <img src="<%= item.image %>">
           <div class = "item-content">
           <h2><%= item.name %></h2>
-          <p>Price: $<%= item.price %></p>
+          <h3>Price: $<%= item.price %></h3>
           <p>Description: <%= item.description %></p>
           </div>
       </div>
