@@ -1,7 +1,7 @@
 {
   "name": "School Store",
   "version": "1.0.0",
-  "description": "Store for students to be able to schedule times to pick up goods online",
+  "description": "Store for students to be able to make orders online",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
