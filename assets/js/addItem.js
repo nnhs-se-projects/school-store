@@ -1,28 +1,26 @@
 const submitButton = document.querySelector("input.submit");
 
-submitButton.addEventListener("click", async (event) => {
-  event.preventDefault(); // Prevent the default form submission
-
+submitButton.addEventListener("click", async () => {
   const name = document.querySelector("input#name").value;
   const price = document.querySelector("input#price").value;
   const description = document.querySelector("input#description").value;
   const imageInput = document.querySelector("input#image");
   const file = imageInput.files[0];
   const reader = new FileReader();
-
-  const sizeCheck = document.querySelector("input#sized-check").checked;
+  let base64String = null;
 
   const sizes = {};
+  const sizeChecked = document.querySelector("input#sized-check").checked;
 
-  // If size check is checked, get the sizes from the size boxes
-  // If size check is not checked, set the sizes equal to what is in the quantity box, parameter is of name "placeholder"
-
-  if (sizeCheck) {
+  // Populate the sizes object
+  if (sizeChecked) {
     document.querySelectorAll(".size-entry").forEach((entry) => {
-      const size = entry.querySelector(".size").value;
-      const quantity = entry.querySelector(".quantity").value;
-      sizes[size] = parseInt(quantity, 10);
-      console.log(sizes[size]);
+      const size = entry.querySelector(".size").value.trim();
+      const quantity = parseInt(entry.querySelector(".quantity").value, 10);
+
+      if (size && !isNaN(quantity)) {
+        sizes[size] = quantity;
+      }
     });
   } else {
     sizes.placeholder = parseInt(
@@ -31,7 +29,7 @@ submitButton.addEventListener("click", async (event) => {
     );
   }
 
-  console.log("Sizes Object:", sizes);
+  console.log(sizes); // Debugging: Check the sizes object
 
   reader.onloadend = async function () {
     const img = new Image();
@@ -41,23 +39,19 @@ submitButton.addEventListener("click", async (event) => {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
 
-      // Set canvas size to:
-
       const height = 600;
       const width = 600;
 
       canvas.width = width;
       canvas.height = height;
 
-      // Calculate the cropping area
       const minSize = Math.min(img.width, img.height);
       const cropX = (img.width - minSize) / 2;
       const cropY = (img.height - minSize) / 2;
 
-      // Draw the cropped and resized image onto the canvas
       ctx.drawImage(img, cropX, cropY, minSize, minSize, 0, 0, width, height);
 
-      const base64String = canvas.toDataURL("image/jpeg");
+      base64String = canvas.toDataURL("image/jpeg");
 
       const item = {
         name,
@@ -78,7 +72,7 @@ submitButton.addEventListener("click", async (event) => {
       if (response.ok) {
         window.location = "/manageItems";
       } else {
-        console.error("error creating entry");
+        console.error("Error adding item");
       }
     };
   };
@@ -86,7 +80,27 @@ submitButton.addEventListener("click", async (event) => {
   if (file) {
     reader.readAsDataURL(file);
   } else {
-    console.error("No file selected");
+    const item = {
+      name,
+      price,
+      description,
+      image: base64String,
+      sizes,
+    };
+
+    const response = await fetch("/addItem", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ item }),
+    });
+
+    if (response.ok) {
+      window.location = "/manageItems";
+    } else {
+      console.error("Error adding item");
+    }
   }
 });
 
