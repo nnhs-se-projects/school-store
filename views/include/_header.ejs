@@ -32,8 +32,10 @@
             <% } %>
             <% if (session && session.clearance >= 2) { %>
               <li><a href="/cart"><strong>Cart</strong></a></li>
+            <% } else if (session && session.clearance >= 1) { %>
+              <li><button class = "nav-button" id="alert-button-1"><strong>Cart</strong></button></li>
             <% } else { %>
-              <li><button class = "nav-button" id="alert-button"><strong>Cart</strong></button></li>
+              <li><button class = "nav-button" id="alert-button-2"><strong>Cart</strong></button></li>
             <% } %>
             <li><a href="/#contact"><strong>Contact</strong></a></li>
             <% if ( session.email) { %>
