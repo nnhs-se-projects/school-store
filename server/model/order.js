@@ -1,21 +1,36 @@
 const mongoose = require("mongoose");
 
-const UserSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  googleId: {
-    type: String,
-    required: true,
-    unique: true,
-  },
+const OrderSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
   },
-  cart: [
+  email: {
+    type: String,
+    required: true,
+  },
+  date: {
+    type: String,
+    required: true,
+  },
+  period: {
+    type: Number,
+    required: true,
+  },
+  totalPrice: {
+    type: mongoose.Types.Decimal128,
+    required: true,
+  },
+  orderNumber: {
+    type: Number,
+    required: true,
+  },
+  orderStatus: {
+    type: String,
+    required: true,
+    default: "pending",
+  },
+  items: [
     {
       itemId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -40,6 +55,7 @@ const UserSchema = new mongoose.Schema({
       },
     },
   ],
+  // Add other fields as necessary
 });
 
-module.exports = mongoose.model("User", UserSchema);
+module.exports = mongoose.model("Order", OrderSchema);

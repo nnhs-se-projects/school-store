@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
   const quantitySelectors = document.querySelectorAll(
     "select.quantity-dropdown"
   );
+  const checkoutButton = document.getElementById("checkout-button");
   const googleId = document.getElementById("googleId").value;
 
   if (warnUserOOSInput.value === "true") {
@@ -21,6 +22,32 @@ document.addEventListener("DOMContentLoaded", (event) => {
     alert(message);
   }
 
+  checkoutButton.addEventListener("click", async (event) => {
+    event.preventDefault(); // Prevent the default form submission
+    if (quantitySelectors.length === 0) {
+      alert(
+        "Your cart is empty. Please add items to your cart before checking out."
+      );
+      return;
+    }
+    // Proceed with checkout if there are items in the cart
+
+    const response = await fetch("/cart/checkout", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.ok) {
+      console.log("Checkout successful");
+      window.location.href = "/cart/checkout"; // Redirect to checkout page
+    } else {
+      console.error("Failed to initiate checkout");
+    }
+  });
+
+  console.log(quantitySelectors);
   quantitySelectors.forEach((button) => {
     // Perform actions on each button
     button.addEventListener("change", async (event) => {
