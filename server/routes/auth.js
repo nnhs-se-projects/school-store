@@ -39,9 +39,9 @@ async function verify(token) {
     // Users have the ability to view orders, but can't manage inventory
     console.log("Volunteer email: ", email);
     clearance = 3;
-  } else if (domain === "stu.naperville203.org") {
+  } else if (domain.endsWith("naperville203.org")) {
     // Users have the ability to place orders, but can't view orders or manage inventory
-    console.log("Student email: ", email);
+    console.log("203 email: ", email);
     clearance = 2;
   } else {
     // Only used in the case a user logs in and is not a student. Cannot place orders, but can view store
