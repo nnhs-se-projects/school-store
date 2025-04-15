@@ -298,4 +298,9 @@ route.get("/cart/confirmation", async (req, res) => {
   res.render("confirmationPage");
 });
 
+route.get("/orderViewer", async (req, res) => {
+  const orders = await Order.find({}).sort({ date: -1 });
+  res.render("orderViewer", { orders });
+});
+
 module.exports = route;

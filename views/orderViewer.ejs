@@ -1,0 +1,41 @@
+<%- include('include/_header') %>
+
+<link rel="stylesheet" href="/css/orderViewer.css" />
+
+<main>
+  <div class="wrapper">
+    <h1>Student Orders</h1>
+    <table id="orders-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Number</th>
+          <th>Date</th>
+          <th>Period</th>
+          <th>Total Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (let i = 0; i < orders.length; i++) { %>
+        <tr
+          id="order-<%= i %>"
+          class="order-row"
+          data-items="<%= JSON.stringify(orders[i].items) %>"
+        >
+          <td><%= orders[i].name %></td>
+          <td><%= orders[i].email %></td>
+          <td><%= orders[i].orderNumber %></td>
+          <td><%= orders[i].date %></td>
+          <td><%= orders[i].period %></td>
+          <td>$<%= orders[i].totalPrice %></td>
+        </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<%- include('include/_footer') %>
+
+<script src="/js/orderViewer.js"></script>

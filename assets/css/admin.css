@@ -1,6 +1,3 @@
-.wrapper {
-}
-
 table {
   border-collapse: collapse;
   display: flex;
@@ -46,19 +43,7 @@ a.admin-link {
   margin-top: 10px;
 }
 
-a.admin-link#editItem {
+a.admin-link#orderViewer {
   background-color: #ff4800;
   color: white;
-}
-
-a.admin-link#editItem:hover {
-  background-color: rgb(255, 99, 99);
-}
-
-a.admin-link#addItem:hover {
-  background-color: #01447a;
-}
-
-a.admin-link#inventoryprint {
-  background-color: #01447a;
 }
