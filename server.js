@@ -6,6 +6,8 @@
 // import the http module, which provides an HTTP server
 const http = require("http");
 
+// Import the path module
+const path = require("path");
 // import the express module, which exports the express function
 const express = require("express");
 
@@ -49,10 +51,14 @@ app.use("/js", express.static("assets/js"));
 app.use((req, res, next) => {
   // if the student is not already logged in, redirect all requests to the
   //  authentication page
-  if (req.session.email === undefined && !req.path.startsWith("/auth")) {
-    res.redirect("/auth/");
-    return;
+  if (req.session.clearance === undefined) {
+    req.session.clearance = 0;
   }
+
+  // if (req.session.email === undefined && !req.path.startsWith("/auth")) {
+  //   res.redirect("/auth/");
+  //   return;
+  // }
 
   next();
 });
@@ -76,6 +82,12 @@ app.use(require("./server/routes/cart"));
 app.use(require("./server/routes/inventory"));
 
 app.use("/size", require("./server/routes/size"));
+
+// Serve the bundled files from the "dist" directory
+app.use("/dist", express.static(path.join(__dirname, "dist")));
+
+// Serve other static files from the "public" directory
+app.use(express.static(path.join(__dirname, "public")));
 
 // start the server on port 8080
 server.listen(8080, () => {

@@ -6,8 +6,22 @@ const Item = require("../model/item");
 const Order = require("../model/order");
 const nodemailer = require("nodemailer");
 
+function isStudent(req, res, next) {
+  // check if the session exists (user is logged in), and if they are an admin
+  if (req.session && req.session.clearance >= 2) {
+    return next(); // Allow access to the next middleware or route
+  } else {
+    return res.status(403).send(`
+        <script>
+          alert("Forbidden: You must be a student to access this page.");
+          window.location.href = "/"; // Redirect to the homepage or another page
+        </script>
+      `);
+  }
+}
+
 // directs to the cart page
-route.get("/cart", async (req, res) => {
+route.get("/cart", isStudent, async (req, res) => {
   try {
     const user = await User.findOne({
       googleId: req.session.user.googleId,
@@ -124,6 +138,7 @@ route.post("/cart/add", async (req, res) => {
 // });
 
 // Route to remove an item from the cart
+
 route.post("/cart/updateQuant", async (req, res) => {
   console.log("Updating item quantity in cart");
   const { googleId, index, quantity } = req.body;

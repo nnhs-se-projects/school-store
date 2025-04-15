@@ -8,14 +8,16 @@
   padding: 2.5%;
 }
 
-.item-info {
-  flex: 1;
+@media (max-width: 768px) {
+  .wrapper {
+    flex-direction: column;
+  }
 }
 
 /* I want the image aligned along the left side of the viewport */
 
 img {
-  width: 30%;
+  width: 500px;
   height: auto;
   display: block;
   border-radius: 8px;
@@ -25,11 +27,63 @@ img {
   border: solid 5px #002f55;
 }
 
+.item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 60%;
+  font-weight: bold;
+}
+
 p {
   color: #002f55;
 }
 
-input {
+.item-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 20px;
+  border-bottom: solid 2px #002f55;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+
+.item-content h1 {
+  color: #002f55;
+  font-size: 2em;
+  font-weight: bold;
+  border-bottom: solid 2px #002f55;
+  padding-bottom: 10px;
+}
+
+.item-actions {
+  border: solid 1px #002f55;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  margin-top: 20px;
+  width: 100%;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+}
+
+.quantity-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 8px;
+  padding: 10px;
+  width: 100%;
+}
+
+select#quantity {
   width: 50%;
   padding: 12px 20px;
   margin: 8px 0;
@@ -38,15 +92,26 @@ input {
   box-sizing: border-box;
 }
 
-.item-content {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 20px;
+label#quantity-label {
+  color: #002f55;
+  font-size: 1.2em;
+  font-weight: bold;
 }
 
-.item-image {
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
+input {
+  width: 75%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+select#size {
+  width: 50%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
 }
