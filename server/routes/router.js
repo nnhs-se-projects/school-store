@@ -46,20 +46,26 @@ function isAdmin(req, res, next) {
   if (req.session && req.session.clearance >= 4) {
     return next(); // Allow access to the next middleware or route
   } else {
+    const currentClearance = req.session ? req.session.clearance : "none";
     return res
       .status(403)
-      .send("Forbidden: You do not have access to this page.");
+      .send(
+        `Forbidden: You do not have access to this page. Your clearance level is ${currentClearance}, but clearance level 4 is required.`
+      );
   }
 }
 
 function isVolunteer(req, res, next) {
-  // check if the session exists (user is logged in), and if they are an volunteer or admin
+  // check if the session exists (user is logged in), and if they are a volunteer or admin
   if (req.session && req.session.clearance >= 3) {
     return next(); // Allow access to the next middleware or route
   } else {
+    const currentClearance = req.session ? req.session.clearance : "none";
     return res
       .status(403)
-      .send("Forbidden: You do not have access to this page.");
+      .send(
+        `Forbidden: You do not have access to this page. Your clearance level is ${currentClearance}, but clearance level 3 is required.`
+      );
   }
 }
 
