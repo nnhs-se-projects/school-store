@@ -5,16 +5,19 @@ document.addEventListener("DOMContentLoaded", function () {
   const quantitySelector = document.getElementById("quantity");
 
   function updateQuantityOptions() {
-    const selectedOption = sizeSelector.options[sizeSelector.selectedIndex];
-    const maxQuantity = parseInt(
-      selectedOption.getAttribute("data-quantity"),
-      10
-    );
+    let maxQuantity;
+    if (!sizeSelector) {
+      maxQuantity = document.getElementById("placeholder").value; // Fallback to a placeholder value if sizeSelector is not present
+    } else {
+      const selectedOption = sizeSelector.options[sizeSelector.selectedIndex];
+      maxQuantity = parseInt(selectedOption.getAttribute("data-quantity"), 10);
+    }
 
     // Clear existing options
     quantitySelector.innerHTML = "";
 
     // Add new options based on the selected size's quantity
+
     for (let i = 1; i <= Math.min(10, maxQuantity); i++) {
       const option = document.createElement("option");
       option.value = i;

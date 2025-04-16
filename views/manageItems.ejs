@@ -11,24 +11,29 @@
         <p>Quantity: <%= items[i].quantity %></p>
         <p>Description: <%= items[i].description %></p>
         <img src="<%= items[i].image %>" />
-        <a href="/editItem/<%= items[i].id %>" class="manage-item-link"
-          ><strong>Edit Content</strong></a
-        >
-        <a
-          href="#"
-          onclick="confirmDelete('<%= items[i].id %>')"
-          class="manage-item-link"
-          ><strong>Delete</strong></a
-        >
-        <script>
-          function confirmDelete(itemId) {
-            if (confirm("Are you sure you want to delete this item?")) {
-              window.location.href = "/deleteItem/" + itemId;
+        <div class="item-link-wrapper">
+          <a href="/editItem/<%= items[i].id %>" class="manage-item-link"
+            ><strong>Edit Content</strong></a
+          >
+          <a
+            href="#"
+            onclick="confirmDelete('<%= items[i].id %>')"
+            class="manage-item-link"
+            ><strong>Delete</strong></a
+          >
+          <script>
+            function confirmDelete(itemId) {
+              if (confirm("Are you sure you want to delete this item?")) {
+                window.location.href = "/deleteItem/" + itemId;
+              }
             }
-          }
-        </script>
+          </script>
+        </div>
       </div>
       <% } %>
+      <div class="item" id="item-add" onclick="window.location.href='/addItem'">
+        <h1>+</h1>
+      </div>
     </div>
   </div>
 </main>

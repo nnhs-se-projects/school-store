@@ -1,5 +1,4 @@
-.wrapper{
-  
+.wrapper {
 }
 
 table {
@@ -13,7 +12,7 @@ table {
 
 th {
   border: 2px solid;
-  color: #FF4800;
+  color: #ff4800;
   font-size: 20px;
   width: 200px;
   height: 40px;
@@ -21,7 +20,7 @@ th {
 
 tr {
   border: 2px solid;
-  color: #FF4800;
+  color: #ff4800;
   font-family: Arial, sans-serif;
   background-color: #dfdfdf;
 }
@@ -29,7 +28,7 @@ tr {
 h1 {
   display: flex;
   font-size: 4em;
-  color: #FF4800;
+  color: #ff4800;
   font-family: Arial, sans-serif;
   justify-content: center;
 }
@@ -61,5 +60,5 @@ a.admin-link#addItem:hover {
 }
 
 a.admin-link#inventoryprint {
-  background-color: #01447a
+  background-color: #01447a;
 }

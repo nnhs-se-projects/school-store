@@ -23,14 +23,6 @@
         value="<%- item.price %>"
         required
       />
-      <label for="quantity">Quantity</label>
-      <input
-        type="number"
-        id="quantity"
-        name="quantity"
-        value="<%- item.quantity %>"
-        required
-      />
       <label for="description">Description</label>
       <input
         type="text"
@@ -51,7 +43,8 @@
 
       <h2>Sizes</h2>
       <div id="sizes">
-        <% if (item.sizes) { %> <% for (let size in item.sizes) { %>
+        <% if (item.sizes.placeholder === undefined) { %> <% for (let size in
+        item.sizes) { %>
         <div class="size-entry">
           <input type="text" class="size" value="<%= size %>" />
           <input
@@ -62,10 +55,18 @@
           <button type="button" class="delete-size">- Remove Size</button>
         </div>
         <% } %> <% } else { %>
-        <p>No sizes available.</p>
+        <label>Quantity</label>
+        <input
+          type="number"
+          class="quantity"
+          value="<%= item.sizes.placeholder %>"
+        />
         <% } %>
       </div>
+
+      <% if (item.sizes.placeholder === undefined) { %>
       <button id="add-size" type="button">Add Size</button>
+      <% } %>
 
       <input type="submit" class="submit" value="Save Edits" />
     </div>
