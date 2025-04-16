@@ -38,6 +38,10 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: false,
       },
+      price: {
+        type: mongoose.Types.Decimal128,
+        required: false,
+      },
     },
   ],
 });
