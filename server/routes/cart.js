@@ -303,4 +303,26 @@ route.get("/orderViewer", async (req, res) => {
   res.render("orderViewer", { orders });
 });
 
+route.post("/deleteOrder", async (req, res) => {
+  const orderId = req.body.orderId;
+  try {
+    await Order.findByIdAndDelete(orderId);
+    res.status(200).send("Order deleted successfully");
+  } catch (error) {
+    console.error("Error deleting order:", error);
+    res.status(500).send("Error deleting order");
+  }
+});
+
+route.post("/checkOffOrder", async (req, res) => {
+  const orderId = req.body.orderId;
+  console.log("orderId: " + orderId);
+  const orderToUpdate = await Order.findById(orderId);
+  if (!orderToUpdate) {
+    return res.status(404).send("Order not found");
+  }
+  orderToUpdate.orderStatus = "completed";
+  await orderToUpdate.save();
+});
+
 module.exports = route;

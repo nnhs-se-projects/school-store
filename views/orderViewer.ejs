@@ -14,6 +14,9 @@
           <th>Date</th>
           <th>Period</th>
           <th>Total Price</th>
+          <th>Check off Order</th>
+          <th>Cancel Order</th>
+          <th>Status</th>
         </tr>
       </thead>
       <tbody>
@@ -29,6 +32,17 @@
           <td><%= orders[i].date %></td>
           <td><%= orders[i].period %></td>
           <td>$<%= orders[i].totalPrice %></td>
+          <td>
+            <button class="check-off-order" order-id="<%=orders[i].id%>">
+              Check off Order
+            </button>
+          </td>
+          <td>
+            <button class="delete-order" order-id="<%=orders[i].id%>">
+              Cancel Order
+            </button>
+          </td>
+          <td class="status"><%= orders[i].orderStatus %></tr>
         </tr>
         <% } %>
       </tbody>
