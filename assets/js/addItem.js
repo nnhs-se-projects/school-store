@@ -108,7 +108,6 @@ const addSizeButton = document.querySelector("button#add-size");
 const sizesContainer = document.querySelector(".size-entry");
 
 addSizeButton.addEventListener("click", (event) => {
-  alert("Size added");
   const sizeEntry = document.createElement("div");
   sizeEntry.classList.add("size-entry");
 

@@ -17,12 +17,13 @@
           <th>Check off Order</th>
           <th>Cancel Order</th>
           <th>Status</th>
+          <th>View Items</th>
         </tr>
       </thead>
       <tbody>
         <% for (let i = 0; i < orders.length; i++) { %>
         <tr
-          id="order-<%= i %>"
+          id="order-<%=i%>"
           class="order-row"
           data-items="<%= JSON.stringify(orders[i].items) %>"
         >
@@ -34,7 +35,9 @@
           <td>$<%= orders[i].totalPrice %></td>
           <td>
             <button class="check-off-order" order-id="<%=orders[i].id%>">
-              Check off Order
+              <% if (orders[i].orderStatus === 'completed') { %>
+              <span class="checked-off">Checked Off</span>
+              <% } else { %> Check off Order <% } %>
             </button>
           </td>
           <td>
@@ -42,7 +45,8 @@
               Cancel Order
             </button>
           </td>
-          <td class="status"><%= orders[i].orderStatus %></tr>
+          <td class="status"><%= orders[i].orderStatus %></td>
+          <td><button class="view-items">View Items</button></td>
         </tr>
         <% } %>
       </tbody>
