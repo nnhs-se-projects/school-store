@@ -230,6 +230,25 @@ route.post("/cart/order", async (req, res) => {
     year: "2-digit",
   });
 
+  // change inventory quantities
+  for (let i = 0; i < user.cart.length; i++) {
+    const item = await Item.findById(user.cart[i].itemId);
+    if (item) {
+      // console.log("size index: " + user.cart[i].sizeIndex);
+      // console.log("quant ordered: " + user.cart[i].quantity);
+      console.log("inventory amount: " + item.sizes[user.cart[i].size]);
+      item.sizes[user.cart[i].size] -= user.cart[i].quantity;
+      await item.save();
+      console.log(
+        "Updated inventory for item: ",
+        item.name,
+        item.sizes[user.cart[i].sizeIndex]
+      );
+    } else {
+      console.log("Item not found in inventory: ", user.cart[i].itemId);
+    }
+  }
+
   user.cart = [];
   await user.save();
   res.status(200).send("Order placed");
@@ -244,12 +263,14 @@ route.post("/cart/order", async (req, res) => {
 
   // send email to user
   // Configure the transporter
+
+  const adminEmail = "napervillenorthschoolstore@gmail.com";
   console.log(process.env.EMAIL_PASSWORD);
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "kieranhome8@gmail.com", // Replace with your email
-      pass: process.env.EMAIL_PASSWORD, // Replace with your email password or app password
+      user: "napervillenorthschoolstore@gmail.com",
+      pass: process.env.EMAIL_PASSWORD,
     },
   });
 
@@ -260,9 +281,9 @@ route.post("/cart/order", async (req, res) => {
 
   // Email details
   const userMailOptions = {
-    from: "kieranhome8@gmail.com", // Replace with your email
+    from: adminEmail, // Replace with your email
     to: user.email, // Send to the user's email
-    subject: "NNHS School Store Order Confirmation",
+    subject: "Order Confirmation",
     text: userEmailText,
   };
 
@@ -280,8 +301,8 @@ route.post("/cart/order", async (req, res) => {
 
   // send email to admin
   const volunteerMailOptions = {
-    from: "kieranhome8@gmail.com",
-    to: "kieranhome8@gmail.com",
+    from: adminEmail,
+    to: adminEmail,
     subject: "New Order Received",
     text: volunteerMailText,
   };
@@ -292,6 +313,8 @@ route.post("/cart/order", async (req, res) => {
   } catch (error) {
     console.error("Error sending email:", error);
   }
+
+  console.log("Order placed successfully and emails sent");
 });
 
 route.get("/cart/confirmation", async (req, res) => {
