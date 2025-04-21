@@ -322,6 +322,7 @@ route.post("/checkOffOrder", async (req, res) => {
     return res.status(404).send("Order not found");
   }
   orderToUpdate.orderStatus = "completed";
+  res.status(200).send("Order checked off successfully");
   await orderToUpdate.save();
 });
 

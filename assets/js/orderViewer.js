@@ -32,13 +32,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     let html =
-      "<table class='items-table'><thead><tr><th>Item Name</th><th>Size</th><th>Quantity</th><th>Price</th></tr></thead><tbody>";
+      "<table class='items-table'><thead><tr><th>Item Name</th><th>Size</th><th>Quantity</th></tr></thead><tbody>";
     items.forEach((item) => {
       html += `<tr>
         <td>${item.name}</td>
         <td>${item.size}</td>
         <td>${item.quantity}</td>
-        <td>$${item.price}</td>
       </tr>`;
     });
     html += "</tbody></table>";

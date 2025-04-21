@@ -37,3 +37,7 @@ tr:nth-child(even) {
   background-color: #f2f2f2;
   font-weight: bold;
 }
+
+.order-row-completed {
+  background-color: #00b82b; /* Light green for completed orders */
+}

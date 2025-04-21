@@ -24,7 +24,7 @@
         <% for (let i = 0; i < orders.length; i++) { %>
         <tr
           id="order-<%=i%>"
-          class="order-row"
+          class="order-row-<%=orders[i].orderStatus%>"
           data-items="<%= JSON.stringify(orders[i].items) %>"
         >
           <td><%= orders[i].name %></td>
