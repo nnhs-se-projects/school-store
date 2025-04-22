@@ -28,6 +28,7 @@
       <h2>Total: $<%= total.toFixed(2) %></h2>
     </div>
     <h1>All orders must be paid for IN CASH at the time of pickup at the school store.</h1>
+    <div class = input-box>
     <div class="user-inputs">
       <label for="pickup-date">Select Pickup Date:</label>
       <input type="date" id="pickup-date" name="pickup-date" required min="<%= new Date(Date.now() + 86400000).toISOString().split('T')[0] %>" />
@@ -39,7 +40,8 @@
         <option value="6">6th</option>
       </select>
     </div>
-    <button id="checkout-button" class="checkout-button" >Place Order</button>
+    </div>
+    <button id="place-order-button" class="checkout-button" >Place Order</button>
     <input type="hidden" id="googleId" value="<%= session.user.googleId %>" />
     <input type="hidden" id="total-cost" value="<%= total.toFixed(2) %>" />
   </div>
