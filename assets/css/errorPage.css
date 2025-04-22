@@ -1,0 +1,28 @@
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+}
+
+h1 {
+  font-weight: bold;
+  font-size: 2em;
+  text-align: center;
+}
+
+a {
+  color: #ffffff;
+  background-color: black;
+  border: 2px solid #ffffff;
+  border-radius: 5px;
+  padding: 10px 20px;
+  margin: 20px auto;
+  width: 200px;
+  text-decoration: none;
+  font-size: 1.2em;
+  display: block;
+  text-align: center;
+  margin-top: 20px;
+}

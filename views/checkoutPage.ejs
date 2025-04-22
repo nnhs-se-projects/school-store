@@ -1,0 +1,55 @@
+<!-- include header -->
+<%- include('include/_header') %>
+<!-- /include header -->
+
+<!-- Main Site -->
+
+<link href="/css/cart.css" rel="stylesheet" />
+
+<main>
+  <h1>Order Summary</h1>
+  <div class="wrapper">
+    <% let total = 0; %>
+    <ul class="cart-list">
+      <% for (let i = 0; i < cart.length; i++) { %>
+      <li class="cart-item">
+        <div class="cart-item-details">
+          <div class="cart-item-content">
+            <h2><%= cart[i].name %></h2>
+            <p>Size: <%= cart[i].size %></p>
+            <p>Quantity: <%= cart[i].quantity %></p>
+          <% total += cart[i].price * cart[i].quantity; %>
+          <p>Total: $<%= (cart[i].price * cart[i].quantity).toFixed(2) %></p>
+        </div>
+      </li>
+      <% } %>
+    </ul>
+    <div class="cart-summary">
+      <h2>Total: $<%= total.toFixed(2) %></h2>
+    </div>
+    <h1>All orders must be paid for IN CASH at the time of pickup at the school store.</h1>
+    <div class="user-inputs">
+      <label for="pickup-date">Select Pickup Date:</label>
+      <input type="date" id="pickup-date" name="pickup-date" required min="<%= new Date(Date.now() + 86400000).toISOString().split('T')[0] %>" />
+      <label for="pickup-time">Select Pickup Period:</label>
+      <select id="pickup-time" name="pickup-time" required>
+        <option value="" disabled selected>Select a period</option>
+        <option value="4">4th</option>
+        <option value="5">5th</option>
+        <option value="6">6th</option>
+      </select>
+    </div>
+    <button id="checkout-button" class="checkout-button" >Place Order</button>
+    <input type="hidden" id="googleId" value="<%= session.user.googleId %>" />
+    <input type="hidden" id="total-cost" value="<%= total.toFixed(2) %>" />
+  </div>
+</main>
+
+
+<!-- /Main Site -->
+
+<script src="/js/checkout.js"></script>
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->

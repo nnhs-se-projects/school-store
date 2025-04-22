@@ -37,20 +37,29 @@
 
 
   <% if (session && session.clearance >= 2) { %>
-
     <div class = "item-list"> 
       <% items.forEach(function(item) { %>
         <div class = "item" onclick= "window.location.href='/item/<%= item.id %>'">
           <img src="<%= item.image %>">
           <div class = "item-content">
           <h2><%= item.name %></h2>
-          <p>Price: $<%= item.price %></p>
+          <h3>Price: $<%= item.price %></h3>
           <p>Description: <%= item.description %></p>
           </div>
       </div>
       <% }) %>
     </div>
-  <% } else { %>
+    <% } else if (session && session.clearance >= 1) { %>
+    <div class = "item-list"> 
+      <% items.forEach(function(item) { %>
+        <div class = "item" id = "not-logged-in-as-student">
+          <img src="<%= item.image %>">
+          <div class = "item-content">
+          <h2><%= item.name %></h2>
+          <p>Price: $<%= item.price %></p>
+          </div>
+      </div>
+     <% }) } else { %>
     <div class = "item-list"> 
       <% items.forEach(function(item) { %>
         <div class = "item" id = "not-logged-in">
@@ -75,9 +84,17 @@
 
 <script>
   let notLoggedInItems = document.querySelectorAll("#not-logged-in");
+  let notLoggedInAsStudentItems = document.querySelectorAll("#not-logged-in-as-student");
+
   notLoggedInItems.forEach(item => {
     item.addEventListener("click", function() {
       alert("Please log in to view item details.");
+    });
+  });
+
+  notLoggedInAsStudentItems.forEach(item => {
+    item.addEventListener("click", function() {
+      alert("Please log in as a student to view item details.");
     });
   });
 </script>
