@@ -1,0 +1,59 @@
+<%- include('include/_header') %>
+
+<link rel="stylesheet" href="/css/orderViewer.css" />
+
+<main>
+  <div class="wrapper">
+    <h1>Student Orders</h1>
+    <table id="orders-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Number</th>
+          <th>Date</th>
+          <th>Period</th>
+          <th>Total Price</th>
+          <th>Check off Order</th>
+          <th>Cancel Order</th>
+          <th>Status</th>
+          <th>View Items</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (let i = 0; i < orders.length; i++) { %>
+        <tr
+          id="order-<%=i%>"
+          class="order-row"
+          data-items="<%= JSON.stringify(orders[i].items) %>"
+        >
+          <td><%= orders[i].name %></td>
+          <td><%= orders[i].email %></td>
+          <td><%= orders[i].orderNumber %></td>
+          <td><%= orders[i].date %></td>
+          <td><%= orders[i].period %></td>
+          <td>$<%= orders[i].totalPrice %></td>
+          <td>
+            <button class="check-off-order" order-id="<%=orders[i].id%>">
+              <% if (orders[i].orderStatus === 'completed') { %>
+              <span class="checked-off">Checked Off</span>
+              <% } else { %> Check off Order <% } %>
+            </button>
+          </td>
+          <td>
+            <button class="delete-order" order-id="<%=orders[i].id%>">
+              Cancel Order
+            </button>
+          </td>
+          <td class="status"><%= orders[i].orderStatus %></td>
+          <td><button class="view-items">View Items</button></td>
+        </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<%- include('include/_footer') %>
+
+<script src="/js/orderViewer.js"></script>
