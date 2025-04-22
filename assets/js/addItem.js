@@ -43,6 +43,7 @@ submitButton.addEventListener("click", async () => {
       const ctx = canvas.getContext("2d");
 
       // Set canvas size to:
+
       const height = 600;
       const width = 600;
 
