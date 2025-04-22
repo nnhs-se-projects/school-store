@@ -5,37 +5,47 @@
 <div class="wrapper">
   <img class="item-image" src="<%= item.image %>" />
 
-  <div class="item-content">
-    <h1><strong><%= item.name %></strong></h1>
-    <p>Price: $<%= item.price %></p>
-    <p>Description: <%= item.description %></p>
+  <div class="item-info">
+    <div class="item-content">
+      <h1><strong><%= item.name %></strong></h1>
+      <p>Price: $<%= item.price %></p>
+      <p>Description: <%= item.description %></p>
 
-    <div class="size-selector">
-      <label for="size">Select size:</label>
-      <select id="size" name="size">
-        <% if (item.sizes) { %> <% for (let size in item.sizes) { %>
-        <option value="<%= size %>"><%= size %></option>
-        <% } %> <% }%>
-      </select>
+      <% if (item.sizes.placeholder === undefined) { %>
+      <div class="size-selector">
+        <label for="size">Type:</label>
+        <select id="size" name="size">
+          <% for (let size in item.sizes) { %>
+          <option value="<%= size %>" data-quantity="<%= item.sizes[size] %>">
+            <%= size %>
+          </option>
+          <% } %>
+        </select>
+        <% }%>
+      </div>
     </div>
 
-    <label>Quantity</label>
-    <input
-      class="quantity"
-      type="number"
-      name="quantity"
-      value="1"
-      min="1"
-      max="100"
-    />
-    <input
-      type="submit"
-      id="add-to-cart-button"
-      class="submit"
-      value="Add to Cart"
-    />
+    <div class="item-actions">
+      <div class="quantity-selector">
+        <label for="quantity" id="quantity-label">Quantity:</label>
+        <select id="quantity">
+          <% for (let i = 1; i <= Math.min(10, item.sizes[0]); i++) { %>
+          <option value="<%= i %>"><%= i %></option>
+          <% } %>
+        </select>
+      </div>
+      <input
+        type="submit"
+        id="add-to-cart"
+        class="submit"
+        value="Add to Cart"
+      />
+    </div>
   </div>
-  <input type="hidden" id="item-id" value="<%= item._id %>" />
 </div>
+<input type="hidden" id="itemId" value="<%= item.id %>" />
+<input type="hidden" id="googleId" value="<%= session.user.googleId %>" />
+
+<script src="/js/itemPage.js"></script>
 
 <%- include('include/_footer') -%>

@@ -4,6 +4,8 @@
 
 <!-- Main Site -->
 
+<link href="/css/cart.css" rel="stylesheet" />
+
 <main>
   <div class="wrapper">
     <h1>Cart</h1>
@@ -11,24 +13,53 @@
     <ul class="cart-list">
       <% for (let i = 0; i < cart.length; i++) { %>
       <li class="cart-item">
-        <div
-          class="cart-item-details"
-          onclick="window.location.href='/item/' + '<%= cart[i].id %>'"
-        >
-          <h2><%= cart[i].name %></h2>
-          <img src="<%= cart[i].image %>" alt="<%= cart[i].name %>" />
-          <p><%= cart[i].description %></p>
-          <p>Quantity: <%= cart[i].quantity %></p>
+        <div class="cart-item-details">
+          <img
+            src="<%= cart[i].image %>"
+            alt="<%= cart[i].name %>"
+            onclick="window.location.href = '/item/' + '<%= cart[i].id %>' "
+          />
+          <div class="cart-item-content">
+            <h2><%= cart[i].name %></h2>
+            <p>Size: <%= cart[i].size %></p>
+
+            <div class="cart-item-actions">
+              <!-- Button that display quantity selected and can increment/decrease the quantity the user wants to select of each item-->
+              <div class="quantity-button-label">
+                <label for="quantity-<%= cart[i].id %>"
+                  ><strong>Quantity:</strong></label
+                >
+                <div class="quantity-button">
+                  <span
+                    class="quantity-button-within"
+                    id="decrease"
+                    data-id="<%= cart[i].id %>"
+                    data-index="<%= i %>"
+                    >-</span
+                  >
+                  <span class="quantity-selected"><%= cart[i].quantity %></span>
+                  <span
+                    class="quantity-button-within"
+                    id="increase"
+                    data-id="<%= cart[i].id %>"
+                    data-index="<%= i %>"
+                    >+</span
+                  >
+                </div>
+              </div>
+
+              <button
+                class="remove-button"
+                id="remove"
+                data-id="<%= cart[i].id %>"
+                data-index="<%= i %>"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
           <% total += cart[i].price * cart[i].quantity; %>
           <p>Total: $<%= (cart[i].price * cart[i].quantity).toFixed(2) %></p>
-        </div>
-        <div class="cart-item-actions">
-          <button class="update-quantity" data-id="<%= cart[i].id %>">
-            Update Quantity
-          </button>
-          <button class="remove-item" data-id="<%= cart[i].id %>">
-            Remove
-          </button>
         </div>
       </li>
       <% } %>
@@ -40,7 +71,8 @@
       <h2>Total: $<%= total.toFixed(2) %></h2>
       <button id="checkout" class="checkout-button">Checkout</button>
     </div>
-    <input type="hidden" id="warning" value="<%= warn %>" />
+    <input type="hidden" id="warningOOS" value="<%= warnOOS %>" />
+    <input type="hidden" id="warningQuant" value="<%= warnQuant %>" />
     <input type="hidden" id="googleId" value="<%= session.user.googleId %>" />
   </div>
 </main>

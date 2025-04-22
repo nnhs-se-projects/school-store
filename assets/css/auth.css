@@ -1,7 +1,18 @@
 /* styling for the authentication page */
 
+h1,
+h2,
+p {
+  text-align: center;
+}
+
+p {
+  font-size: 1.2rem;
+}
+
 .authForm {
   display: flex;
+  margin: auto;
   flex-direction: column;
   flex-wrap: nowrap;
   justify-content: center;

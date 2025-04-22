@@ -7,10 +7,10 @@
 const express = require("express");
 const route = express.Router();
 
-const { adminEmails } = require("../../whitelist.json");
+const { adminEmails, volunteerEmails } = require("../../whitelist.json");
 
 const CLIENT_ID =
-  "1022838194773-p8g5ac0qr11mfko61qurgnqdb9jitpjf.apps.googleusercontent.com";
+  "409921621424-4at7hadkvuvrcvjh25fvgggqkahk78eh.apps.googleusercontent.com";
 
 // from: https://developers.google.com/identity/gsi/web/guides/verify-google-id-token#node.js
 const { OAuth2Client } = require("google-auth-library");
@@ -23,19 +23,39 @@ async function verify(token) {
     audience: CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
   });
   const { sub, email, name } = ticket.getPayload();
-  console.log(sub, email, name);
-  const isAdmin = adminEmails.includes(email);
-  console.log("isAdmin: ", isAdmin);
-  return { googleId: sub, email, name, isAdmin };
-}
 
-route.get("/", (req, res) => {
-  res.render("auth");
-});
+  const domain = email.split("@")[1];
+  const isAdmin = adminEmails.includes(email);
+  const isVolunteer = volunteerEmails.includes(email);
+
+  let clearance = 0;
+  // Clearance 0 is used for people who don't login, should have same permissions as clearance 1
+
+  if (isAdmin) {
+    // Users have the ability to access all systems, including but not limited to viewing orders and managing inventory
+    console.log("Admin email: ", email);
+    clearance = 4;
+  } else if (isVolunteer) {
+    // Users have the ability to view orders, but can't manage inventory
+    console.log("Volunteer email: ", email);
+    clearance = 3;
+  } else if (domain.endsWith("naperville203.org")) {
+    // Users have the ability to place orders, but can't view orders or manage inventory
+    console.log("203 email: ", email);
+    clearance = 2;
+  } else {
+    // Only used in the case a user logs in and is not a student. Cannot place orders, but can view store
+    console.log("Non-student email: ", email);
+    clearance = 1;
+  }
+
+  console.log("Clearance: ", clearance);
+  return { googleId: sub, email, name, clearance };
+}
 
 route.post("/", async (req, res) => {
   try {
-    const { googleId, email, name, isAdmin } = await verify(
+    const { googleId, email, name, clearance } = await verify(
       req.body.credential
     );
     let user = await User.findOne({ googleId });
@@ -46,18 +66,8 @@ route.post("/", async (req, res) => {
       await user.save();
     }
     req.session.email = email;
-    req.session.isAdmin = isAdmin;
+    req.session.clearance = clearance;
     req.session.user = user;
-    /** 
-    const newItem = new Item({
-      name: "Shirt",
-      price: 11.8,
-      quantity: 11,
-      description: "A shirt",
-      image: "shirt.jpg",
-    });
-    await newItem.save();
-    */
 
     req.session.save((err) => {
       if (err) {

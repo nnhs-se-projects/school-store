@@ -1,0 +1,170 @@
+h1 {
+  display: flex;
+  font-size: 4em;
+  font-family: Arial, sans-serif;
+  margin-left: 20px;
+  border-bottom: solid 1px #002f55;
+}
+
+.cart-item-content {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  flex-direction: column;
+}
+
+.cart-list {
+  list-style: none;
+  padding: 0;
+  margin-left: 20px;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Align items to the left */
+  flex-direction: row;
+  border: solid 1px #ccc; /* Optional: border around each item */
+  padding: 10px;
+  margin: 10px 0; /* Space between items */
+}
+
+.cart-item img {
+  width: 200px; /* Set a fixed width for the image */
+  height: auto; /* Set a fixed height for the image */
+  object-fit: cover; /* Ensure the image covers the area */
+  margin-right: 20px; /* Add some space between the image and the details */
+  border: solid, 2px, black;
+}
+
+.cart-item-details {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.cart-item-details h1 {
+  font-size: 1.5em;
+  color: #333;
+  margin: 0;
+}
+
+.cart-item-details p {
+  margin: 5px 0;
+  color: #555;
+}
+
+.cart-item-content {
+  display: flex;
+  justify-content: space-between; /* Space between image and details */
+  width: 100%; /* Ensure it takes full width */
+  flex-direction: column;
+}
+
+.cart-item-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  gap: 100%;
+}
+
+.quantity-button-label {
+  display: flex;
+  flex-direction: column;
+}
+
+.quantity-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+}
+
+.quantity-button-within {
+  position: relative;
+  z-index: 10;
+  cursor: pointer;
+}
+.quantity-button-within#decrease {
+  background-color: rgb(218, 213, 213);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  border: solid, 1px, black;
+}
+
+.quantity-button-within#increase {
+  background-color: rgb(218, 213, 213);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  border: solid, 1px, black;
+}
+
+.remove-button {
+  width: 100px; /* Set desired width */
+  height: 50px; /* Set desired height */
+  padding: 10px; /* Adjust padding if needed */
+  border: none; /* Remove default border */
+  background-color: rgb(255, 98, 98); /* Set background color */
+  cursor: pointer; /* Change cursor on hover */
+  font-weight: bold; /* Make text bold */
+  color: white; /* Set text color */
+  border: solid, 1px, black;
+  border-radius: 5px; /* Optional: add rounded corners */
+}
+
+.cart-summary {
+  border: solid, 1px, black;
+  padding: 20px;
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.checkout-button {
+  width: 200px; /* Set desired width */
+  height: 50px; /* Set desired height */
+  padding: 10px; /* Adjust padding if needed */
+  border: none; /* Remove default border */
+  cursor: pointer; /* Change cursor on hover */
+  font-weight: bold; /* Make text bold */
+  color: black; /* Set text color */
+  border: solid, 1px, black;
+  border-radius: 5px; /* Optional: add rounded corners */
+}
+
+/* Ensure the cart-item layout adapts for smaller screens */
+@media (max-width: 768px) {
+  .cart-item {
+    flex-direction: column; /* Stack items vertically */
+    align-items: flex-start; /* Align items to the left */
+  }
+
+  .cart-item img {
+    margin-bottom: 10px; /* Add spacing below the image */
+  }
+
+  .cart-item-details {
+    width: 100%; /* Ensure details take full width */
+  }
+
+  .cart-item-actions {
+    flex-direction: column; /* Stack actions vertically */
+    align-items: flex-start; /* Align actions to the left */
+    gap: 10px; /* Reduce gap between actions */
+    width: 100%; /* Ensure actions take full width */
+  }
+
+  .remove-button {
+    align-self: flex-start; /* Push the button to the left */
+    width: 100%; /* Make the button full width for better usability */
+  }
+}
