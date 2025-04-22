@@ -206,7 +206,7 @@ h1 {
   box-sizing: border-box; /* Ensure padding is included in width */
 }
 
-#place-order-button {
+#checkout-button {
   margin: 20px 0; /* Add some space above and below the button */
   width: 100%; /* Make the button full width for better usability */
   display: flex;
