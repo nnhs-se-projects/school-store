@@ -6,11 +6,23 @@
 
 // eslint-disable-next-line no-unused-vars
 
-const cartButton = document.querySelector("#alert-button");
+const cartButtonNotLoggedIn = document.querySelector("#alert-button-2");
 
-cartButton.addEventListener("click", () => {
-  alert("You need to log in before you can access the cart page");
-});
+const cartButtonLoggedInStudent = document.querySelector("#alert-button-1");
+
+if (cartButtonNotLoggedIn) {
+  cartButtonNotLoggedIn.addEventListener("click", () => {
+    alert("You need to log in before you can access the cart page");
+  });
+}
+
+if (cartButtonLoggedInStudent) {
+  cartButtonLoggedInStudent.addEventListener("click", () => {
+    alert(
+      "You need to log in as a student before you can access the cart page"
+    );
+  });
+}
 
 async function handleCredentialResponse(res) {
   await fetch("/auth", {

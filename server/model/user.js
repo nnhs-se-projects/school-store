@@ -34,6 +34,14 @@ const UserSchema = new mongoose.Schema({
         type: Number,
         required: false,
       },
+      name: {
+        type: String,
+        required: false,
+      },
+      price: {
+        type: mongoose.Types.Decimal128,
+        required: false,
+      },
     },
   ],
 });

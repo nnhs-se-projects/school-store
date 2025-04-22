@@ -3,18 +3,19 @@ const route = express.Router();
 
 const User = require("../model/user");
 const Item = require("../model/item");
+const Order = require("../model/order");
+const nodemailer = require("nodemailer");
 
 function isStudent(req, res, next) {
   // check if the session exists (user is logged in), and if they are an admin
   if (req.session && req.session.clearance >= 2) {
     return next(); // Allow access to the next middleware or route
   } else {
-    return res.status(403).send(`
-        <script>
-          alert("Forbidden: You must be a student to access this page.");
-          window.location.href = "/"; // Redirect to the homepage or another page
-        </script>
-      `);
+    return res.status(403).render("errorPage", {
+      title: "Access Denied",
+      message: "Forbidden: You do not have access to this page.",
+      redirectUrl: "/",
+    });
   }
 }
 
@@ -112,7 +113,7 @@ route.post("/cart/add", async (req, res) => {
       parseInt(user.cart[itemIndex].quantity) + parseInt(quantity);
   } else {
     // If item does not exist in the cart, add it
-    user.cart.push({ itemId, quantity, size, sizeIndex });
+    user.cart.push({ itemId, quantity, size, sizeIndex, name: item.name });
   }
 
   await item.save();
@@ -160,6 +161,164 @@ route.post("/cart/updateQuant", async (req, res) => {
 
   await user.save();
   res.status(200).send("Item quantity updated in cart");
+});
+
+route.get("/cart/checkout", async (req, res) => {
+  const user = await User.findOne({
+    googleId: req.session.user.googleId,
+  });
+  if (!user) {
+    return res.status(404).send("User not found");
+  }
+
+  const cartItems = [];
+  for (let i = 0; i < user.cart.length; i++) {
+    const item = await Item.findById(user.cart[i].itemId);
+    if (item) {
+      cartItems.push({
+        id: item._id,
+        name: item.name,
+        price: item.price,
+        size: user.cart[i].size,
+        quantity: user.cart[i].quantity,
+        image: item.image,
+      });
+    }
+  }
+
+  res.render("checkoutPage", { cart: cartItems });
+});
+
+route.post("/cart/order", async (req, res) => {
+  console.log("Placing order");
+  const { googleId, pickUpDate, pickUpPeriod, totalCost } = req.body;
+
+  const user = await User.findOne({ googleId });
+
+  if (!user) {
+    return res.status(404).send("User not found");
+  }
+
+  // generate order number
+  const orderNum = Math.floor(Math.random() * 1000000);
+
+  const order = {
+    name: user.name,
+    email: user.email,
+    date: pickUpDate,
+    period: pickUpPeriod,
+    totalPrice: totalCost,
+    orderNumber: orderNum,
+    orderStatus: "pending",
+    items: user.cart,
+  };
+
+  console.log("Order details:", order);
+
+  const newOrder = new Order(order);
+  try {
+    await newOrder.save();
+  } catch (error) {
+    console.error("Error saving order:", error);
+    return res.status(500).send("Error placing order");
+  }
+
+  const unformattedDate = new Date(order.date);
+  const date = unformattedDate.toLocaleDateString("en-US", {
+    month: "2-digit",
+    day: "2-digit",
+    year: "2-digit",
+  });
+
+  // change inventory quantities
+  for (let i = 0; i < user.cart.length; i++) {
+    const item = await Item.findById(user.cart[i].itemId);
+    if (item) {
+      // console.log("size index: " + user.cart[i].sizeIndex);
+      // console.log("quant ordered: " + user.cart[i].quantity);
+      console.log("inventory amount: " + item.sizes[user.cart[i].size]);
+      item.sizes[user.cart[i].size] -= user.cart[i].quantity;
+      await item.save();
+      console.log(
+        "Updated inventory for item: ",
+        item.name,
+        item.sizes[user.cart[i].sizeIndex]
+      );
+    } else {
+      console.log("Item not found in inventory: ", user.cart[i].itemId);
+    }
+  }
+
+  user.cart = [];
+  await user.save();
+  res.status(200).send("Order placed");
+
+  function printOrder(order) {
+    let orderDetails = `Student: ${order.name}\nEmail: ${order.email}\nPickup Date: ${date}\nPickup Period: ${order.period}\nTotal Cost: $${order.totalPrice}\nItems:\n`;
+    for (let i = 0; i < order.items.length; i++) {
+      orderDetails += `- ${order.items[i].quantity} x ${order.items[i].size} ${order.items[i].name}\n`;
+    }
+    return orderDetails;
+  }
+
+  // send email to user
+  // Configure the transporter
+
+  const adminEmail = "napervillenorthschoolstore@gmail.com";
+  console.log(process.env.EMAIL_PASSWORD);
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "napervillenorthschoolstore@gmail.com",
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+
+  const userEmailText =
+    `Thank you for your order, ${user.name}!\n\nPlease bring CASH as well as your student ID to the school store to pay for your order at your designated date and period.\n\n` +
+    printOrder(order) +
+    `We appreciate your business!`;
+
+  // Email details
+  const userMailOptions = {
+    from: adminEmail, // Replace with your email
+    to: user.email, // Send to the user's email
+    subject: "Order Confirmation",
+    text: userEmailText,
+  };
+
+  try {
+    await transporter.sendMail(userMailOptions);
+    console.log("Order confirmation email sent to user");
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
+
+  const volunteerMailText =
+    `New order received!\n\n` +
+    printOrder(order) +
+    `\n\nPlease check the order panel for more details.`;
+
+  // send email to admin
+  const volunteerMailOptions = {
+    from: adminEmail,
+    to: adminEmail,
+    subject: "New Order Received",
+    text: volunteerMailText,
+  };
+
+  try {
+    await transporter.sendMail(volunteerMailOptions);
+    console.log("Order notification email sent to admin");
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
+
+  console.log("Order placed successfully and emails sent");
+});
+
+route.get("/cart/confirmation", async (req, res) => {
+  res.render("confirmationPage");
 });
 
 module.exports = route;
