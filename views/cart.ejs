@@ -38,6 +38,8 @@
                     >-</span
                   >
                   <span class="quantity-selected"><%= cart[i].quantity %></span>
+                  <% if (maxQuantity[i] - cart[i].quantity <= 0) { %> <% } else
+                  { %>
                   <span
                     class="quantity-button-within"
                     id="increase"
@@ -45,9 +47,9 @@
                     data-index="<%= i %>"
                     >+</span
                   >
+                  <% } %>
                 </div>
               </div>
-
               <button
                 class="remove-button"
                 id="remove"

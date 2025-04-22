@@ -42,6 +42,8 @@ submitButton.addEventListener("click", async () => {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
 
+      // Set canvas size to:
+
       const height = 600;
       const width = 600;
 
@@ -141,7 +143,6 @@ const addSizeButton = document.querySelector("button#add-size");
 const sizesContainer = document.querySelector(".size-entry");
 
 addSizeButton.addEventListener("click", (event) => {
-  alert("Size added");
   const sizeEntry = document.createElement("div");
   sizeEntry.classList.add("size-entry");
 
