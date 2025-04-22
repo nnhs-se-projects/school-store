@@ -34,6 +34,7 @@ li {
 .nav-links {
   list-style: none;
   align-items: center;
+  justify-content: center;
   margin: 0;
   padding: 0;
   display: flex;
@@ -116,7 +117,6 @@ button {
   border-radius: 4px;
   padding: 0 10px;
   cursor: pointer;
-  position: relative;
   text-decoration: none;
 
   /* Add these properties to match the link font */

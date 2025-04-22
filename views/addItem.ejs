@@ -79,6 +79,21 @@
   // }
 </script>
 
+<script>
+  function toggleSizeInput() {
+    const sizeInput = document.getElementById("size-input");
+    const checkBox = document.getElementById("sized-check");
+    const genericSizeInput = document.getElementById("generic-size-input");
+    if (checkBox.checked) {
+      sizeInput.style.display = "block";
+      genericSizeInput.style.display = "none";
+    } else {
+      sizeInput.style.display = "none";
+      genericSizeInput.style.display = "block";
+    }
+  }
+</script>
+
 <script src="/dist/addItem.bundle.js"></script>
 
 <%- include('include/_footer') %>
