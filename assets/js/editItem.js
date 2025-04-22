@@ -1,3 +1,5 @@
+import heic2any from "heic2any";
+
 const submitButton = document.querySelector("input.submit");
 const addSizeButton = document.getElementById("add-size");
 const sizesContainer = document.getElementById("sizes");
@@ -71,7 +73,34 @@ submitButton.addEventListener("click", async () => {
   };
 
   if (file) {
-    reader.readAsDataURL(file);
+    const fileType = file.type;
+    const fileName = file.name.toLowerCase();
+    if (fileType === "") {
+      // Check for HEIC in file name
+      const fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1);
+
+      if (fileExtension === "heic") {
+        try {
+          // Convert the HEIC file to JPEG using heic2any
+          const convertedBlob = await heic2any({
+            blob: file, // Input file as a Blob
+            toType: "image/jpeg", // Output format
+          });
+
+          // Read the converted Blob as a Data URL
+          reader.readAsDataURL(convertedBlob);
+        } catch (error) {
+          console.error("Error converting HEIC file:", error);
+        }
+      } else {
+        console.error("File type not supported");
+      }
+    } else {
+      // Current file types supported include:
+      // image/jpeg, image/png, image/webp, image/gif, image/avif
+      console.log("File type: ", file);
+      reader.readAsDataURL(file);
+    }
   } else {
     console.log(sizes);
     const item = {

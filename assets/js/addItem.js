@@ -1,3 +1,5 @@
+import heic2any from "heic2any";
+
 const submitButton = document.querySelector("input.submit");
 
 submitButton.addEventListener("click", async () => {
@@ -36,9 +38,11 @@ submitButton.addEventListener("click", async () => {
     img.src = reader.result;
 
     img.onload = async function () {
+      console.log("Image loaded successfully");
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
 
+      // Set canvas size to:
       const height = 600;
       const width = 600;
 
@@ -61,6 +65,8 @@ submitButton.addEventListener("click", async () => {
         sizes,
       };
 
+      console.log("Item object:", item);
+
       const response = await fetch("/addItem", {
         method: "POST",
         headers: {
@@ -78,7 +84,35 @@ submitButton.addEventListener("click", async () => {
   };
 
   if (file) {
-    reader.readAsDataURL(file);
+    const fileType = file.type;
+    const fileName = file.name.toLowerCase();
+    if (fileType === "") {
+      // Check for HEIC in file name
+      const fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1);
+
+      if (fileExtension === "heic") {
+        try {
+          // Convert the HEIC file to JPEG using heic2any
+          const convertedBlob = await heic2any({
+            blob: file, // Input file as a Blob
+            toType: "image/jpeg", // Output format
+          });
+
+          // Read the converted Blob as a Data URL
+          reader.readAsDataURL(convertedBlob);
+        } catch (error) {
+          console.error("Error converting HEIC file:", error);
+        }
+      } else {
+        // Mysterious file type? Implement support later on
+        console.error("File type not supported");
+      }
+    } else {
+      // Current file types supported include:
+      // image/jpeg, image/png, image/webp, image/gif, image/avif
+      console.log("File type: ", file);
+      reader.readAsDataURL(file);
+    }
   } else {
     const item = {
       name,
