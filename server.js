@@ -37,26 +37,17 @@ app.use(
   })
 );
 
-
-
-
 // app.post("/upload", upload.single("file"), (req, res) => {
 // 	// check whether req.file contains the file
 // 	// if not multer is failed to parse so notify the client
 // 	if (!req.file) {
-// 		res.status(413).send(`File not uploaded!, Please 
+// 		res.status(413).send(`File not uploaded!, Please
 // 							attach jpeg file under 5 MB`);
 // 		return;
 // 	}
 // 	// successfull completion
 // 	res.status(201).send("Files uploaded successfully");
 // });
-
-
-
-
-
-
 
 // set the template engine to EJS, which generates HTML with embedded
 //  JavaScript
@@ -110,7 +101,7 @@ app.use("/dist", express.static(path.join(__dirname, "dist")));
 // Serve other static files from the "public" directory
 app.use(express.static(path.join(__dirname, "public")));
 
-// start the server on port 8087
-server.listen(8087, () => {
-  console.log("Server started on http://localhost:8087");
+// start the server on port 8080
+server.listen(8080, () => {
+  console.log("Server started on http://localhost:8080");
 });
