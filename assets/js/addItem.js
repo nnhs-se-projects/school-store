@@ -176,16 +176,3 @@ document.querySelectorAll(".delete-size").forEach((button) => {
     e.target.closest(".size-entry").remove();
   });
 });
-
-function toggleSizeInput() {
-  const sizeInput = document.getElementById("size-input");
-  const checkBox = document.getElementById("sized-check");
-  const genericSizeInput = document.getElementById("generic-size-input");
-  if (checkBox.checked) {
-    sizeInput.style.display = "block";
-    genericSizeInput.style.display = "none";
-  } else {
-    sizeInput.style.display = "none";
-    genericSizeInput.style.display = "block";
-  }
-}
