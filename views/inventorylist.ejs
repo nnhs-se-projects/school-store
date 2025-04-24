@@ -4,34 +4,36 @@
 
 <link rel="stylesheet" href="/css/admin.css">
 
-<main>
-  
+<main> 
   <h1>Print</h1>
 
   <a class="admin-link" href="inventorylistprint" id="inventorylistprint"><strong>Print</strong></a>
 
+  
+
   <h1>Inventory Spreadsheet</h1>
 
   <table>
-    <tr>
-      <th> Item </th>
-      <th> Quantity </th>
-      <th> palce </th>
-    </tr>
     <% items.forEach(function(item) { %>
-    <tr>
-      <th> <%= item.name %> </th>
-      <% if (item.sizes) { %> <% for (let size in item.sizes) { %>
-        <th> <%= item.sizes[size] %> </th>
+    <th colspan = 10>
+      <b> <%= item.name %> </b>
+    </th>
+    <tr></tr>
+      <% for (let size in item.sizes) { %>
+        <% if (size == "placeholder") { %>
+          <th> <%= item.sizes[size] %> </th>
+        <% } %>
+        <% if (size != "placeholder") { %>
+          <th> <%= size + ": " + item.sizes[size] %> </th>
+        <% } %>
       <% } %>
-      <% } %>
-    </tr>
+    <tr></tr>
     <% }) %>
   </table>
 
 </main>
 
-</body>
+
 
 <!-- include footer -->
 <%- include('include/_footer') %>

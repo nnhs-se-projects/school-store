@@ -1,20 +1,21 @@
 <link rel="stylesheet" href="/css/admin.css">
 
-<body onload="window.print()">
+<body onload="window.print()"> <!-- This is the same block of code from the previous page, but the body loads up a print screen instantly so the user can either print it or download it as a pdf -->
   <table>
-    <tr>
-      <th> Item </th>
-      <th> Quantity </th>
-      <th> palce </th>
-    </tr>
     <% items.forEach(function(item) { %>
-    <tr>
-      <th> <%= item.name %> </th>
-      <% if (item.sizes) { %> <% for (let size in item.sizes) { %>
-        <th> <%= item.sizes[size] %> </th>
+    <th colspan = 10>
+      <b> <%= item.name %> </b>
+    </th>
+    <tr></tr>
+      <% for (let size in item.sizes) { %>
+        <% if (size == "placeholder") { %>
+          <th> <%= item.sizes[size] %> </th>
+        <% } %>
+        <% if (size != "placeholder") { %>
+          <th> <%= size + ": " + item.sizes[size] %> </th>
+        <% } %>
       <% } %>
-      <% } %>
-    </tr>
+    <tr></tr>
     <% }) %>
   </table>
 </body>

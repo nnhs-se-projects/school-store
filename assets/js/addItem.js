@@ -1,6 +1,26 @@
 import heic2any from "heic2any";
 
 const submitButton = document.querySelector("input.submit");
+const sizeInput = document.getElementById("size-input");
+const checkBox = document.getElementById("sized-check");
+const genericSizeInput = document.getElementById("generic-size-input");
+
+document.addEventListener("DOMContentLoaded", () => {
+  sizeInput.style.display = "none";
+  genericSizeInput.style.display = "block";
+});
+checkBox.addEventListener("change", toggleSizeInput);
+// Initially hide the size input
+
+function toggleSizeInput() {
+  if (checkBox.checked) {
+    sizeInput.style.display = "block";
+    genericSizeInput.style.display = "none";
+  } else {
+    sizeInput.style.display = "none";
+    genericSizeInput.style.display = "block";
+  }
+}
 
 submitButton.addEventListener("click", async () => {
   const name = document.querySelector("input#name").value;

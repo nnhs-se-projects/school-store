@@ -116,6 +116,7 @@ route.get("/addItem", isAdmin, (req, res) => {
   res.render("addItem");
 });
 
+// routes for getting admin inventory pages
 route.get("/inventorylist", isAdmin, async (req, res) => {
   const items = await Item.find();
 

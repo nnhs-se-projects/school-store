@@ -13,7 +13,7 @@
       "type": "chrome",
       "request": "launch",
       "name": "Node Client",
-      "url": "http://localhost:8080",
+      "url": "http://localhost:8087",
       "webRoot": "${workspaceFolder}/assets",
       "outputCapture": "std"
     },
