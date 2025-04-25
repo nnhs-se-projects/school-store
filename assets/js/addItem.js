@@ -1,6 +1,26 @@
 import heic2any from "heic2any";
 
 const submitButton = document.querySelector("input.submit");
+const sizeInput = document.getElementById("size-input");
+const checkBox = document.getElementById("sized-check");
+const genericSizeInput = document.getElementById("generic-size-input");
+
+document.addEventListener("DOMContentLoaded", () => {
+  sizeInput.style.display = "none";
+  genericSizeInput.style.display = "block";
+});
+checkBox.addEventListener("change", toggleSizeInput);
+// Initially hide the size input
+
+function toggleSizeInput() {
+  if (checkBox.checked) {
+    sizeInput.style.display = "block";
+    genericSizeInput.style.display = "none";
+  } else {
+    sizeInput.style.display = "none";
+    genericSizeInput.style.display = "block";
+  }
+}
 
 submitButton.addEventListener("click", async () => {
   const name = document.querySelector("input#name").value;
@@ -41,6 +61,8 @@ submitButton.addEventListener("click", async () => {
       console.log("Image loaded successfully");
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
+
+      // Set canvas size to:
 
       const height = 600;
       const width = 600;
@@ -141,7 +163,6 @@ const addSizeButton = document.querySelector("button#add-size");
 const sizesContainer = document.querySelector(".size-entry");
 
 addSizeButton.addEventListener("click", (event) => {
-  alert("Size added");
   const sizeEntry = document.createElement("div");
   sizeEntry.classList.add("size-entry");
 
@@ -175,16 +196,3 @@ document.querySelectorAll(".delete-size").forEach((button) => {
     e.target.closest(".size-entry").remove();
   });
 });
-
-function toggleSizeInput() {
-  const sizeInput = document.getElementById("size-input");
-  const checkBox = document.getElementById("sized-check");
-  const genericSizeInput = document.getElementById("generic-size-input");
-  if (checkBox.checked) {
-    sizeInput.style.display = "block";
-    genericSizeInput.style.display = "none";
-  } else {
-    sizeInput.style.display = "none";
-    genericSizeInput.style.display = "block";
-  }
-}

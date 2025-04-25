@@ -12,7 +12,7 @@
      <script>
       window.onload = function () {
         google.accounts.id.initialize({
-          client_id: "1022838194773-p8g5ac0qr11mfko61qurgnqdb9jitpjf.apps.googleusercontent.com",
+            client_id: "<%= process.env.GOOGLE_CLIENT_ID %>",
           callback: handleCredentialResponse,
         });
 
@@ -28,7 +28,7 @@
         <ul class="nav-links">
             <li><a href="/"><strong>Home</strong></a></li>
             <% if ( session && session.clearance >= 3 ) { %>
-            <li><a href="/admin"><strong>View Orders</strong></a></li>
+            <li><a href="/admin"><strong>Manage Inventory</strong></a></li>
             <% } %>
             <% if (session && session.clearance >= 2) { %>
               <li><a href="/cart"><strong>Cart</strong></a></li>

@@ -170,3 +170,59 @@ h1 {
     width: 100%; /* Make the button full width for better usability */
   }
 }
+
+.user-inputs {
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+}
+
+.user-inputs label {
+  font-size: 1.2em; /* Adjust label font size */
+  margin-bottom: 5px; /* Space between label and input */
+  color: #333; /* Label color */
+  font-weight: bold; /* Make label text bold */
+}
+
+#pickup-date {
+  width: 100%; /* Make the date input full width */
+  padding: 10px; /* Add some padding for better appearance */
+  border: solid 1px #ccc; /* Add a border */
+  border-radius: 5px; /* Optional: add rounded corners */
+  font-size: 16px; /* Adjust font size */
+  margin-top: 10px; /* Add some space above the input */
+  margin-bottom: 20px; /* Add some space below the input */
+  box-sizing: border-box; /* Ensure padding is included in width */
+}
+
+#pickup-time {
+  width: 100%; /* Make the time input full width */
+  padding: 10px; /* Add some padding for better appearance */
+  border: solid 1px #ccc; /* Add a border */
+  border-radius: 5px; /* Optional: add rounded corners */
+  font-size: 16px; /* Adjust font size */
+  margin-top: 10px; /* Add some space above the input */
+  margin-bottom: 20px; /* Add some space below the input */
+  box-sizing: border-box; /* Ensure padding is included in width */
+}
+
+#checkout-button {
+  margin: 20px 0; /* Add some space above and below the button */
+  width: 100%; /* Make the button full width for better usability */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.input-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+h1 {
+  font-size: 2.5em; /* Adjust the size of the heading */
+  color: #002f55; /* Set a color for the heading */
+  margin-bottom: 20px; /* Add some space below the heading */
+  text-align: center; /* Center the heading text */
+}

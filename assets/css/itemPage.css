@@ -11,20 +11,14 @@
 .item-container {
   display: flex;
   flex-direction: column;
-  width: 50%;
+  width: 100%;
   margin-left: 1%;
-}
-
-@media (max-width: 768px) {
-  .wrapper {
-    flex-direction: column;
-  }
 }
 
 /* I want the image aligned along the left side of the viewport */
 
 img {
-  width: 500px;
+  width: 100%;
   height: auto;
   display: block;
   border-radius: 8px;
@@ -113,4 +107,15 @@ select#size {
   display: inline-block;
   border: 1px solid #ccc;
   box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    flex-direction: column;
+  }
+
+  .item-content {
+    align-items: center;
+    text-align: center;
+  }
 }
