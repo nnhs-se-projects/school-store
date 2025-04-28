@@ -41,12 +41,6 @@ li {
   gap: 15px;
 }
 
-.nav-links li {
-  display: inline;
-  background-color: #002f55;
-  margin: 0 10px;
-}
-
 @media (max-width: 768px) {
   .nav-links li + li {
     margin-top: 10px;
