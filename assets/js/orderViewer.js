@@ -63,9 +63,10 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify({ orderId }),
       });
 
+      window.location.reload();
+
       if (response.ok) {
         console.log("Order checked off successfully");
-        window.location.reload(); // Reload the page to reflect the changes
       } else {
         console.error("Failed to check off order");
       }

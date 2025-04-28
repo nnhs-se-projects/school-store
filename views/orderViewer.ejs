@@ -5,6 +5,7 @@
 <main>
   <div class="wrapper">
     <h1>Student Orders</h1>
+    <h2>Pending Orders</h2>
     <table id="orders-table">
       <thead>
         <tr>
@@ -21,36 +22,40 @@
         </tr>
       </thead>
       <tbody>
-        <% for (let i = 0; i < orders.length; i++) { %>
+        <% for (let i = 0; i < pendingOrders.length; i++) { %>
         <tr
           id="order-<%=i%>"
           class="order-row"
-          data-items="<%= JSON.stringify(orders[i].items) %>"
+          data-items="<%= JSON.stringify(pendingOrders[i].items) %>"
         >
-          <td><%= orders[i].name %></td>
-          <td><%= orders[i].email %></td>
-          <td><%= orders[i].orderNumber %></td>
-          <td><%= orders[i].date %></td>
-          <td><%= orders[i].period %></td>
-          <td>$<%= orders[i].totalPrice %></td>
+          <td><%= pendingOrders[i].name %></td>
+          <td><%= pendingOrders[i].email %></td>
+          <td><%= pendingOrders[i].orderNumber %></td>
+          <td><%= pendingOrders[i].date %></td>
+          <td><%= pendingOrders[i].period %></td>
+          <td>$<%= pendingOrders[i].totalPrice %></td>
           <td>
-            <button class="check-off-order" order-id="<%=orders[i].id%>">
-              <% if (orders[i].orderStatus === 'completed') { %>
-              <span class="checked-off">Checked Off</span>
-              <% } else { %> Check off Order <% } %>
+            <button class="check-off-order" order-id="<%=pendingOrders[i].id%>">
+              Check off Order
             </button>
           </td>
           <td>
-            <button class="delete-order" order-id="<%=orders[i].id%>">
+            <button class="delete-order" order-id="<%=pendingOrders[i].id%>">
               Cancel Order
             </button>
           </td>
-          <td class="status"><%= orders[i].orderStatus %></td>
+          <td class="status"><%= pendingOrders[i].orderStatus %></td>
           <td><button class="view-items">View Items</button></td>
         </tr>
         <% } %>
       </tbody>
     </table>
+    <div class="completed-order">
+      <h2>Completed Orders</h2>
+      <a href="/completedOrderViewer" class="completed-order-link"
+        >View Past Completed Orders</a
+      >
+    </div>
   </div>
 </main>
 

@@ -19,6 +19,20 @@ function isStudent(req, res, next) {
   }
 }
 
+function isVolunteer(req, res, next) {
+  // check if the session exists (user is logged in), and if they are a volunteer or admin
+  if (req.session && req.session.clearance >= 3) {
+    return next(); // Allow access to the next middleware or route
+  } else {
+    const currentClearance = req.session ? req.session.clearance : "none";
+    return res
+      .status(403)
+      .send(
+        `Forbidden: You do not have access to this page. Your clearance level is ${currentClearance}, but clearance level 3 is required.`
+      );
+  }
+}
+
 // directs to the cart page
 route.get("/cart", isStudent, async (req, res) => {
   try {
@@ -321,9 +335,20 @@ route.get("/cart/confirmation", async (req, res) => {
   res.render("confirmationPage");
 });
 
-route.get("/orderViewer", async (req, res) => {
+route.get("/orderViewer", isVolunteer, async (req, res) => {
   const orders = await Order.find({}).sort({ date: -1 });
-  res.render("orderViewer", { orders });
+
+  const pendingOrders = orders.filter(
+    (order) => order.orderStatus !== "completed"
+  );
+  res.render("orderViewer", { pendingOrders });
+});
+
+route.get("/completedOrderViewer", isVolunteer, async (req, res) => {
+  const completedOrders = await Order.find({ orderStatus: "completed" }).sort({
+    date: -1,
+  });
+  res.render("completedOrderViewer", { completedOrders });
 });
 
 route.post("/deleteOrder", async (req, res) => {
