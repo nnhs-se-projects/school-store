@@ -61,3 +61,8 @@ tr:nth-child(even) {
   font-size: 16px; /* Font size */
   margin-bottom: 20px; /* Space below the link */
 }
+
+tr.late-order {
+  background-color: #f8d7da !important; /* Light red background */
+  color: #721c24; /* Dark red text */
+}

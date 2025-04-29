@@ -22,10 +22,12 @@
         </tr>
       </thead>
       <tbody>
-        <% for (let i = 0; i < pendingOrders.length; i++) { %>
+        <% const currentDate = new Date(); %> <% for (let i = 0; i <
+        pendingOrders.length; i++) { %> <% const pickupDate = new
+        Date(pendingOrders[i].date); %>
         <tr
           id="order-<%=i%>"
-          class="order-row"
+          class="order-row <%= pickupDate < currentDate ? 'late-order' : '' %>"
           data-items="<%= JSON.stringify(pendingOrders[i].items) %>"
         >
           <td><%= pendingOrders[i].name %></td>

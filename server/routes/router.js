@@ -46,12 +46,11 @@ function isAdmin(req, res, next) {
   if (req.session && req.session.clearance >= 4) {
     return next(); // Allow access to the next middleware or route
   } else {
-    const currentClearance = req.session ? req.session.clearance : "none";
-    return res
-      .status(403)
-      .send(
-        `Forbidden: You do not have access to this page. Your clearance level is ${currentClearance}, but clearance level 4 is required.`
-      );
+    return res.status(403).render("errorPage", {
+      title: "Access Denied",
+      message: "Forbidden: You do not have access to this page.",
+      redirectUrl: "/",
+    });
   }
 }
 
@@ -60,12 +59,11 @@ function isVolunteer(req, res, next) {
   if (req.session && req.session.clearance >= 3) {
     return next(); // Allow access to the next middleware or route
   } else {
-    const currentClearance = req.session ? req.session.clearance : "none";
-    return res
-      .status(403)
-      .send(
-        `Forbidden: You do not have access to this page. Your clearance level is ${currentClearance}, but clearance level 3 is required.`
-      );
+    return res.status(403).render("errorPage", {
+      title: "Access Denied",
+      message: "Forbidden: You do not have access to this page.",
+      redirectUrl: "/",
+    });
   }
 }
 
