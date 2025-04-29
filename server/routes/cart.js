@@ -231,21 +231,28 @@ route.post("/cart/order", async (req, res) => {
   });
 
   // change inventory quantities
-  for (let i = 0; i < user.cart.length; i++) {
-    const item = await Item.findById(user.cart[i].itemId);
+  for (let i = 0; i < order.items.length; i++) {
+    const item = await Item.findById(order.items[i].itemId);
     if (item) {
-      // console.log("size index: " + user.cart[i].sizeIndex);
-      // console.log("quant ordered: " + user.cart[i].quantity);
-      console.log("inventory amount: " + item.sizes[user.cart[i].size]);
-      item.sizes[user.cart[i].size] -= user.cart[i].quantity;
+      // console.log("Item found in inventory: ", item.name);
+      // const sizeIndex = order.items[i].sizeIndex;
+      // console.log("Item size: ", order.items[i].size);
+      // console.log("Item size index: ", sizeIndex);
+      // console.log("Item quantity ordered: ", order.items[i].quantity);
+      // console.log("Item inventory quantity: ", item.sizes[size]);
+      // console.log("Item size quantity array: ", item.sizes);
+      const size = order.items[i].size;
+      item.sizes[size] -= order.items[i].quantity;
       await item.save();
       console.log(
-        "Updated inventory for item: ",
+        "Item inventory updated: ",
         item.name,
-        item.sizes[user.cart[i].sizeIndex]
+        size,
+        item.sizes[size]
       );
     } else {
-      console.log("Item not found in inventory: ", user.cart[i].itemId);
+      console.log("Item not found in inventory: ", order.items[i].itemId);
+      return res.status(404).send("Item not found in inventory");
     }
   }
 
