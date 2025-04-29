@@ -13,3 +13,5 @@ your .env file needs to have 4 things in it
 3. the EMAIL_PASSWORD
 4. the GOOGLE_CLIENT_ID
 our project currently has two separate google client ID's one for the live server, and one for local host.
+
+Have fun coding!
