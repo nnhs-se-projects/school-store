@@ -102,6 +102,6 @@ app.use("/dist", express.static(path.join(__dirname, "dist")));
 app.use(express.static(path.join(__dirname, "public")));
 
 // start the server on port 8087
-server.listen(8080, () => {
-  console.log("Server started on http://localhost:8080");
+server.listen(8087, () => {
+  console.log("Server started on http://localhost:8087");
 });
