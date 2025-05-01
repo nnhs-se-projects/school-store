@@ -353,7 +353,7 @@ route.get("/orderViewer", isVolunteer, async (req, res) => {
 
 route.get("/completedOrderViewer", isVolunteer, async (req, res) => {
   const completedOrders = await Order.find({ orderStatus: "completed" }).sort({
-    date: 1,
+    date: -1,
   });
   res.render("completedOrderViewer", { completedOrders });
 });
