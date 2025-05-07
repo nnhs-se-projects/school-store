@@ -151,6 +151,10 @@ route.get("/inventorylistprint", isAdmin, async (req, res) => {
   });
 });
 
+route.get("/contact", async (req, res) => {
+  res.render("contact");
+});
+
 // displays product page for a specific item
 route.get("/item/:id", isStudent, async (req, res) => {
   const item = await Item.findById(req.params.id);
