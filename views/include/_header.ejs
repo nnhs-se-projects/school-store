@@ -24,26 +24,30 @@
      </script>
 
     <nav class="navbar">
-      <div onclick="window.location.href='/'" class="logo">Naperville North School Store <img src = "/img/Mascot.png" alt = "Huskie Logo" class = "logo-image"> </div>
-        <ul class="nav-links">
-            <li><a href="/"><strong>Home</strong></a></li>
-            <% if ( session && session.clearance >= 3 ) { %>
-            <li><a href="/admin"><strong>Manage Inventory</strong></a></li>
-            <% } %>
-            <% if (session && session.clearance >= 2) { %>
-              <li><a href="/cart"><strong>Cart</strong></a></li>
-            <% } else if (session && session.clearance >= 1) { %>
-              <li><button class = "nav-button" id="alert-button-1"><strong>Cart</strong></button></li>
-            <% } else { %>
-              <li><button class = "nav-button" id="alert-button-2"><strong>Cart</strong></button></li>
-            <% } %>
-            <li><a href="/contact"><strong>Contact</strong></a></li>
-            <% if ( session.email) { %>
-            <li><a href="/logout"><strong>Logout</strong></a></li>
-            <% } else { %>
-            <li><button id = "login-button"><strong>Login</strong></button></li>
-            <% } %> 
-        </ul>
+      <div class="nav-header">
+        <span onclick="window.location.href='/'" class="logo">Naperville North School Store
+        <img src = "/img/Mascot.png" alt = "Huskie Logo" class = "logo-image"></span>
+        <button class="navbar-button" id="open-menu" onclick="toggleMobileNavbar()">Open Menu</button>
+      </div>
+      <ul class="nav-links">
+          <li><a href="/"><strong>Home</strong></a></li>
+          <% if ( session && session.clearance >= 3 ) { %>
+          <li><a href="/admin"><strong>Manage Inventory</strong></a></li>
+          <% } %>
+          <% if (session && session.clearance >= 2) { %>
+            <li><a href="/cart"><strong>Cart</strong></a></li>
+          <% } else if (session && session.clearance >= 1) { %>
+            <li><button class = "nav-button" id="alert-button-1"><strong>Cart</strong></button></li>
+          <% } else { %>
+            <li><button class = "nav-button" id="alert-button-2"><strong>Cart</strong></button></li>
+          <% } %>
+          <li><a href="/contact"><strong>Contact</strong></a></li>
+          <% if ( session.email) { %>
+          <li><a href="/logout"><strong>Logout</strong></a></li>
+          <% } else { %>
+          <li><button id = "login-button"><strong>Login</strong></button></li>
+          <% } %> 
+      </ul>
           
     </nav>
   </head>

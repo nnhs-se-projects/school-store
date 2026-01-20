@@ -39,3 +39,16 @@ async function handleCredentialResponse(res) {
   // redirect to the index page
   window.location.href = "/";
 }
+
+function toggleMobileNavbar() {
+  const navbar = document.querySelector(".nav-links");
+  const menu_button = document.getElementById("open-menu");
+
+  if (navbar.classList.contains("show")) {
+    navbar.classList.remove("show");
+    menu_button.innerText = "Open Menu";
+  } else {
+    navbar.classList.add("show");
+    menu_button.innerText = "Close Menu";
+  }
+}
