@@ -5,8 +5,17 @@
 
 <!-- Main Site -->
 
+<link rel="stylesheet" href="/css/splashPage.css" />
     
 <main>
+  <!-- Popup Modal -->
+  <div id="popup-modal" class="popup-modal">
+    <div class="popup-content">
+      <button class="popup-close" id="popup-close-btn">&times;</button>
+      <!-- Popup content goes here -->
+    </div>
+  </div>
+
   <div class="wrapper">
 
     <img src = "/img/Store-Front.png" class = "store-front" alt = "Store Front" />
@@ -77,6 +86,7 @@
 <!-- /Main Site -->
 
 <script src="/js/homePage.js"></script>
+<script src="/js/splashPage.js"></script>
 
 <!-- include footer -->
 <%- include('include/_footer') %>
