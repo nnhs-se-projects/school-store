@@ -1,0 +1,35 @@
+<%- include('include/_header') %>
+
+<link rel="stylesheet" href="/css/admin.css" />
+
+<main>
+  <div class="wrapper">
+    <h1>Set Times</h1>
+    <h2>Add New Time</h2>
+    <form action="/setTimes" method="POST">
+      <label for="date">Select Date:</label>
+      <input type="date" id="date" name="date" required><br><br>
+      
+      <label for="openTime">Open Time:</label>
+      <input type="time" id="openTime" name="openTime" required><br><br>
+      
+      <label for="closeTime">Close Time:</label>
+      <input type="time" id="closeTime" name="closeTime" required><br><br>
+      
+      <button type="submit">Save Time</button>
+    </form>
+    
+    <h2>Existing Times</h2>
+    <% if (times && times.length > 0) { %>
+      <ul>
+        <% times.forEach(time => { %>
+          <li><%= time.date.toDateString() %>: <%= time.openTime %> - <%= time.closeTime %></li>
+        <% }); %>
+      </ul>
+    <% } else { %>
+      <p>No times set yet.</p>
+    <% } %>
+  </div>
+</main>
+
+<%- include('include/_footer') %>

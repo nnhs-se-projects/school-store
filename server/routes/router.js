@@ -3,6 +3,7 @@ const route = express.Router();
 
 // const User = require("../model/user");
 const Item = require("../model/item");
+const Time = require("../model/time");
 
 /*
   How to create a get route
@@ -147,6 +148,22 @@ route.get("/inventorylistprint", isAdmin, async (req, res) => {
   res.render("inventorylistprint", {
     items: formattedItems,
   });
+});
+
+route.get("/setTimes", isAdmin, async (req, res) => {
+  const times = await Time.find().sort({ date: 1 });
+  res.render("setTimes", { times });
+});
+
+route.post("/setTimes", isAdmin, async (req, res) => {
+  const { date, openTime, closeTime } = req.body;
+  const newTime = new Time({
+    date: new Date(date),
+    openTime,
+    closeTime,
+  });
+  await newTime.save();
+  res.redirect("/setTimes");
 });
 
 route.get("/contact", async (req, res) => {
