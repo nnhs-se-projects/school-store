@@ -5,14 +5,16 @@ const TimeSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  openTime: {
-    type: String,
-    required: true,
-  },
-  closeTime: {
-    type: String,
-    required: true,
-  },
+  times: [{
+    openTime: {
+      type: String,
+      required: true,
+    },
+    closeTime: {
+      type: String,
+      required: true,
+    },
+  }],
   // Add other fields as necessary
 });
 

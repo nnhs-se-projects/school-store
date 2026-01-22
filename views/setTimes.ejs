@@ -23,7 +23,13 @@
     <% if (times && times.length > 0) { %>
       <ul>
         <% times.forEach(time => { %>
-          <li><%= time.date.toDateString() %>: <%= time.openTime %> - <%= time.closeTime %></li>
+          <li><%= time.date.toDateString() %>:
+            <ul>
+              <% time.times.forEach(slot => { %>
+                <li><%= slot.openTime %> - <%= slot.closeTime %></li>
+              <% }); %>
+            </ul>
+          </li>
         <% }); %>
       </ul>
     <% } else { %>
