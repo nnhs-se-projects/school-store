@@ -5,12 +5,6 @@
 <link rel="stylesheet" href="/css/admin.css">
 
 <main> 
-  <h1>Print</h1>
-
-  <a class="admin-link" href="inventorylistprint" id="inventorylistprint"><strong>Print</strong></a>
-
-  
-
   <h1>Inventory Spreadsheet</h1>
 
   <table>
@@ -30,6 +24,11 @@
     <tr></tr>
     <% }) %>
   </table>
+
+  <h1>Export</h1>
+
+  <a class="admin-link" href="inventorylistprint" id="inventorylistprint"><strong>Print</strong></a>
+  <a class="admin-link" href="<%= xlsxDownload %>" id="inventorylistxlsx"><strong>Download XLSX Spreadsheet</strong></a>
 
 </main>
 

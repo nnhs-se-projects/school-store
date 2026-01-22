@@ -116,6 +116,7 @@ route.get("/addItem", isAdmin, (req, res) => {
 
 // routes for getting admin inventory pages
 route.get("/inventorylist", isAdmin, async (req, res) => {
+  const { exportXLSX } = require("../exportXLSX");
   const items = await Item.find();
 
   const formattedItems = items.map((item) => {
@@ -127,8 +128,11 @@ route.get("/inventorylist", isAdmin, async (req, res) => {
     };
   });
 
+  const xlsxDownload = exportXLSX(['<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>test</t></is></c></row></sheetData><mergeCells count="1"><mergeCell ref="A1:B1"/></mergeCells>']); // FIXME: see `exportXLSX` function return comment in `../exportXLSX.js` 
+
   res.render("inventorylist", {
     items: formattedItems,
+    xlsxDownload
   });
 });
 
