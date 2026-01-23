@@ -161,18 +161,66 @@ function createZIP(files) {
 /* Creates an Object that contains sheet data and name.
 Parameters:
 - id (integer): Numerical sheet id >0
-- def_value (string): Worksheet data
+- value (string): Worksheet data
 Return: (Object)
   Object with the following properties:
   - value (string): Worksheet data
   - name (string): Worhseet name */
-function createSheet(id, def_value = "<sheetData>\n</sheetData>") {
+function createSheet(id, value) {
   return {
-    value: def_value,
+    value,
     name: "Sheet" + id
   };
 }
 
+/* Maintainability note:
+`sheets_data` is an array of sheet data strings (sections of the full XML file for worksheet data in the XLSX ZIP file system).
+Here is a rudimentary breakdown of sheet data in XLSX files:
+- The data in the cells are stored in a <sheetData> element
+  - Every row is stored in <row> elements
+    - <row> tags take an `r` attribute that stores the row number (one-based indexing)
+    - Every cell in a row is stored in <c> elements
+      - <c> tags take an `r` attribute that stores the cell name (e.g. "A1")
+      - <c> tags can also take a `t` attribute that defines the type of data stored in that <c> element
+        - For numerical values, `t` does not have to be set (t="n" by default)
+          - Numerical values require <v> elements
+            - The numerical value can then be stored in the <v> element
+        - For string values, `t` should be set to "inlineStr" (technically, this is using inline strings, as opposed to shared strings, which this function does not support)
+          - These inline strings require an <is> element ("inline string")
+            - Inside the <is> element, there should be a <t> element ("text")
+              - Strings can then be stored in the <t> element
+        - <c> tags' `t` attribute can also be set to other values, like following:
+          - "b" for boolean
+          - "e" for error
+          - "d" for date/time (although, typically "n" is used instead)
+          - "s" for shared string (strings are stored in a separate file)
+          - "str" for string (legacy)
+- Cell merge data is stored in a <mergeCells> element (this is only used if there are merged cells)
+  - <mergeCells> tags take a `count` attribute that stores the number of merges (i.e. the number of <mergeCell> elements inside the <mergeCells> element)
+  - The individual merges are stored in <mergeCell> (self-closing element)
+    - <mergeCell> tags take a `ref` attribute that stores which cells get merged (e.g. "A1:C1" for merging from cell A1 to cell C1)
+In short, sheet data is stored in rows and cells, and merging cells is handled separately in <mergeCells>.
+Example:
+```
+<sheetData>
+  <row r="1">
+    <c r="A1" t="inlineStr">
+      <is><t>example text</t></is>
+    </c>
+  </row>
+  <row r="2">
+    <c r="A2">
+      <v>1234</v>
+    </c>
+    <c r="C2">
+      <v>321</v>
+    </c>
+  </row>
+</sheetData>
+<mergeCells count="1">
+  <mergeCell ref="A1:C1"/>
+</mergeCells>
+``` */
 export function exportXLSX(sheets_data) {
   for (let i = 1; i <= sheets_data.length; i++) {
     sheets.push(createSheet(i, sheets_data[i - 1]));
