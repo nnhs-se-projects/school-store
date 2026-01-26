@@ -157,12 +157,12 @@ route.get("/setTimes", isAdmin, async (req, res) => {
 
 route.post("/setTimes", isAdmin, async (req, res) => {
   const { date, openTime, closeTime } = req.body;
-  let timeEntry = await Time.findOne({ date: new Date(date + 'T12:00:00') });
+  let timeEntry = await Time.findOne({ date: new Date(date + "T12:00:00") });
   if (timeEntry) {
     timeEntry.times.push({ openTime, closeTime });
   } else {
     timeEntry = new Time({
-      date: new Date(date + 'T12:00:00'),
+      date: new Date(date + "T12:00:00"),
       times: [{ openTime, closeTime }],
     });
   }

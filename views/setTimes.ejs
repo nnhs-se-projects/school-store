@@ -1,6 +1,6 @@
 <%- include('include/_header') %>
 
-<link rel="stylesheet" href="/css/admin.css" />
+<link rel="stylesheet" href="/css/times.css" />
 
 <main>
   <div class="wrapper">
@@ -19,22 +19,59 @@
       <button type="submit">Save Time</button>
     </form>
     
-    <h2>Existing Times</h2>
-    <% if (times && times.length > 0) { %>
-      <ul>
-        <% times.forEach(time => { %>
-          <li><%= time.date.toDateString() %>:
-            <ul>
-              <% time.times.forEach(slot => { %>
-                <li><%= slot.openTime %> - <%= slot.closeTime %></li>
-              <% }); %>
-            </ul>
-          </li>
-        <% }); %>
-      </ul>
-    <% } else { %>
-      <p>No times set yet.</p>
-    <% } %>
+    <h2>Store Hours for Next Two Weeks</h2>
+    <%
+    const today = new Date();
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay()); // Sunday
+    const endDate = new Date(startOfWeek);
+    endDate.setDate(startOfWeek.getDate() + 13); // Two weeks
+    
+    const timesMap = {};
+    times.forEach(time => {
+      const dateStr = time.date.toISOString().split('T')[0];
+      timesMap[dateStr] = time.times;
+    });
+    %>
+    <table class="calendar">
+      <thead>
+        <tr>
+          <th>Sun</th>
+          <th>Mon</th>
+          <th>Tue</th>
+          <th>Wed</th>
+          <th>Thu</th>
+          <th>Fri</th>
+          <th>Sat</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (let week = 0; week < 2; week++) { %>
+          <tr>
+            <% for (let day = 0; day < 7; day++) { %>
+              <% 
+              const currentDate = new Date(startOfWeek);
+              currentDate.setDate(startOfWeek.getDate() + week * 7 + day);
+              const dateStr = currentDate.toISOString().split('T')[0];
+              const dayTimes = timesMap[dateStr];
+              %>
+              <td class="day">
+                <div class="date"><%= currentDate.getDate() %></div>
+                <% if (dayTimes && dayTimes.length > 0) { %>
+                  <ul>
+                    <% dayTimes.forEach(slot => { %>
+                      <li><%= slot.openTime %> - <%= slot.closeTime %></li>
+                    <% }); %>
+                  </ul>
+                <% } else { %>
+                  <p>Closed</p>
+                <% } %>
+              </td>
+            <% } %>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
   </div>
 </main>
 
