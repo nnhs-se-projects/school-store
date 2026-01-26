@@ -1,3 +1,6 @@
+module.exports = { exportXLSX };
+const fs = require("fs");
+
 // used with permission, see: https://github.com/JKSquires/xlsx-web-experiment
 
 let sheets = []; // store sheet data
@@ -221,7 +224,7 @@ Example:
   <mergeCell ref="A1:C1"/>
 </mergeCells>
 ``` */
-export function exportXLSX(sheets_data) {
+async function exportXLSX(sheets_data) {
   for (let i = 1; i <= sheets_data.length; i++) {
     sheets.push(createSheet(i, sheets_data[i - 1]));
   }
@@ -270,5 +273,7 @@ export function exportXLSX(sheets_data) {
       '<?xml version="1.0" encoding="UTF-8"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' + sheets[i - 1].value + '</worksheet>'));
   }
 
-  //return createZIP(files_to_zip); // FIXME: let's make this function return a string URL for downloading (probably using `data:application/zip;base64,...`. See `FileReader.readAsDataURL(blob);`)
+  const xlsx_blob = createZIP(files_to_zip);
+  const xlsx_buffer = await xlsx_blob.arrayBuffer();
+  return "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64," + Buffer.from(xlsx_buffer).toString("base64");
 }
