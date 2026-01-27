@@ -5,21 +5,23 @@
 <main>
   <div class="wrapper">
     <h1>Set Times</h1>
-    <h2>Add New Time</h2>
-    <form action="/setTimes" method="POST">
-      <label for="date">Select Date:</label>
-      <input type="date" id="date" name="date" required><br><br>
-      
-      <label for="openTime">Open Time:</label>
-      <input type="time" id="openTime" name="openTime" required><br><br>
-      
-      <label for="closeTime">Close Time:</label>
-      <input type="time" id="closeTime" name="closeTime" required><br><br>
-      
-      <button type="submit">Save Time</button>
-    </form>
+    <div class="add-time-section">
+      <h2>Add New Time</h2>
+      <form action="/setTimes" method="POST" class="add-time-form">
+        <label for="date">Select Date:</label>
+        <input type="date" id="date" name="date" required><br>
+        
+        <label for="openTime">Open Time:</label>
+        <input type="time" id="openTime" name="openTime" required><br>
+        
+        <label for="closeTime">Close Time:</label>
+        <input type="time" id="closeTime" name="closeTime" required><br>
+        
+        <button type="submit">Save Time</button>
+      </form>
+    </div>
     
-    <h2>Store Hours for Next Two Weeks</h2>
+    <h2 class="store-hours-h2">Store Hours for Next Two Weeks</h2>
     <%
     const today = new Date();
     const startOfWeek = new Date(today);
@@ -59,8 +61,19 @@
                 <div class="date"><%= currentDate.getDate() %></div>
                 <% if (dayTimes && dayTimes.length > 0) { %>
                   <ul>
-                    <% dayTimes.forEach(slot => { %>
-                      <li><%= slot.openTime %> - <%= slot.closeTime %></li>
+                    <% dayTimes.forEach((slot, index) => { %>
+                      <li><%= slot.openTime %> - <%= slot.closeTime %>
+                        <div class="edit-popup">
+                          <form action="/editTime" method="POST">
+                            <input type="hidden" name="date" value="<%= dateStr %>">
+                            <input type="hidden" name="index" value="<%= index %>">
+                            <label>Open: <input type="time" name="openTime" value="<%= slot.openTime %>" required></label><br>
+                            <label>Close: <input type="time" name="closeTime" value="<%= slot.closeTime %>" required></label><br>
+                            <button type="submit" name="action" value="save">Save</button>
+                            <button type="submit" name="action" value="delete">Delete</button>
+                          </form>
+                        </div>
+                      </li>
                     <% }); %>
                   </ul>
                 <% } else { %>
