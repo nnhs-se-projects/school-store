@@ -174,9 +174,11 @@ route.post("/editTime", isAdmin, async (req, res) => {
   const { date, index, openTime, closeTime, action } = req.body;
   const timeEntry = await Time.findOne({ date: new Date(date + "T12:00:00") });
   if (!timeEntry || !timeEntry.times[index]) {
-    return res.status(404).render("errorPage", { message: "Time slot not found" });
+    return res
+      .status(404)
+      .render("errorPage", { message: "Time slot not found" });
   }
-  if (action === 'delete') {
+  if (action === "delete") {
     timeEntry.times.splice(index, 1);
   } else {
     timeEntry.times[index] = { openTime, closeTime };
