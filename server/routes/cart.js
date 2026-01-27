@@ -348,7 +348,12 @@ route.get("/orderViewer", isVolunteer, async (req, res) => {
     (order) => order.orderStatus !== "completed"
   );
 
-  res.render("orderViewer", { pendingOrders });
+  const xlsxDownload = ""; // FIXME: create XLSX download url
+
+  res.render("orderViewer", {
+    pendingOrders,
+    xlsxDownload
+  });
 });
 
 route.get("/completedOrderViewer", isVolunteer, async (req, res) => {

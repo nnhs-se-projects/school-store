@@ -167,7 +167,6 @@ route.get("/inventorylist", isAdmin, async (req, res) => {
 
     xlsxSheetXML = sheetData + mergeCells;
   }
-  console.log(xlsxSheetXML);
   const xlsxDownload = await exportXLSX([xlsxSheetXML]);
 
   res.render("inventorylist", {
