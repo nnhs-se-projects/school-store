@@ -2,6 +2,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const popupModal = document.getElementById("popup-modal");
   const closeBtn = document.getElementById("popup-close-btn");
 
+  // Fetch and display stats
+  fetchStats();
+
   // Show popup when page loads
   if (popupModal) {
     popupModal.classList.remove("hidden");
@@ -23,3 +26,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+async function fetchStats() {
+  try {
+    const response = await fetch("/api/stats");
+    const data = await response.json();
+    
+    document.getElementById("orders-count").textContent = data.totalOrders;
+    document.getElementById("items-count").textContent = data.totalItems;
+  } catch (error) {
+    console.error("Error fetching stats:", error);
+  }
+}
