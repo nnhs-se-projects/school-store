@@ -3,6 +3,7 @@ const route = express.Router();
 
 // const User = require("../model/user");
 const Item = require("../model/item");
+const { format } = require("morgan");
 
 /*
   How to create a get route
@@ -129,27 +130,45 @@ route.get("/inventorylist", isAdmin, async (req, res) => {
     };
   });
 
-  const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  let trackRow = 1;
-  let sheetData = "<sheetData>";
-  let mergeCellsData = [];
-  for (let i = 0; i < formattedItems.length; i++) {
-    sheetData += `<row r="${trackRow}"><c r="A${trackRow}" t="inlineStr"><is><t>${formattedItems[i].name}</t></is></c></row>`;
-    mergeCellsData.push(`<mergeCell ref="A${trackRow}:B${trackRow}"/>`); // FIXME: hardcoded B, need to determine width based on max number of sizes
+  // see ../exportXLSX.js for maintainability note on XLSX worksheet data
+  let xlsxSheetXML;
+  {
+    const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let trackRow = 1;
+    let sheetData = "<sheetData>";
+    let mergeCells = "";
+    const mergeCellsRows = [];
+    let maxMergeLength = 0;
+    for (let i = 0; i < formattedItems.length; i++) {
+      sheetData += `<row r="${trackRow}"><c r="A${trackRow}" t="inlineStr"><is><t>${formattedItems[i].name}</t></is></c></row>`;
+      mergeCellsRows.push(trackRow);
+      trackRow++;
 
-    trackRow++;
-    sheetData += `<row r="${trackRow}">`;
-    for (let j = 0; j < formattedItems[i].sizes.length; j++) {
-      const size = formattedItems[i].sizes[j];
-      sheetData += `<c r="${abc[j] + trackRow}" t="inlineStr"><is><t>${size}</t></is></c>`;
+      sheetData += `<row r="${trackRow}">`;
+      let sizeCount = 0;
+      for (const size in formattedItems[i].sizes) {
+        sheetData += `<c r="${abc[sizeCount] + trackRow}" t="inlineStr"><is><t>${size}</t></is></c>`;
+        sizeCount++;
+      }
+      if (sizeCount > maxMergeLength) {
+        maxMergeLength = sizeCount;
+      }
+      sheetData += `</row>`;
+      trackRow++;
     }
-    sheetData += `</row>`;
-    trackRow++;
-  }
-  sheetData += "</sheetData>";
-  // FIXME: Create final mergeCells xml and put with sheetData
+    sheetData += "</sheetData>";
+    if (mergeCellsRows.length !== 0) {
+      mergeCells = `<mergeCells count="${mergeCellsRows.length}">`;
+      for (const row of mergeCellsRows) {
+        mergeCells += `<mergeCell ref="A${row}:${abc[maxMergeLength]}${row}"/>`;
+      }
+      mergeCells += `</mergeCells>`;
+    }
 
-  const xlsxDownload = await exportXLSX(['<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>test</t></is></c></row></sheetData><mergeCells count="1"><mergeCell ref="A1:B1"/></mergeCells>']); // FIXME: hardcoded text sheetData
+    xlsxSheetXML = sheetData + mergeCells;
+  }
+  console.log(xlsxSheetXML);
+  const xlsxDownload = await exportXLSX([xlsxSheetXML]);
 
   res.render("inventorylist", {
     items: formattedItems,
