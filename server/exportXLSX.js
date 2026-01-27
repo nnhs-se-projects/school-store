@@ -1,9 +1,7 @@
-module.exports = { exportXLSX };
+module.exports = { exportXLSX, createSheet };
 const fs = require("fs");
 
 // used with permission, see: https://github.com/JKSquires/xlsx-web-experiment
-
-let sheets = []; // store sheet data
 
 /* Creates ZIP file data as blob from inputted file data.
 Parameters:
@@ -163,21 +161,21 @@ function createZIP(files) {
 
 /* Creates an Object that contains sheet data and name.
 Parameters:
-- id (integer): Numerical sheet id >0
-- value (string): Worksheet data
+- name (string): Worksheet name
+- sheet_data (string): Worksheet data
 Return: (Object)
   Object with the following properties:
-  - value (string): Worksheet data
-  - name (string): Worhseet name */
-function createSheet(id, value) {
+  - name (string): Worksheet name
+  - sheet_data (string): Worksheet data */
+function createSheet(name, sheet_data) {
   return {
-    value,
-    name: "Sheet" + id
+    name,
+    sheet_data
   };
 }
 
 /* Maintainability note:
-`sheets_data` is an array of sheet data strings (sections of the full XML file for worksheet data in the XLSX ZIP file system).
+The `worksheet` parameters of the objects in `sheets' are a strings containing sheet data (sections of the full XML file for worksheet data in the XLSX ZIP file system).
 Here is a rudimentary breakdown of sheet data in XLSX files:
 - The data in the cells are stored in a <sheetData> element
   - Every row is stored in <row> elements
@@ -224,11 +222,16 @@ Example:
   <mergeCell ref="A1:C1"/>
 </mergeCells>
 ``` */
-async function exportXLSX(sheets_data) {
-  for (let i = 1; i <= sheets_data.length; i++) {
-    sheets.push(createSheet(i, sheets_data[i - 1]));
-  }
-
+/* Creates a data URL for downloading an XLSX spreadsheet from given sheet data.
+Parameters:
+- sheets (Object[]): Object with the following parameters:
+  - name (string): Worksheet name
+  - worksheet (string): Worksheet data
+Globals Used:
+- fs (Object): Node File System module
+Return: (string)
+  Data URL for XLSX spreadsheet */
+async function exportXLSX(sheets) {
   const encoder = new TextEncoder();
 
   /* Creates an Object that contains text file name and data.
@@ -270,7 +273,7 @@ async function exportXLSX(sheets_data) {
   
   for (let i = 1; i <= sheets.length; i++) {
     files_to_zip.push(createTextFile("xl/worksheets/sheet" + i + ".xml",
-      '<?xml version="1.0" encoding="UTF-8"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' + sheets[i - 1].value + '</worksheet>'));
+      '<?xml version="1.0" encoding="UTF-8"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' + sheets[i - 1].sheet_data + '</worksheet>'));
   }
 
   const xlsx_blob = createZIP(files_to_zip);

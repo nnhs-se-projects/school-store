@@ -5,6 +5,8 @@ const route = express.Router();
 const Item = require("../model/item");
 const { format } = require("morgan");
 
+const xlsx = require("../exportXLSX");
+
 /*
   How to create a get route
 
@@ -117,8 +119,6 @@ route.get("/addItem", isAdmin, (req, res) => {
 
 // routes for getting admin inventory pages
 route.get("/inventorylist", isAdmin, async (req, res) => {
-  const exportXLSX = require("../exportXLSX").exportXLSX;
-  console.log(exportXLSX);
   const items = await Item.find();
 
   const formattedItems = items.map((item) => {
@@ -167,7 +167,9 @@ route.get("/inventorylist", isAdmin, async (req, res) => {
 
     xlsxSheetXML = sheetData + mergeCells;
   }
-  const xlsxDownload = await exportXLSX([xlsxSheetXML]);
+  const xlsxDownload = await xlsx.exportXLSX([
+    xlsx.createSheet("Inventory List", xlsxSheetXML)
+  ]);
 
   res.render("inventorylist", {
     items: formattedItems,
