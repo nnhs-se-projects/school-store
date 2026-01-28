@@ -132,7 +132,6 @@ route.get("/inventorylist", isAdmin, async (req, res) => {
 
   res.render("inventorylist", {
     items: formattedItems,
-    //xlsxDownload
   });
 });
 
@@ -153,6 +152,7 @@ route.get("/inventorylistprint", isAdmin, async (req, res) => {
   });
 });
 
+// generate and return XLSX file for inventory list
 route.get("/inventorylist/xlsx", isAdmin, async (req, res) => {
   const items = await Item.find();
 

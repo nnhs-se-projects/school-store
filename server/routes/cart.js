@@ -348,12 +348,21 @@ route.get("/orderViewer", isVolunteer, async (req, res) => {
     (order) => order.orderStatus !== "completed"
   );
 
-  const xlsxDownload = ""; // FIXME: create XLSX download url
-
   res.render("orderViewer", {
     pendingOrders,
-    xlsxDownload
   });
+});
+
+route.get("/orderViewer/xlsx", isVolunteer, async (req, res) => {
+  const orders = await Order.find({}).sort({ date: 1 });
+
+  const pendingOrders = orders.filter(
+    (order) => order.orderStatus !== "completed"
+  );
+
+  const xlsxDownload = ""; // FIXME: create XLSX download url
+
+  res.json({xlsxDownload});
 });
 
 route.get("/completedOrderViewer", isVolunteer, async (req, res) => {
