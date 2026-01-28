@@ -130,6 +130,41 @@ route.get("/inventorylist", isAdmin, async (req, res) => {
     };
   });
 
+  res.render("inventorylist", {
+    items: formattedItems,
+    //xlsxDownload
+  });
+});
+
+route.get("/inventorylistprint", isAdmin, async (req, res) => {
+  const items = await Item.find();
+
+  const formattedItems = items.map((item) => {
+    return {
+      id: item._id,
+      name: item.name,
+      quantity: item.quantity,
+      sizes: item.sizes,
+    };
+  });
+
+  res.render("inventorylistprint", {
+    items: formattedItems,
+  });
+});
+
+route.get("/inventorylist/xlsx", isAdmin, async (req, res) => {
+  const items = await Item.find();
+
+  const formattedItems = items.map((item) => {
+    return {
+      id: item._id,
+      name: item.name,
+      quantity: item.quantity,
+      sizes: item.sizes,
+    };
+  });
+
   // see ../exportXLSX.js for maintainability note on XLSX worksheet data
   let xlsxSheetXML;
   {
@@ -171,27 +206,7 @@ route.get("/inventorylist", isAdmin, async (req, res) => {
     xlsx.createSheet("Inventory List", xlsxSheetXML)
   ]);
 
-  res.render("inventorylist", {
-    items: formattedItems,
-    xlsxDownload
-  });
-});
-
-route.get("/inventorylistprint", isAdmin, async (req, res) => {
-  const items = await Item.find();
-
-  const formattedItems = items.map((item) => {
-    return {
-      id: item._id,
-      name: item.name,
-      quantity: item.quantity,
-      sizes: item.sizes,
-    };
-  });
-
-  res.render("inventorylistprint", {
-    items: formattedItems,
-  });
+  res.json({xlsxDownload});
 });
 
 route.get("/contact", async (req, res) => {
