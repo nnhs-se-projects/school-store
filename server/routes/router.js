@@ -152,7 +152,8 @@ route.get("/inventorylistprint", isAdmin, async (req, res) => {
 
 route.get("/setTimes", isAdmin, async (req, res) => {
   const times = await Time.find().sort({ date: 1 });
-  res.render("setTimes", { times });
+  const query = req.query;
+  res.render("setTimes", { times, query });
 });
 
 route.post("/setTimes", isAdmin, async (req, res) => {

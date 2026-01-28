@@ -22,10 +22,15 @@
     </div>
     
     <h2 class="store-hours-h2">Store Hours for Next Two Weeks</h2>
+    <div class="calendar-nav">
+      <button id="prev-week" class="nav-arrow">◀</button>
+      <button id="next-week" class="nav-arrow">▶</button>
+    </div>
     <%
     const today = new Date();
+    const offset = parseInt(query.offset || 0);
     const startOfWeek = new Date(today);
-    startOfWeek.setDate(today.getDate() - today.getDay()); // Sunday
+    startOfWeek.setDate(today.getDate() - today.getDay() + (offset * 14)); // Sunday + offset
     const endDate = new Date(startOfWeek);
     endDate.setDate(startOfWeek.getDate() + 13); // Two weeks
     
@@ -69,8 +74,10 @@
                             <input type="hidden" name="index" value="<%= index %>">
                             <label>Open: <input type="time" name="openTime" value="<%= slot.openTime %>" required></label><br>
                             <label>Close: <input type="time" name="closeTime" value="<%= slot.closeTime %>" required></label><br>
-                            <button type="submit" name="action" value="save">Save</button>
-                            <button type="submit" name="action" value="delete">Delete</button>
+                            <div class="button-group">
+                              <button type="submit" name="action" value="save">Save</button>
+                              <button type="submit" name="action" value="delete">Delete</button>
+                            </div>
                           </form>
                         </div>
                       </li>
@@ -85,6 +92,33 @@
         <% } %>
       </tbody>
     </table>
+    <script>
+      const currentOffset = <%= offset %>;
+      const prevBtn = document.getElementById('prev-week');
+      const nextBtn = document.getElementById('next-week');
+      
+      // Disable previous button if offset is already -1
+      if (currentOffset <= -1) {
+        prevBtn.disabled = true;
+      }
+      
+      // Disable next button if offset is already 1
+      if (currentOffset >= 1) {
+        nextBtn.disabled = true;
+      }
+      
+      prevBtn.addEventListener('click', () => {
+        if (currentOffset > -1) {
+          window.location.href = '/setTimes?offset=' + (currentOffset - 1);
+        }
+      });
+      
+      nextBtn.addEventListener('click', () => {
+        if (currentOffset < 1) {
+          window.location.href = '/setTimes?offset=' + (currentOffset + 1);
+        }
+      });
+    </script>
   </div>
 </main>
 
