@@ -41,12 +41,18 @@ async function createXLSXWithOrders(orders) {
   let ordersXML = '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c><c r="B1" t="inlineStr"><is><t>Name</t></is></c><c r="C1" t="inlineStr"><is><t>Email</t></is></c><c r="D1" t="inlineStr"><is><t>Date</t></is></c><c r="E1" t="inlineStr"><is><t>Period</t></is></c><c r="F1" t="inlineStr"><is><t>Total Price</t></is></c><c r="G1" t="inlineStr"><is><t>Status</t></is></c></row>';
   let orderItemsXML = '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c>';
 
+  const itemColumnMap = new Map();
+
   let columnCount = 1;
   for (let i = 0; i < items.length; i++) {
-    console.log(items[i]);
-    orderItemsXML += `<c r="${abc[columnCount]}1" t="inlineStr"><is><t>${items[i].name}</t></is></c>`;
+    const itemName = items[i].name;
+
+    itemColumnMap.set(itemName, columnCount);
+
+    orderItemsXML += `<c r="${abc[columnCount]}1" t="inlineStr"><is><t>${itemName}</t></is></c>`;
     orderItemsXML += `<c r="${abc[columnCount + 1]}1" t="inlineStr"><is><t>Size/Variant</t></is></c>`;
     orderItemsXML += `<c r="${abc[columnCount + 2]}1" t="inlineStr"><is><t>Quantity</t></is></c>`;
+
     columnCount += 3;
   }
   orderItemsXML += '</row>';
@@ -55,7 +61,15 @@ async function createXLSXWithOrders(orders) {
     const order = orders[row - 2];
     ordersXML += `<row r="${row}"><c r="A${row}"><v>${order.orderNumber}</v></c><c r="B${row}" t="inlineStr"><is><t>${order.name}</t></is></c><c r="C${row}" t="inlineStr"><is><t>${order.email}</t></is></c><c r="D${row}" t="inlineStr"><is><t>${order.date}</t></is></c><c r="E${row}"><v>${order.period}</v></c><c r="F${row}"><v>${order.totalPrice}</v></c><c r="G${row}" t="inlineStr"><is><t>${order.orderStatus}</t></is></c></row>`;
     
+    orderItemsXML += `<row r="${row}"><c r="A${row}"><v>${order.orderNumber}</v></c>`;
     const orderItems = order.items;
+    for (const item of orderItems) {
+      const itemColumn = itemColumnMap.get(item.name);
+      
+      // FIXME: this XML sheet data is currently broken. Might need to sort the items by their column index first
+      orderItemsXML += `<c r="${abc[itemColumn]}${row}" t="inlineStr"><is><t>${item.name}</t></is></c><c r="${abc[itemColumn + 1]}${row}" t="inlineStr"><is><t>${item.size}</t></is></c><c r="${abc[itemColumn + 2]}${row}"><v>${item.quantity}</v></c>`;
+    }
+    orderItemsXML += `</row>`;
   }
   ordersXML += '</sheetData>';
   orderItemsXML += '</sheetData>';
