@@ -26,7 +26,7 @@ h1 {
   flex-direction: row;
   border: solid 1px #ccc; /* Optional: border around each item */
   padding: 10px;
-  margin: 10px 0; /* Space between items */
+  margin: 10px; /* Space between items */
 }
 
 .cart-item img {
@@ -144,7 +144,7 @@ h1 {
 }
 
 /* Ensure the cart-item layout adapts for smaller screens */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .cart-item {
     flex-direction: column; /* Stack items vertically */
     align-items: flex-start; /* Align items to the left */
@@ -168,6 +168,13 @@ h1 {
   .remove-button {
     align-self: flex-start; /* Push the button to the left */
     width: 100%; /* Make the button full width for better usability */
+  }
+}
+
+@media (max-width: 450px) {
+  .cart-item-details {
+    width: 100%; /* Ensure details take full width */
+    flex-direction: column;
   }
 }
 

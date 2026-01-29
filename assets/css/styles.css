@@ -116,12 +116,16 @@ h3 {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .item-list {
     grid-template-columns: repeat(
       2,
       1fr
     ); /* 2 items per row for small screens */
+  }
+
+  .wrapper {
+    margin: 10px;
   }
 }
 
