@@ -156,15 +156,6 @@ route.get("/inventorylistprint", isAdmin, async (req, res) => {
 route.get("/inventorylist/xlsx", isAdmin, async (req, res) => {
   const items = await Item.find();
 
-  const formattedItems = items.map((item) => {
-    return {
-      id: item._id,
-      name: item.name,
-      quantity: item.quantity,
-      sizes: item.sizes,
-    };
-  });
-
   // see ../exportXLSX.js for maintainability note on XLSX worksheet data
   const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let trackRow = 1;
@@ -172,14 +163,14 @@ route.get("/inventorylist/xlsx", isAdmin, async (req, res) => {
   let mergeCells = "";
   const mergeCellsRows = [];
   let maxMergeLength = 0;
-  for (let i = 0; i < formattedItems.length; i++) {
-    sheetData += `<row r="${trackRow}"><c r="A${trackRow}" t="inlineStr"><is><t>${formattedItems[i].name}</t></is></c></row>`;
+  for (let i = 0; i < items.length; i++) {
+    sheetData += `<row r="${trackRow}"><c r="A${trackRow}" t="inlineStr"><is><t>${items[i].name}</t></is></c></row>`;
     mergeCellsRows.push(trackRow);
     trackRow++;
 
     sheetData += `<row r="${trackRow}">`;
     let sizeCount = 0;
-    for (const size in formattedItems[i].sizes) {
+    for (const size in items[i].sizes) {
       sheetData += `<c r="${abc[sizeCount] + trackRow}" t="inlineStr"><is><t>${size}</t></is></c>`;
       sizeCount++;
     }
