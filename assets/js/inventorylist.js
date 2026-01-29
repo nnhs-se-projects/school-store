@@ -3,6 +3,7 @@ const exportXLSXText = exportXLSX.innerText;
 const exportXLSXLoadingText = "Generating...";
 const exportXLSXErrorText = "Error generating XLSX File";
 
+// download XLSX file when export button is clicked
 exportXLSX.addEventListener("click", async () => {
   exportXLSX.innerText = exportXLSXLoadingText;
 

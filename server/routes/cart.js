@@ -6,6 +6,8 @@ const Item = require("../model/item");
 const Order = require("../model/order");
 const nodemailer = require("nodemailer");
 
+const xlsx = require("../exportXLSX");
+
 function isStudent(req, res, next) {
   // check if the session exists (user is logged in), and if they are an admin
   if (req.session && req.session.clearance >= 2) {
@@ -30,6 +32,26 @@ function isVolunteer(req, res, next) {
       redirectUrl: "/",
     });
   }
+}
+
+async function createXLSXWithOrders(orders) {
+  let ordersXML = '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Number</t></is></c><c r="B1" t="inlineStr"><is><t>Name</t></is></c><c r="C1" t="inlineStr"><is><t>Email</t></is></c><c r="D1" t="inlineStr"><is><t>Date</t></is></c><c r="E1" t="inlineStr"><is><t>Period</t></is></c><c r="F1" t="inlineStr"><is><t>Total Price</t></is></c><c r="G1" t="inlineStr"><is><t>Status</t></is></c></row>';
+  for (let row = 2; row < orders.length + 2; row++) {
+    const order = orders[row - 2];
+    ordersXML += `<row r="${row}"><c r="A${row}"><v>${order.orderNumber}</v></c><c r="B${row}" t="inlineStr"><is><t>${order.name}</t></is></c><c r="C${row}" t="inlineStr"><is><t>${order.email}</t></is></c><c r="D${row}" t="inlineStr"><is><t>${order.date}</t></is></c><c r="E${row}"><v>${order.period}</v></c><c r="F${row}"><v>${order.totalPrice}</v></c><c r="G${row}" t="inlineStr"><is><t>${order.orderStatus}</t></is></c></row>`;
+  }
+  ordersXML += '</sheetData>';
+
+  let orderItemsXML = '<sheetData>';
+  // FIXME: create XML data
+  orderItemsXML += '</sheetData>';
+
+  const xlsxDownload = await xlsx.exportXLSX([
+    xlsx.createSheet("Orders", ordersXML),
+    xlsx.createSheet("Order Items", orderItemsXML)
+  ]);
+  
+  return xlsxDownload;
 }
 
 // directs to the cart page
@@ -360,7 +382,7 @@ route.get("/orderViewer/xlsx", isVolunteer, async (req, res) => {
     (order) => order.orderStatus !== "completed"
   );
 
-  const xlsxDownload = ""; // FIXME: create XLSX download url
+  const xlsxDownload = await createXLSXWithOrders(pendingOrders);
 
   res.json({xlsxDownload});
 });

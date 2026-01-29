@@ -166,42 +166,40 @@ route.get("/inventorylist/xlsx", isAdmin, async (req, res) => {
   });
 
   // see ../exportXLSX.js for maintainability note on XLSX worksheet data
-  let xlsxSheetXML;
-  {
-    const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    let trackRow = 1;
-    let sheetData = "<sheetData>";
-    let mergeCells = "";
-    const mergeCellsRows = [];
-    let maxMergeLength = 0;
-    for (let i = 0; i < formattedItems.length; i++) {
-      sheetData += `<row r="${trackRow}"><c r="A${trackRow}" t="inlineStr"><is><t>${formattedItems[i].name}</t></is></c></row>`;
-      mergeCellsRows.push(trackRow);
-      trackRow++;
+  const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let trackRow = 1;
+  let sheetData = "<sheetData>";
+  let mergeCells = "";
+  const mergeCellsRows = [];
+  let maxMergeLength = 0;
+  for (let i = 0; i < formattedItems.length; i++) {
+    sheetData += `<row r="${trackRow}"><c r="A${trackRow}" t="inlineStr"><is><t>${formattedItems[i].name}</t></is></c></row>`;
+    mergeCellsRows.push(trackRow);
+    trackRow++;
 
-      sheetData += `<row r="${trackRow}">`;
-      let sizeCount = 0;
-      for (const size in formattedItems[i].sizes) {
-        sheetData += `<c r="${abc[sizeCount] + trackRow}" t="inlineStr"><is><t>${size}</t></is></c>`;
-        sizeCount++;
-      }
-      if (sizeCount > maxMergeLength) {
-        maxMergeLength = sizeCount;
-      }
-      sheetData += `</row>`;
-      trackRow++;
+    sheetData += `<row r="${trackRow}">`;
+    let sizeCount = 0;
+    for (const size in formattedItems[i].sizes) {
+      sheetData += `<c r="${abc[sizeCount] + trackRow}" t="inlineStr"><is><t>${size}</t></is></c>`;
+      sizeCount++;
     }
-    sheetData += "</sheetData>";
-    if (mergeCellsRows.length !== 0) {
-      mergeCells = `<mergeCells count="${mergeCellsRows.length}">`;
-      for (const row of mergeCellsRows) {
-        mergeCells += `<mergeCell ref="A${row}:${abc[maxMergeLength]}${row}"/>`;
-      }
-      mergeCells += `</mergeCells>`;
+    if (sizeCount > maxMergeLength) {
+      maxMergeLength = sizeCount;
     }
-
-    xlsxSheetXML = sheetData + mergeCells;
+    sheetData += `</row>`;
+    trackRow++;
   }
+  sheetData += "</sheetData>";
+  if (mergeCellsRows.length !== 0) {
+    mergeCells = `<mergeCells count="${mergeCellsRows.length}">`;
+    for (const row of mergeCellsRows) {
+      mergeCells += `<mergeCell ref="A${row}:${abc[maxMergeLength]}${row}"/>`;
+    }
+    mergeCells += `</mergeCells>`;
+  }
+
+  const xlsxSheetXML = sheetData + mergeCells;
+  
   const xlsxDownload = await xlsx.exportXLSX([
     xlsx.createSheet("Inventory List", xlsxSheetXML)
   ]);

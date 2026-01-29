@@ -105,6 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // download XLSX file when export button is clicked
   exportXLSX.addEventListener("click", async () => {
     exportXLSX.innerText = exportXLSXLoadingText;
 
