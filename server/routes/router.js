@@ -157,7 +157,7 @@ route.get("/setTimes", isAdmin, async (req, res) => {
 });
 
 route.post("/setTimes", isAdmin, async (req, res) => {
-  const { date, openTime, closeTime } = req.body;
+  const { date, openTime, closeTime, offset } = req.body;
   let timeEntry = await Time.findOne({ date: new Date(date + "T12:00:00") });
   if (timeEntry) {
     timeEntry.times.push({ openTime, closeTime });
@@ -168,11 +168,15 @@ route.post("/setTimes", isAdmin, async (req, res) => {
     });
   }
   await timeEntry.save();
-  res.redirect("/setTimes");
+  const redirectUrl =
+    typeof offset !== "undefined"
+      ? "/setTimes?offset=" + encodeURIComponent(offset)
+      : "/setTimes";
+  res.redirect(redirectUrl);
 });
 
 route.post("/editTime", isAdmin, async (req, res) => {
-  const { date, index, openTime, closeTime, action } = req.body;
+  const { date, index, openTime, closeTime, action, offset } = req.body;
   const timeEntry = await Time.findOne({ date: new Date(date + "T12:00:00") });
   if (!timeEntry || !timeEntry.times[index]) {
     return res
@@ -185,7 +189,11 @@ route.post("/editTime", isAdmin, async (req, res) => {
     timeEntry.times[index] = { openTime, closeTime };
   }
   await timeEntry.save();
-  res.redirect("/setTimes");
+  const redirectUrl =
+    typeof offset !== "undefined"
+      ? "/setTimes?offset=" + encodeURIComponent(offset)
+      : "/setTimes";
+  res.redirect(redirectUrl);
 });
 
 route.get("/contact", async (req, res) => {

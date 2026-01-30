@@ -31,7 +31,10 @@
     <div class = input-box>
     <div class="user-inputs">
       <label for="pickup-date">Select Pickup Date:</label>
-      <input type="date" id="pickup-date" name="pickup-date" required min="<%= new Date(Date.now() + 86400000).toISOString().split('T')[0] %>" />
+      <% const tomorrow = new Date(Date.now() + 86400000);
+        const minDate = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth()+1).padStart(2,'0')}-${String(tomorrow.getDate()).padStart(2,'0')}`;
+      %>
+      <input type="date" id="pickup-date" name="pickup-date" required min="<%= minDate %>" />
       <label for="pickup-time">Select Pickup Period:</label>
       <select id="pickup-time" name="pickup-time" required>
         <option value="" disabled selected>Select a period</option>
