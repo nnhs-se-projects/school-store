@@ -43,6 +43,8 @@ async function createXLSXWithOrders(orders) {
 
   const itemColumnMap = new Map();
 
+  // FIXME: is someone buys the same item but in different sizes/variants, the columns will overlap, which breaks the spreadsheet. Should split by size/variant too.
+
   let columnCount = 1;
   for (let i = 0; i < items.length; i++) {
     const itemName = items[i].name;
@@ -419,6 +421,16 @@ route.get("/completedOrderViewer", isVolunteer, async (req, res) => {
     date: -1,
   });
   res.render("completedOrderViewer", { completedOrders });
+});
+
+route.get("/completedOrderViewer/xlsx", isVolunteer, async (req, res) => {
+  const completedOrders = await Order.find({ orderStatus: "completed" }).sort({
+    date: -1,
+  });
+
+  const xlsxDownload = await createXLSXWithOrders(completedOrders);
+
+  res.json({xlsxDownload});
 });
 
 route.post("/deleteOrder", async (req, res) => {
