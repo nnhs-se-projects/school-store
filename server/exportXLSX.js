@@ -198,9 +198,17 @@ Here is a rudimentary breakdown of sheet data in XLSX files:
           - "str" for string (legacy)
 - Cell merge data is stored in a <mergeCells> element (this is only used if there are merged cells)
   - <mergeCells> tags take a `count` attribute that stores the number of merges (i.e. the number of <mergeCell> elements inside the <mergeCells> element)
-  - The individual merges are stored in <mergeCell> (self-closing element)
-    - <mergeCell> tags take a `ref` attribute that stores which cells get merged (e.g. "A1:C1" for merging from cell A1 to cell C1)
-In short, sheet data is stored in rows and cells, and merging cells is handled separately in <mergeCells>.
+  - The individual merges are stored in <mergeCell />
+    - <mergeCell /> tags take a `ref` attribute that stores which cells get merged (e.g. "A1:C1" for merging from cell A1 to cell C1)
+- Column formatting is stored in a <cols> element (only needed if you need to change from default)
+  - Individual groups of columns are formatted in <col /> tags
+    - <col /> tags take a `min` and a `max` attribute which specifies the starting and ending columns respectively that the formatting applies to (one-based indexing)
+    - <col /> tags can take a `width` attribute that specifies the width of the cells in characters
+      - If `width` is not specified, it uses the default width for the program reading the spreadsheet
+    - <col /> tags can take a `customWidth` attribute, which is a flag for if the specified width should be used
+      - `customWidth` can be set to "0" (false) or "1" (true)
+      - If `customWidth` is not specified, it defaults to "0"
+In short, sheet data is stored in rows and cells, merging cells is handled in <mergeCells>, and column formatting is handled in <cols>.
 Example:
 ```
 <sheetData>
@@ -221,6 +229,9 @@ Example:
 <mergeCells count="1">
   <mergeCell ref="A1:C1"/>
 </mergeCells>
+<cols>
+  <col min="1" max="2" width="20" customWidth="1"/>
+</cols>
 ``` */
 /* Creates a data URL for downloading an XLSX spreadsheet from given sheet data.
 Parameters:
