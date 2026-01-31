@@ -124,7 +124,6 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error fetching XLSX:", error);
       exportXLSX.innerText = exportXLSXErrorText;
     }
-
   });
 });
 

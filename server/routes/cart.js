@@ -35,30 +35,33 @@ function isVolunteer(req, res, next) {
 }
 
 async function createXLSXWithOrders(orders) {
-  // see ../exportXLSX.js for maintainability note on XLSX worksheet data
+  // see /server/exportXLSX.js for maintainability note on XLSX worksheet data
 
-  function getABC(n) { // note that XLSX only supports columns A (0) through XFD (16383)
+  function getABC(n) { // used for getting column name strings
     const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     let row = "";
     let trackN = n;
-    do {
+    while (trackN >= 0) {
       row = abc[trackN % 26] + row;
       trackN = Math.floor(trackN / 26) - 1;
-    } while (trackN >= 0);
+    }
 
-    return row;
+    return row; // note that XLSX only supports columns A (0) through XFD (16383)
   }
+
   const items = await Item.find();
 
+  // create the headers
   let ordersXML = '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c><c r="B1" t="inlineStr"><is><t>Name</t></is></c><c r="C1" t="inlineStr"><is><t>Email</t></is></c><c r="D1" t="inlineStr"><is><t>Date</t></is></c><c r="E1" t="inlineStr"><is><t>Period</t></is></c><c r="F1" t="inlineStr"><is><t>Total Price</t></is></c><c r="G1" t="inlineStr"><is><t>Status</t></is></c></row>';
   let orderItemsXML = '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c>';
 
-  const itemColumnMap = new Map();
+  // order item headers
+  const itemColumnMap = new Map(); // create a Map to map different items (and sizes/variants) to a column in the spreadsheet
 
-  let columnCount = 1;
+  let columnCount = 1; // keep track of the next open column
   for (let i = 0; i < items.length; i++) {
-    const sizes = Object.keys(items[i].sizes).sort((a, b) => a.localeCompare(b));
+    const sizes = Object.keys(items[i].sizes).sort((a, b) => a.localeCompare(b)); // sort objects by their sizes/variants for consistency
     for (const size of sizes) {
       const itemDesc = items[i].name + " " + size;
 
@@ -71,12 +74,15 @@ async function createXLSXWithOrders(orders) {
   }
   orderItemsXML += '</row>';
 
+  // add the orders into the sheets
   for (let row = 2; row < orders.length + 2; row++) {
+    // add order info
     const order = orders[row - 2];
     ordersXML += `<row r="${row}"><c r="A${row}"><v>${order.orderNumber}</v></c><c r="B${row}" t="inlineStr"><is><t>${order.name}</t></is></c><c r="C${row}" t="inlineStr"><is><t>${order.email}</t></is></c><c r="D${row}" t="inlineStr"><is><t>${order.date}</t></is></c><c r="E${row}"><v>${order.period}</v></c><c r="F${row}"><v>${order.totalPrice}</v></c><c r="G${row}" t="inlineStr"><is><t>${order.orderStatus}</t></is></c></row>`;
     
-    orderItemsXML += `<row r="${row}"><c r="A${row}"><v>${order.orderNumber}</v></c>`;
-    const orderItems = order.items.sort((a, b) => (
+    // add order items
+    orderItemsXML += `<row r="${row}"><c r="A${row}"><v>${order.orderNumber}</v></c>`; // order number
+    const orderItems = order.items.sort((a, b) => ( // sort the items by type and size/variant for consistency
       a.name === b.name ?
         a.size.localeCompare(b.size) :
         itemColumnMap.get(a.name) - itemColumnMap.get(b.name)
@@ -85,7 +91,7 @@ async function createXLSXWithOrders(orders) {
       const itemDesc = item.name + " " + item.size;
       const itemColumn = itemColumnMap.get(itemDesc);
       
-      orderItemsXML += `<c r="${getABC(itemColumn)}${row}"><v>${item.quantity}</v></c>`;
+      orderItemsXML += `<c r="${getABC(itemColumn)}${row}"><v>${item.quantity}</v></c>`; // order items
     }
     orderItemsXML += `</row>`;
   }
@@ -97,7 +103,7 @@ async function createXLSXWithOrders(orders) {
   const xlsxDownload = await xlsx.exportXLSX([
     xlsx.createSheet("Orders", ordersXML),
     xlsx.createSheet("Order Items", orderItemsXML)
-  ]);
+  ]); // data URI string
   
   return xlsxDownload;
 }

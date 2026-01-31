@@ -156,31 +156,35 @@ route.get("/inventorylistprint", isAdmin, async (req, res) => {
 route.get("/inventorylist/xlsx", isAdmin, async (req, res) => {
   const items = await Item.find();
 
-  // see ../exportXLSX.js for maintainability note on XLSX worksheet data
+  // see /server/exportXLSX.js for maintainability note on XLSX worksheet data
   const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   let trackRow = 1;
   let sheetData = "<sheetData>";
   let mergeCells = "";
-  const mergeCellsRows = [];
+  const mergeCellsRows = []; // track which rows should have merged cells (item name headers)
   let maxMergeLength = 0;
-  for (let i = 0; i < items.length; i++) {
+  // create <sheetData> data
+  for (let i = 0; i < items.length; i++) { // put each item in the spreadsheet
+    // item name header
     sheetData += `<row r="${trackRow}"><c r="A${trackRow}" t="inlineStr"><is><t>${items[i].name}</t></is></c></row>`;
     mergeCellsRows.push(trackRow);
     trackRow++;
 
+    // item sizes/variants
     sheetData += `<row r="${trackRow}">`;
     let sizeCount = 0;
-    for (const size in items[i].sizes) {
+    for (const size in items[i].sizes) { // note: `items[i].sizes` is an object, `size` are keys
       sheetData += `<c r="${abc[sizeCount] + trackRow}" t="inlineStr"><is><t>${size}</t></is></c>`;
       sizeCount++;
     }
-    if (sizeCount > maxMergeLength) {
+    if (sizeCount > maxMergeLength) { // adjust `maxMergeLength` as needed
       maxMergeLength = sizeCount;
     }
     sheetData += `</row>`;
     trackRow++;
   }
   sheetData += "</sheetData>";
+  // create <mergeCells> data
   if (mergeCellsRows.length !== 0) {
     mergeCells = `<mergeCells count="${mergeCellsRows.length}">`;
     for (const row of mergeCellsRows) {
@@ -189,11 +193,11 @@ route.get("/inventorylist/xlsx", isAdmin, async (req, res) => {
     mergeCells += `</mergeCells>`;
   }
 
-  const xlsxSheetXML = sheetData + mergeCells;
+  const xlsxSheetXML = sheetData + mergeCells; // combine into worksheet XML
   
   const xlsxDownload = await xlsx.exportXLSX([
     xlsx.createSheet("Inventory List", xlsxSheetXML)
-  ]);
+  ]); // data URI string
 
   res.json({xlsxDownload});
 });

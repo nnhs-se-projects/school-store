@@ -22,5 +22,4 @@ exportXLSX.addEventListener("click", async () => {
     console.error("Error fetching XLSX:", error);
     exportXLSX.innerText = exportXLSXErrorText;
   }
-
 });
