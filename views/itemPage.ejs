@@ -46,7 +46,7 @@
   </div>
 </div>
 <input type="hidden" id="itemId" value="<%= item.id %>" />
-<input type="hidden" id="googleId" value="<%= session.user.googleId %>" />
+<input type="hidden" id="googleId" value="<% if (session.user) { %><%= session.user.googleId %><% } %>" />
 <input type="hidden" id="placeholder" value="<%= item.sizes.placeholder%>" />
 
 <script src="/js/itemPage.js"></script>
