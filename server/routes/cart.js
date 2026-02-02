@@ -62,7 +62,7 @@ route.get("/cart", isStudent, async (req, res) => {
         console.log(
           "Item quantity is less than requested: ",
           item.name,
-          user.cart[i].size
+          user.cart[i].size,
         );
         user.cart[i].quantity = itemInventoryQuantity;
         await user.save();
@@ -119,7 +119,7 @@ route.post("/cart/add", async (req, res) => {
   }
 
   const itemIndex = user.cart.findIndex(
-    (cartItem) => cartItem.itemId.toString() === itemId
+    (cartItem) => cartItem.itemId.toString() === itemId,
   );
   if (itemIndex > -1 && user.cart[itemIndex].size === size) {
     // If item already exists in the cart, update the quantity
@@ -186,7 +186,7 @@ route.get("/cart/checkout", async (req, res) => {
       redirectUrl: "/auth/login",
     });
   }
-  
+
   const user = await User.findOne({
     googleId: req.session.user.googleId,
   });
@@ -213,13 +213,13 @@ route.get("/cart/checkout", async (req, res) => {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   tomorrow.setHours(0, 0, 0, 0);
-  
+
   const twoWeeksFromNow = new Date();
   twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
   twoWeeksFromNow.setHours(23, 59, 59, 999);
-  
+
   const storeHours = await Time.find({
-    date: { $gte: tomorrow, $lte: twoWeeksFromNow }
+    date: { $gte: tomorrow, $lte: twoWeeksFromNow },
   }).sort({ date: 1 });
 
   res.render("checkoutPage", { cart: cartItems, storeHours });
@@ -284,7 +284,7 @@ route.post("/cart/order", async (req, res) => {
         "Item inventory updated: ",
         item.name,
         size,
-        item.sizes[size]
+        item.sizes[size],
       );
     } else {
       console.log("Item not found in inventory: ", order.items[i].itemId);
@@ -368,7 +368,7 @@ route.get("/orderViewer", isVolunteer, async (req, res) => {
   const orders = await Order.find({}).sort({ date: 1 });
 
   const pendingOrders = orders.filter(
-    (order) => order.orderStatus !== "completed"
+    (order) => order.orderStatus !== "completed",
   );
 
   res.render("orderViewer", { pendingOrders });
@@ -400,7 +400,7 @@ route.post("/deleteOrder", async (req, res) => {
           "Item inventory updated: ",
           item.name,
           size,
-          item.sizes[size]
+          item.sizes[size],
         );
       } else {
         console.log("Item not found in inventory: ", order.items[i].itemId);
