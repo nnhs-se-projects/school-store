@@ -4,6 +4,7 @@ const route = express.Router();
 const User = require("../model/user");
 const Item = require("../model/item");
 const Order = require("../model/order");
+const Time = require("../model/time");
 const nodemailer = require("nodemailer");
 
 function isStudent(req, res, next) {
@@ -177,6 +178,15 @@ route.post("/cart/updateQuant", async (req, res) => {
 });
 
 route.get("/cart/checkout", async (req, res) => {
+  // Check if user is logged in
+  if (!req.session || !req.session.user) {
+    return res.status(401).render("errorPage", {
+      title: "Unauthorized",
+      message: "Please log in to access checkout.",
+      redirectUrl: "/auth/login",
+    });
+  }
+  
   const user = await User.findOne({
     googleId: req.session.user.googleId,
   });
@@ -199,7 +209,20 @@ route.get("/cart/checkout", async (req, res) => {
     }
   }
 
-  res.render("checkoutPage", { cart: cartItems });
+  // Query store hours for next two weeks only (starting tomorrow)
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
+  
+  const twoWeeksFromNow = new Date();
+  twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
+  twoWeeksFromNow.setHours(23, 59, 59, 999);
+  
+  const storeHours = await Time.find({
+    date: { $gte: tomorrow, $lte: twoWeeksFromNow }
+  }).sort({ date: 1 });
+
+  res.render("checkoutPage", { cart: cartItems, storeHours });
 });
 
 route.post("/cart/order", async (req, res) => {
