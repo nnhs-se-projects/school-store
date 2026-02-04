@@ -154,7 +154,7 @@ route.get("/contact", async (req, res) => {
 });
 
 // displays product page for a specific item
-route.get("/item/:id", isStudent, async (req, res) => {
+route.get("/item/:id", async (req, res) => {
   const item = await Item.findById(req.params.id);
   res.render("itemPage", { item });
 });
