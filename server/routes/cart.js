@@ -78,15 +78,11 @@ async function createXLSXWithOrders(orders) {
   for (let row = 2; row < orders.length + 2; row++) {
     // add order info
     const order = orders[row - 2];
-    ordersXML += `<row r="${row}"><c r="A${row}"><v>${order.orderNumber}</v></c><c r="B${row}" t="inlineStr"><is><t>${order.name}</t></is></c><c r="C${row}" t="inlineStr"><is><t>${order.email}</t></is></c><c r="D${row}" t="inlineStr"><is><t>${order.date}</t></is></c><c r="E${row}"><v>${order.period}</v></c><c r="F${row}"><v>${order.totalPrice}</v></c><c r="G${row}" t="inlineStr"><is><t>${order.orderStatus}</t></is></c></row>`;
+    ordersXML += `<row r="${row}"><c r="A${row}"><v>${order.orderNumber}</v></c><c r="B${row}" t="inlineStr"><is><t>${order.name}</t></is></c><c r="C${row}" t="inlineStr"><is><t>${order.email}</t></is></c><c r="D${row}" t="inlineStr"><is><t>${order.date}</t></is></c><c r="E${row}" t="inlineStr"><t><is>${order.period}</t></is></c><c r="F${row}"><v>${order.totalPrice}</v></c><c r="G${row}" t="inlineStr"><is><t>${order.orderStatus}</t></is></c></row>`;
     
     // add order items
     orderItemsXML += `<row r="${row}"><c r="A${row}"><v>${order.orderNumber}</v></c>`; // order number
-    const orderItems = order.items.sort((a, b) => ( // sort the items by type and size/variant for consistency
-      a.name === b.name ?
-        a.size.localeCompare(b.size) :
-        itemColumnMap.get(a.name) - itemColumnMap.get(b.name)
-    ));
+    const orderItems = order.items.sort((a, b) => (itemColumnMap.get(a.name + " " + a.size) - itemColumnMap.get(b.name + " " + b.size)));
     for (const item of orderItems) {
       const itemDesc = item.name + " " + item.size;
       const itemColumn = itemColumnMap.get(itemDesc);
@@ -98,7 +94,7 @@ async function createXLSXWithOrders(orders) {
   ordersXML += '</sheetData>';
   orderItemsXML += '</sheetData>';
 
-  orderItemsXML += `<cols><col min="1" max="${columnCount}" width="20" customWidth="1"/></cols>`; // adjust column width for order items
+  //orderItemsXML += `<cols><col min="1" max="${columnCount}" width="20" customWidth="1"/></cols>`; // adjust column width for order items // FIXME: columns not working?
 
   const xlsxDownload = await xlsx.exportXLSX([
     xlsx.createSheet("Orders", ordersXML),
