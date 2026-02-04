@@ -13,6 +13,24 @@ document.addEventListener("DOMContentLoaded", (event) => {
     return `${y}-${m}-${day}`;
   }
 
+  // Function to convert time string (e.g., "9:00 AM") to minutes since midnight
+  function timeToMinutes(timeStr) {
+    const [time, period] = timeStr.split(" ");
+    let [hours, minutes] = time.split(":").map(Number);
+    if (period === "PM" && hours !== 12) hours += 12;
+    if (period === "AM" && hours === 12) hours = 0;
+    return hours * 60 + minutes;
+  }
+
+  // Function to convert minutes since midnight back to time string
+  function minutesToTime(minutes) {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    const period = hours >= 12 ? "PM" : "AM";
+    const displayHours = hours > 12 ? hours - 12 : hours === 0 ? 12 : hours;
+    return `${displayHours}:${String(mins).padStart(2, "0")} ${period}`;
+  }
+
   // Populate time options when a date is selected
   pickupDateSelect.addEventListener("change", function () {
     const selectedDate = this.value;
@@ -27,10 +45,23 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
     if (matchingEntry && matchingEntry.times) {
       matchingEntry.times.forEach((timeSlot) => {
-        const option = document.createElement("option");
-        option.value = `${timeSlot.openTime} - ${timeSlot.closeTime}`;
-        option.textContent = `${timeSlot.openTime} - ${timeSlot.closeTime}`;
-        pickupTimeSelect.appendChild(option);
+        // Convert opening and closing times to minutes since midnight
+        const openMinutes = timeToMinutes(timeSlot.openTime);
+        const closeMinutes = timeToMinutes(timeSlot.closeTime);
+
+        // Generate 30-minute intervals
+        for (
+          let currentMinutes = openMinutes;
+          currentMinutes < closeMinutes;
+          currentMinutes += 30
+        ) {
+          const startTime = minutesToTime(currentMinutes);
+          const endTime = minutesToTime(currentMinutes + 30);
+          const option = document.createElement("option");
+          option.value = `${startTime} - ${endTime}`;
+          option.textContent = `${startTime} - ${endTime}`;
+          pickupTimeSelect.appendChild(option);
+        }
       });
     }
   });
