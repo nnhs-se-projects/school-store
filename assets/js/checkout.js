@@ -74,9 +74,13 @@ document.addEventListener("DOMContentLoaded", (event) => {
       alert("Please fill in all fields before proceeding to checkout.");
       return;
     }
-    confirm(
+    const userConfirmed = confirm(
       "All orders must be paid for IN CASH at the time of pickup at the school store. ",
     );
+    if (!userConfirmed) {
+      return;
+    }
+
     const response = await fetch("/cart/order", {
       method: "POST",
       headers: {
@@ -86,10 +90,9 @@ document.addEventListener("DOMContentLoaded", (event) => {
     });
 
     if (response.ok) {
-      console.log("Checkout successful");
       window.location.href = "/cart/confirmation";
     } else {
-      console.error("Failed to checkout");
+      alert("Failed to place order. Please try again.");
     }
   });
 });
