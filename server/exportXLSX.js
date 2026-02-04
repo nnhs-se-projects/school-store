@@ -201,6 +201,7 @@ Here is a rudimentary breakdown of sheet data in XLSX files:
   - The individual merges are stored in <mergeCell />
     - <mergeCell /> tags take a `ref` attribute that stores which cells get merged (e.g. "A1:C1" for merging from cell A1 to cell C1)
 - Column formatting is stored in a <cols> element (only needed if you need to change from default)
+  - If defined, <cols> MUST be defined before <sheetData> elements
   - Individual groups of columns are formatted in <col /> tags
     - <col /> tags take a `min` and a `max` attribute which specifies the starting and ending columns respectively that the formatting applies to (one-based indexing)
     - <col /> tags can take a `width` attribute that specifies the width of the cells in characters
@@ -211,6 +212,9 @@ Here is a rudimentary breakdown of sheet data in XLSX files:
 In short, sheet data is stored in rows and cells, merging cells is handled in <mergeCells>, and column formatting is handled in <cols>.
 Example:
 ```
+<cols>
+  <col min="1" max="2" width="20" customWidth="1"/>
+</cols>
 <sheetData>
   <row r="1">
     <c r="A1" t="inlineStr">
@@ -229,9 +233,6 @@ Example:
 <mergeCells count="1">
   <mergeCell ref="A1:C1"/>
 </mergeCells>
-<cols>
-  <col min="1" max="2" width="20" customWidth="1"/>
-</cols>
 ``` */
 /* Creates a data URL for downloading an XLSX spreadsheet from given sheet data.
 Parameters:
