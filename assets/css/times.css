@@ -81,6 +81,7 @@ h1 {
 }
 
 .calendar .day {
+  min-width: 100px;
   height: 120px;
   position: relative;
 }

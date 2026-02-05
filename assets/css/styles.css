@@ -47,7 +47,8 @@ h3 {
 /* Store info section */
 
 .store-info {
-  max-width: 600px;
+  width: 75%;
+  max-width: 900px;
   margin: 50px auto;
   background-color: #fff;
   padding: 20px;
@@ -81,23 +82,6 @@ h3 {
   background-color: #f7f7f7; /* Optional: light background for distinction */
   border-radius: 8px; /* Rounded corners */
   margin-bottom: 20px; /* Space below the section */
-}
-
-.store-hours li {
-  position: relative;
-  margin: 8px 0; /* Add spacing between each list item */
-  padding-left: 20px; /* Space for custom bullet */
-  list-style: none;
-}
-
-.store-hours li::before {
-  content: "•"; /* Custom bullet symbol */
-  color: #002f55; /* Bullet color */
-  font-size: 1.2em; /* Bullet size */
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
 }
 
 .item-list {
@@ -272,4 +256,8 @@ button {
   width: auto;
   display: flex;
   border-radius: 8px;
+}
+
+.overflow-wrapper {
+  overflow-x: auto;
 }
