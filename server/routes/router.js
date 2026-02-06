@@ -36,9 +36,17 @@ route.get("/", async (req, res) => {
 
   console.log(req.session);
 
+  const times = await Time.find().sort({ date: 1 });
+  /* for (const time of times) {
+    console.log(time.date + " " + time.times);
+  } */
+  const query = req.query;
+
   // render the homePage view and pass the items to it
   res.render("homePage", {
     items: formattedItems,
+    times,
+    query
   });
 });
 
