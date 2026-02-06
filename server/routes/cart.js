@@ -380,7 +380,7 @@ route.post("/cart/order", async (req, res) => {
   // Configure the transporter
 
   const adminEmail = "napervillenorthschoolstore@gmail.com";
-  console.log(process.env.EMAIL_PASSWORD);
+  // console.log(process.env.EMAIL_PASSWORD);
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
