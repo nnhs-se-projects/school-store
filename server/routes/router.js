@@ -3,8 +3,8 @@ const route = express.Router();
 
 // const User = require("../model/user");
 const Item = require("../model/item");
+const Time = require("../model/time");
 const { format } = require("morgan");
-
 const xlsx = require("../exportXLSX");
 
 /*
@@ -38,9 +38,17 @@ route.get("/", async (req, res) => {
 
   console.log(req.session);
 
+  const times = await Time.find().sort({ date: 1 });
+  /* for (const time of times) {
+    console.log(time.date + " " + time.times);
+  } */
+  const query = req.query;
+
   // render the homePage view and pass the items to it
   res.render("homePage", {
     items: formattedItems,
+    times,
+    query,
   });
 });
 
@@ -150,6 +158,87 @@ route.get("/inventorylistprint", isAdmin, async (req, res) => {
   res.render("inventorylistprint", {
     items: formattedItems,
   });
+});
+
+// Helper function to clean up times outside the visible calendar range
+async function cleanupOldTimes() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Calculate the range: previous 2 weeks to future 2 weeks
+  const startOfPreviousTwoWeeks = new Date(today);
+  startOfPreviousTwoWeeks.setDate(today.getDate() - 14 - today.getDay()); // Sunday of previous 2 weeks
+
+  const endOfNextTwoWeeks = new Date(today);
+  endOfNextTwoWeeks.setDate(today.getDate() + (27 - today.getDay())); // Saturday of next 2 weeks
+
+  console.log(
+    "Cleanup Range - Keep dates between:",
+    startOfPreviousTwoWeeks,
+    "and",
+    endOfNextTwoWeeks,
+  );
+
+  // Delete all times outside this range
+  const result = await Time.deleteMany({
+    $or: [
+      { date: { $lt: startOfPreviousTwoWeeks } },
+      { date: { $gt: endOfNextTwoWeeks } },
+    ],
+  });
+
+  console.log(
+    `Deleted ${result.deletedCount} time entries outside the visible range`,
+  );
+}
+
+route.get("/setTimes", isAdmin, async (req, res) => {
+  // Clean up times outside the visible calendar range
+  await cleanupOldTimes();
+
+  const times = await Time.find().sort({ date: 1 });
+  const query = req.query;
+  res.render("setTimes", { times, query });
+});
+
+route.post("/setTimes", isAdmin, async (req, res) => {
+  const { date, openTime, closeTime, offset } = req.body;
+  let timeEntry = await Time.findOne({ date: new Date(date + "T12:00:00") });
+  if (timeEntry) {
+    timeEntry.times.push({ openTime, closeTime });
+  } else {
+    timeEntry = new Time({
+      date: new Date(date + "T12:00:00"),
+      times: [{ openTime, closeTime }],
+    });
+  }
+  await timeEntry.save();
+  const redirectUrl =
+    typeof offset !== "undefined"
+      ? "/setTimes?offset=" + encodeURIComponent(offset)
+      : "/setTimes";
+  res.redirect(redirectUrl);
+});
+
+route.post("/editTime", isAdmin, async (req, res) => {
+  const { date, index, openTime, closeTime, action, offset } = req.body;
+  const timeEntry = await Time.findOne({ date: new Date(date + "T12:00:00") });
+  if (!timeEntry || !timeEntry.times[index]) {
+    return res
+      .status(404)
+      .render("errorPage", { message: "Time slot not found" });
+  }
+  if (action === "delete") {
+    timeEntry.times.splice(index, 1);
+  } else {
+    timeEntry.times[index] = { openTime, closeTime };
+  }
+  await timeEntry.save();
+  const redirectUrl =
+    typeof offset !== "undefined"
+      ? "/setTimes?offset=" + encodeURIComponent(offset)
+      : "/setTimes";
+  res.redirect(redirectUrl);
 });
 
 // generate and return XLSX file for inventory list
