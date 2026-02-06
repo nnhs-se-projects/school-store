@@ -75,7 +75,7 @@
                 <% if (dayTimes && dayTimes.length > 0) { %>
                   <ul>
                     <% dayTimes.forEach((slot, index) => { %>
-                      <li><%= slot.openTime %> - <%= slot.closeTime %>
+                      <li class="store-open-hours-indicator"><%= slot.openTime %> - <%= slot.closeTime %>
                         <div class="edit-popup">
                           <form action="/editTime" method="POST">
                             <input type="hidden" name="offset" value="<%= query.offset || 0 %>">

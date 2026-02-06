@@ -120,10 +120,14 @@ h1 {
   top: 50%;
   left: 100%;
   transform: translateY(-50%);
-  margin-left: -5px;
+  margin-left: -10px;
 }
 
-li:hover .edit-popup {
+.store-open-hours-indicator {
+  width: 100%;
+}
+
+.store-open-hours-indicator:hover .edit-popup {
   display: block;
 }
 
