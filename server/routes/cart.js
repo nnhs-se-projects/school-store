@@ -7,6 +7,8 @@ const Order = require("../model/order");
 const Time = require("../model/time");
 const nodemailer = require("nodemailer");
 
+const xlsx = require("../exportXLSX");
+
 function isStudent(req, res, next) {
   // check if the session exists (user is logged in), and if they are an admin
   if (req.session && req.session.clearance >= 2) {
@@ -31,6 +33,76 @@ function isVolunteer(req, res, next) {
       redirectUrl: "/",
     });
   }
+}
+
+async function createXLSXWithOrders(orders) {
+  // see /server/exportXLSX.js for maintainability note on XLSX worksheet data
+
+  function getABC(n) { // used for getting column name strings
+    const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    let row = "";
+    let trackN = n;
+    while (trackN >= 0) {
+      row = abc[trackN % 26] + row;
+      trackN = Math.floor(trackN / 26) - 1;
+    }
+
+    return row; // note that XLSX only supports columns A (0) through XFD (16383)
+  }
+
+  const items = await Item.find();
+
+  // create the headers
+  let ordersXML = '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c><c r="B1" t="inlineStr"><is><t>Name</t></is></c><c r="C1" t="inlineStr"><is><t>Email</t></is></c><c r="D1" t="inlineStr"><is><t>Date</t></is></c><c r="E1" t="inlineStr"><is><t>Period</t></is></c><c r="F1" t="inlineStr"><is><t>Total Price</t></is></c><c r="G1" t="inlineStr"><is><t>Status</t></is></c></row>';
+  let orderItemsXML = '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c>';
+
+  // order item headers
+  const itemColumnMap = new Map(); // create a Map to map different items (and sizes/variants) to a column in the spreadsheet
+
+  let columnCount = 1; // keep track of the next open column
+  for (let i = 0; i < items.length; i++) {
+    const sizes = Object.keys(items[i].sizes).sort((a, b) => a.localeCompare(b)); // sort objects by their sizes/variants for consistency
+    for (const size of sizes) {
+      const itemDesc = items[i].name + " " + size;
+
+      itemColumnMap.set(itemDesc, columnCount);
+
+      orderItemsXML += `<c r="${getABC(columnCount)}1" t="inlineStr"><is><t>${itemDesc}</t></is></c>`;
+
+      columnCount++;
+    }
+  }
+  orderItemsXML += '</row>';
+
+  // add the orders into the sheets
+  for (let row = 2; row < orders.length + 2; row++) {
+    // add order info
+    const order = orders[row - 2];
+    ordersXML += `<row r="${row}"><c r="A${row}"><v>${order.orderNumber}</v></c><c r="B${row}" t="inlineStr"><is><t>${order.name}</t></is></c><c r="C${row}" t="inlineStr"><is><t>${order.email}</t></is></c><c r="D${row}" t="inlineStr"><is><t>${order.date}</t></is></c><c r="E${row}" t="inlineStr"><is><t>${order.period}</t></is></c><c r="F${row}"><v>${order.totalPrice}</v></c><c r="G${row}" t="inlineStr"><is><t>${order.orderStatus}</t></is></c></row>`;
+    
+    // add order items
+    orderItemsXML += `<row r="${row}"><c r="A${row}"><v>${order.orderNumber}</v></c>`; // order number
+    const orderItems = order.items.sort((a, b) => (itemColumnMap.get(a.name + " " + a.size) - itemColumnMap.get(b.name + " " + b.size)));
+    for (const item of orderItems) {
+      const itemDesc = item.name + " " + item.size;
+      const itemColumn = itemColumnMap.get(itemDesc);
+      
+      orderItemsXML += `<c r="${getABC(itemColumn)}${row}"><v>${item.quantity}</v></c>`; // order items
+    }
+    orderItemsXML += `</row>`;
+  }
+  ordersXML += '</sheetData>';
+  orderItemsXML += '</sheetData>';
+
+  orderItemsXML = `<cols><col min="2" max="${columnCount}" width="20" customWidth="1"/></cols>` + orderItemsXML; // adjust column width for order items
+
+  const xlsxDownload = await xlsx.exportXLSX([
+    xlsx.createSheet("Orders", ordersXML),
+    xlsx.createSheet("Order Items", orderItemsXML)
+  ]); // data URI string
+  
+  return xlsxDownload;
 }
 
 // directs to the cart page
@@ -371,7 +443,21 @@ route.get("/orderViewer", isVolunteer, async (req, res) => {
     (order) => order.orderStatus !== "completed",
   );
 
-  res.render("orderViewer", { pendingOrders });
+  res.render("orderViewer", {
+    pendingOrders,
+  });
+});
+
+route.get("/orderViewer/xlsx", isVolunteer, async (req, res) => {
+  const orders = await Order.find({}).sort({ date: 1 });
+
+  const pendingOrders = orders.filter(
+    (order) => order.orderStatus !== "completed"
+  );
+
+  const xlsxDownload = await createXLSXWithOrders(pendingOrders);
+
+  res.json({xlsxDownload});
 });
 
 route.get("/completedOrderViewer", isVolunteer, async (req, res) => {
@@ -379,6 +465,16 @@ route.get("/completedOrderViewer", isVolunteer, async (req, res) => {
     date: -1,
   });
   res.render("completedOrderViewer", { completedOrders });
+});
+
+route.get("/completedOrderViewer/xlsx", isVolunteer, async (req, res) => {
+  const completedOrders = await Order.find({ orderStatus: "completed" }).sort({
+    date: -1,
+  });
+
+  const xlsxDownload = await createXLSXWithOrders(completedOrders);
+
+  res.json({xlsxDownload});
 });
 
 route.post("/deleteOrder", async (req, res) => {
