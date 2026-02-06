@@ -170,17 +170,24 @@ async function cleanupOldTimes() {
   const endOfNextTwoWeeks = new Date(today);
   endOfNextTwoWeeks.setDate(today.getDate() + (27 - today.getDay())); // Saturday of next 2 weeks
 
-  console.log("Cleanup Range - Keep dates between:", startOfPreviousTwoWeeks, "and", endOfNextTwoWeeks);
+  console.log(
+    "Cleanup Range - Keep dates between:",
+    startOfPreviousTwoWeeks,
+    "and",
+    endOfNextTwoWeeks,
+  );
 
   // Delete all times outside this range
   const result = await Time.deleteMany({
     $or: [
       { date: { $lt: startOfPreviousTwoWeeks } },
-      { date: { $gt: endOfNextTwoWeeks } }
-    ]
+      { date: { $gt: endOfNextTwoWeeks } },
+    ],
   });
 
-  console.log(`Deleted ${result.deletedCount} time entries outside the visible range`);
+  console.log(
+    `Deleted ${result.deletedCount} time entries outside the visible range`,
+  );
 }
 
 route.get("/setTimes", isAdmin, async (req, res) => {
