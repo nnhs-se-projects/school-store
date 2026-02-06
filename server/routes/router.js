@@ -46,7 +46,7 @@ route.get("/", async (req, res) => {
   res.render("homePage", {
     items: formattedItems,
     times,
-    query
+    query,
   });
 });
 
@@ -158,7 +158,35 @@ route.get("/inventorylistprint", isAdmin, async (req, res) => {
   });
 });
 
+// Helper function to clean up times outside the visible calendar range
+async function cleanupOldTimes() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Calculate the range: previous 2 weeks to future 2 weeks
+  const startOfPreviousTwoWeeks = new Date(today);
+  startOfPreviousTwoWeeks.setDate(today.getDate() - 14 - today.getDay()); // Sunday of previous 2 weeks
+
+  const endOfNextTwoWeeks = new Date(today);
+  endOfNextTwoWeeks.setDate(today.getDate() + (27 - today.getDay())); // Saturday of next 2 weeks
+
+  console.log("Cleanup Range - Keep dates between:", startOfPreviousTwoWeeks, "and", endOfNextTwoWeeks);
+
+  // Delete all times outside this range
+  const result = await Time.deleteMany({
+    $or: [
+      { date: { $lt: startOfPreviousTwoWeeks } },
+      { date: { $gt: endOfNextTwoWeeks } }
+    ]
+  });
+
+  console.log(`Deleted ${result.deletedCount} time entries outside the visible range`);
+}
+
 route.get("/setTimes", isAdmin, async (req, res) => {
+  // Clean up times outside the visible calendar range
+  await cleanupOldTimes();
+
   const times = await Time.find().sort({ date: 1 });
   const query = req.query;
   res.render("setTimes", { times, query });

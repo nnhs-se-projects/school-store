@@ -48,6 +48,7 @@
       timesMap[dateStr] = time.times;
     });
     %>
+    <div class="overflow-wrapper">
     <table class="calendar">
       <thead>
         <tr>
@@ -101,6 +102,7 @@
         <% } %>
       </tbody>
     </table>
+    </div>
     <script>
       const currentOffset = <%- JSON.stringify(offset) %>;
       const prevBtn = document.getElementById('prev-week');
