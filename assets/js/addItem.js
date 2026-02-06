@@ -4,6 +4,8 @@ const submitButton = document.querySelector("input.submit");
 const sizeInput = document.getElementById("size-input");
 const checkBox = document.getElementById("sized-check");
 const genericSizeInput = document.getElementById("generic-size-input");
+const secondImageInput = document.querySelector("input#second-image");
+const imageInput = document.querySelector("input#image");
 
 document.addEventListener("DOMContentLoaded", () => {
   sizeInput.style.display = "none";
@@ -26,10 +28,13 @@ submitButton.addEventListener("click", async () => {
   const name = document.querySelector("input#name").value;
   const price = document.querySelector("input#price").value;
   const description = document.querySelector("input#description").value;
-  const imageInput = document.querySelector("input#image");
   const file = imageInput.files[0];
   const reader = new FileReader();
   let base64String = null;
+
+  const secondFile = secondImageInput.files[0];
+  const secondReader = new FileReader();
+  let secondBase64String = null;
 
   const sizes = {};
   const sizeChecked = document.querySelector("input#sized-check").checked;
@@ -47,11 +52,16 @@ submitButton.addEventListener("click", async () => {
   } else {
     sizes.placeholder = parseInt(
       document.querySelector("input#generic-quantity").value,
-      10
+      10,
     );
   }
 
   console.log(sizes); // Debugging: Check the sizes object
+
+  if (!file && !secondFile) {
+    console.error("No images selected");
+    return;
+  }
 
   reader.onloadend = async function () {
     const img = new Image();
@@ -78,28 +88,91 @@ submitButton.addEventListener("click", async () => {
 
       base64String = canvas.toDataURL("image/jpeg");
 
-      const item = {
-        name,
-        price,
-        description,
-        image: base64String,
-        sizes,
+      secondReader.onloadend = async function () {
+        const secondImg = new Image();
+        secondImg.src = secondReader.result;
+
+        secondImg.onload = async function () {
+          console.log("Second image loaded successfully");
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+
+          const height = 600;
+          const width = 600;
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const minSize = Math.min(secondImg.width, secondImg.height);
+          const cropX = (secondImg.width - minSize) / 2;
+          const cropY = (secondImg.height - minSize) / 2;
+
+          ctx.drawImage(
+            secondImg,
+            cropX,
+            cropY,
+            minSize,
+            minSize,
+            0,
+            0,
+            width,
+            height,
+          );
+
+          secondBase64String = canvas.toDataURL("image/jpeg");
+
+          const item = {
+            name,
+            price,
+            description,
+            image: base64String,
+            imageAlt: secondBase64String,
+            sizes,
+          };
+
+          console.log("Item object:", item);
+
+          const response = await fetch("/addItem", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ item }),
+          });
+
+          if (response.ok) {
+            window.location = "/manageItems";
+          } else {
+            console.error("Error adding item");
+          }
+        };
       };
 
-      console.log("Item object:", item);
-
-      const response = await fetch("/addItem", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ item }),
-      });
-
-      if (response.ok) {
-        window.location = "/manageItems";
+      if (secondFile) {
+        secondReader.readAsDataURL(secondFile);
       } else {
-        console.error("Error adding item");
+        const item = {
+          name,
+          price,
+          description,
+          image: base64String,
+          imageAlt: secondBase64String,
+          sizes,
+        };
+
+        const response = await fetch("/addItem", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ item }),
+        });
+
+        if (response.ok) {
+          window.location = "/manageItems";
+        } else {
+          console.error("Error adding item");
+        }
       }
     };
   };
@@ -140,6 +213,7 @@ submitButton.addEventListener("click", async () => {
       price,
       description,
       image: base64String,
+      imageAlt: secondBase64String,
       sizes,
     };
 

@@ -3,6 +3,9 @@
 document.addEventListener("DOMContentLoaded", function () {
   const sizeSelector = document.getElementById("size");
   const quantitySelector = document.getElementById("quantity");
+  const toggleImageButton = document.getElementById("toggle-image");
+  const primaryImage = document.getElementById("primary-image");
+  const secondaryImage = document.getElementById("secondary-image");
 
   function updateQuantityOptions() {
     let maxQuantity;
@@ -36,6 +39,18 @@ document.addEventListener("DOMContentLoaded", function () {
   const addToCartButton = document.getElementById("add-to-cart");
   const itemId = document.getElementById("itemId").value;
   const googleId = document.getElementById("googleId").value;
+
+  toggleImageButton.addEventListener("click", () => {
+    if (primaryImage.style.display === "none") {
+      primaryImage.style.display = "block";
+      secondaryImage.style.display = "none";
+      toggleImageButton.textContent = "View Alternate Image";
+    } else {
+      primaryImage.style.display = "none";
+      secondaryImage.style.display = "block";
+      toggleImageButton.textContent = "View Primary Image";
+    }
+  });
 
   addToCartButton.addEventListener("click", async () => {
     const size = sizeSelector.value;

@@ -15,12 +15,14 @@ const ItemSchema = new mongoose.Schema({
   image: {
     type: String,
   },
+  imageAlt: {
+    type: String,
+  },
   sizes: {
     type: Object,
     required: true,
     default: {},
   },
-  // Add other fields as necessary
 });
 
 module.exports = mongoose.model("Item", ItemSchema);

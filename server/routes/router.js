@@ -204,7 +204,7 @@ route.get("/api/stats", async (req, res) => {
   try {
     const totalOrders = await Order.countDocuments();
     const allOrders = await Order.find();
-    
+
     // Sum up all items across all orders
     let totalItems = 0;
     allOrders.forEach((order) => {
@@ -212,7 +212,7 @@ route.get("/api/stats", async (req, res) => {
         totalItems += item.quantity;
       });
     });
-    
+
     res.json({
       totalOrders: totalOrders,
       totalItems: totalItems,
