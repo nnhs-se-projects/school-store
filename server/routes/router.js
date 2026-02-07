@@ -4,6 +4,9 @@ const route = express.Router();
 // const User = require("../model/user");
 const Item = require("../model/item");
 const Order = require("../model/order");
+const Time = require("../model/time");
+const { format } = require("morgan");
+const xlsx = require("../exportXLSX");
 
 /*
   How to create a get route
@@ -36,9 +39,17 @@ route.get("/", async (req, res) => {
 
   console.log(req.session);
 
+  const times = await Time.find().sort({ date: 1 });
+  /* for (const time of times) {
+    console.log(time.date + " " + time.times);
+  } */
+  const query = req.query;
+
   // render the homePage view and pass the items to it
   res.render("homePage", {
     items: formattedItems,
+    times,
+    query,
   });
 });
 
@@ -150,12 +161,143 @@ route.get("/inventorylistprint", isAdmin, async (req, res) => {
   });
 });
 
+// Helper function to clean up times outside the visible calendar range
+async function cleanupOldTimes() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Calculate the range: previous 2 weeks to future 2 weeks
+  const startOfPreviousTwoWeeks = new Date(today);
+  startOfPreviousTwoWeeks.setDate(today.getDate() - 14 - today.getDay()); // Sunday of previous 2 weeks
+
+  const endOfNextTwoWeeks = new Date(today);
+  endOfNextTwoWeeks.setDate(today.getDate() + (27 - today.getDay())); // Saturday of next 2 weeks
+
+  console.log(
+    "Cleanup Range - Keep dates between:",
+    startOfPreviousTwoWeeks,
+    "and",
+    endOfNextTwoWeeks,
+  );
+
+  // Delete all times outside this range
+  const result = await Time.deleteMany({
+    $or: [
+      { date: { $lt: startOfPreviousTwoWeeks } },
+      { date: { $gt: endOfNextTwoWeeks } },
+    ],
+  });
+
+  console.log(
+    `Deleted ${result.deletedCount} time entries outside the visible range`,
+  );
+}
+
+route.get("/setTimes", isAdmin, async (req, res) => {
+  // Clean up times outside the visible calendar range
+  await cleanupOldTimes();
+
+  const times = await Time.find().sort({ date: 1 });
+  const query = req.query;
+  res.render("setTimes", { times, query });
+});
+
+route.post("/setTimes", isAdmin, async (req, res) => {
+  const { date, openTime, closeTime, offset } = req.body;
+  let timeEntry = await Time.findOne({ date: new Date(date + "T12:00:00") });
+  if (timeEntry) {
+    timeEntry.times.push({ openTime, closeTime });
+  } else {
+    timeEntry = new Time({
+      date: new Date(date + "T12:00:00"),
+      times: [{ openTime, closeTime }],
+    });
+  }
+  await timeEntry.save();
+  const redirectUrl =
+    typeof offset !== "undefined"
+      ? "/setTimes?offset=" + encodeURIComponent(offset)
+      : "/setTimes";
+  res.redirect(redirectUrl);
+});
+
+route.post("/editTime", isAdmin, async (req, res) => {
+  const { date, index, openTime, closeTime, action, offset } = req.body;
+  const timeEntry = await Time.findOne({ date: new Date(date + "T12:00:00") });
+  if (!timeEntry || !timeEntry.times[index]) {
+    return res
+      .status(404)
+      .render("errorPage", { message: "Time slot not found" });
+  }
+  if (action === "delete") {
+    timeEntry.times.splice(index, 1);
+  } else {
+    timeEntry.times[index] = { openTime, closeTime };
+  }
+  await timeEntry.save();
+  const redirectUrl =
+    typeof offset !== "undefined"
+      ? "/setTimes?offset=" + encodeURIComponent(offset)
+      : "/setTimes";
+  res.redirect(redirectUrl);
+});
+
+// generate and return XLSX file for inventory list
+route.get("/inventorylist/xlsx", isAdmin, async (req, res) => {
+  const items = await Item.find();
+
+  // see /server/exportXLSX.js for maintainability note on XLSX worksheet data
+  const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let trackRow = 1;
+  let sheetData = "<sheetData>";
+  let mergeCells = "";
+  const mergeCellsRows = []; // track which rows should have merged cells (item name headers)
+  let maxMergeLength = 0;
+  // create <sheetData> data
+  for (let i = 0; i < items.length; i++) { // put each item in the spreadsheet
+    // item name header
+    sheetData += `<row r="${trackRow}"><c r="A${trackRow}" t="inlineStr"><is><t>${items[i].name}</t></is></c></row>`;
+    mergeCellsRows.push(trackRow);
+    trackRow++;
+
+    // item sizes/variants
+    sheetData += `<row r="${trackRow}">`;
+    let sizeCount = 0;
+    for (const size in items[i].sizes) { // note: `items[i].sizes` is an object, `size` are keys
+      sheetData += `<c r="${abc[sizeCount] + trackRow}" t="inlineStr"><is><t>${size}</t></is></c>`;
+      sizeCount++;
+    }
+    if (sizeCount > maxMergeLength) { // adjust `maxMergeLength` as needed
+      maxMergeLength = sizeCount;
+    }
+    sheetData += `</row>`;
+    trackRow++;
+  }
+  sheetData += "</sheetData>";
+  // create <mergeCells> data
+  if (mergeCellsRows.length !== 0) {
+    mergeCells = `<mergeCells count="${mergeCellsRows.length}">`;
+    for (const row of mergeCellsRows) {
+      mergeCells += `<mergeCell ref="A${row}:${abc[maxMergeLength]}${row}"/>`;
+    }
+    mergeCells += `</mergeCells>`;
+  }
+
+  const xlsxSheetXML = sheetData + mergeCells; // combine into worksheet XML
+  
+  const xlsxDownload = await xlsx.exportXLSX([
+    xlsx.createSheet("Inventory List", xlsxSheetXML)
+  ]); // data URI string
+
+  res.json({xlsxDownload});
+});
+
 route.get("/contact", async (req, res) => {
   res.render("contact");
 });
 
 // displays product page for a specific item
-route.get("/item/:id", isStudent, async (req, res) => {
+route.get("/item/:id", async (req, res) => {
   const item = await Item.findById(req.params.id);
   res.render("itemPage", { item });
 });

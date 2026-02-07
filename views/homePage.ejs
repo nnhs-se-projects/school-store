@@ -1,4 +1,6 @@
 
+<link rel="stylesheet" href="/css/times.css" />
+
 <!-- include header -->
 <%- include('include/_header') %>
 <!-- /include header -->
@@ -20,15 +22,73 @@
     </p>
 
     <div class="store-hours">
-      <h2>Hours</h2>
-      <ul>
-        <li><strong>Monday:</strong> 10:36am - 1:18pm</li>
-        <li><strong>Tuesday:</strong> 11:05am - 1:30pm</li>
-        <li><strong>Wednesday:</strong> 11:21am - 1:36pm</li>
-        <li><strong>Thursday:</strong> 11:05am - 1:30pm</li>
-        <li><strong>Friday:</strong> 10:36am - 1:18pm</li>
-      </ul>
-    
+      <h2>Available Order Pickup Times</h2>
+      <%
+      const today = new Date();
+      const offset = parseInt(query.offset || 0);
+      const startOfWeek = new Date(today);
+      startOfWeek.setDate(today.getDate() - today.getDay() + (offset * 14)); // Sunday + offset
+      const endDate = new Date(startOfWeek);
+      endDate.setDate(startOfWeek.getDate() + 13); // Two weeks
+      
+      const timesMap = {};
+      function localDateString(d) {
+        const dt = new Date(d);
+        const y = dt.getFullYear();
+        const m = String(dt.getMonth() + 1).padStart(2, '0');
+        const day = String(dt.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+      }
+      times.forEach(time => {
+        const dateStr = localDateString(time.date);
+        timesMap[dateStr] = time.times;
+      });
+      %>
+      <div class="overflow-wrapper">
+        <table class="calendar">
+          <thead>
+            <tr>
+              <th>Sun</th>
+              <th>Mon</th>
+              <th>Tue</th>
+              <th>Wed</th>
+              <th>Thu</th>
+              <th>Fri</th>
+              <th>Sat</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% for (let week = 0; week < 2; week++) { %>
+              <tr>
+                <% for (let day = 0; day < 7; day++) { %>
+                  <% 
+                  const currentDate = new Date(startOfWeek);
+                  currentDate.setDate(startOfWeek.getDate() + week * 7 + day);
+                  const dateStr = localDateString(currentDate);
+                  const dayTimes = timesMap[dateStr];
+                  %>
+                  <td class="day"
+                    <% if (week === 0 && day === today.getDay()) { %>
+                      style="background-color:#fff; font-weight:bold; border: 2px solid #000;"
+                    <% } %>
+                  >
+                    <div class="date"><%= currentDate.getDate() %></div>
+                    <% if (dayTimes && dayTimes.length > 0) { %>
+                      <ul>
+                        <% dayTimes.forEach((slot, index) => { %>
+                          <li><%= slot.openTime %> - <%= slot.closeTime %></li>
+                        <% }); %>
+                      </ul>
+                    <% } else { %>
+                      <p>Closed</p>
+                    <% } %>
+                  </td>
+                <% } %>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
 
     </div>
 
@@ -37,42 +97,18 @@
   <img id="imagePreview" alt="Image Preview" style="display:none;">
 
 
-  <% if (session && session.clearance >= 2) { %>
-    <div class = "item-list"> 
-      <% items.forEach(function(item) { %>
-        <div class = "item" onclick= "window.location.href='/item/<%= item.id %>'">
-          <img src="<%= item.image %>">
-          <div class = "item-content">
-          <h2><%= item.name %></h2>
-          <h3>Price: $<%= item.price %></h3>
-          <p>Description: <%= item.description %></p>
-          </div>
-      </div>
-      <% }) %>
+  <div class = "item-list"> 
+    <% items.forEach(function(item) { %>
+      <div class = "item" onclick= "window.location.href='/item/<%= item.id %>'">
+        <img src="<%= item.image %>">
+        <div class = "item-content">
+        <h2><%= item.name %></h2>
+        <h3>Price: $<%= item.price %></h3>
+        <p>Description: <%= item.description %></p>
+        </div>
     </div>
-    <% } else if (session && session.clearance >= 1) { %>
-    <div class = "item-list"> 
-      <% items.forEach(function(item) { %>
-        <div class = "item" id = "not-logged-in-as-student">
-          <img src="<%= item.image %>">
-          <div class = "item-content">
-          <h2><%= item.name %></h2>
-          <p>Price: $<%= item.price %></p>
-          </div>
-      </div>
-     <% }) } else { %>
-    <div class = "item-list"> 
-      <% items.forEach(function(item) { %>
-        <div class = "item" id = "not-logged-in">
-          <img src="<%= item.image %>">
-          <div class = "item-content">
-          <h2><%= item.name %></h2>
-          <p>Price: $<%= item.price %></p>
-          </div>
-      </div>
-      <% }) %>
-    </div>
-  <% } %>
+    <% }) %>
+  </div>
 </main>
 
 <!-- /Main Site -->
@@ -82,20 +118,3 @@
 <!-- include footer -->
 <%- include('include/_footer') %>
 <!-- /include footer -->
-
-<script>
-  let notLoggedInItems = document.querySelectorAll("#not-logged-in");
-  let notLoggedInAsStudentItems = document.querySelectorAll("#not-logged-in-as-student");
-
-  notLoggedInItems.forEach(item => {
-    item.addEventListener("click", function() {
-      alert("Please log in to view item details.");
-    });
-  });
-
-  notLoggedInAsStudentItems.forEach(item => {
-    item.addEventListener("click", function() {
-      alert("Please log in as a student to view item details.");
-    });
-  });
-</script>
