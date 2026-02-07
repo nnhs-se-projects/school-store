@@ -11,6 +11,7 @@
           <th>Name</th>
           <th>Email</th>
           <th>Number</th>
+          <th>Pickup Date</th>
           <th>Pickup Time</th>
           <th>Total Price</th>
           <th>Status</th>
@@ -29,7 +30,8 @@
           <td><%= completedOrders[i].orderNumber %></td>
           <td><%= completedOrders[i].date %></td>
           <td><%= completedOrders[i].period %></td>
-          <td><%= completedOrders[i].date %>ders[i].orderStatus %></td>
+          <td>$<%= completedOrders[i].totalPrice %></td>
+          <td class="status"><%= completedOrders[i].orderStatus %></td>
           <td><button class="view-items-completed">View Items</button></td>
         </tr>
         <% } %>

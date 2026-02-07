@@ -202,8 +202,8 @@ route.get("/deleteItem/:id", isAdmin, async (req, res) => {
 // API endpoint to get order and item statistics
 route.get("/api/stats", async (req, res) => {
   try {
-    const totalOrders = await Order.countDocuments();
     const allOrders = await Order.find();
+    const totalOrders = allOrders.length;
     
     // Sum up all items across all orders
     let totalItems = 0;

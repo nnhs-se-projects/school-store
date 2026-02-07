@@ -12,6 +12,7 @@
           <th>Name</th>
           <th>Email</th>
           <th>Number</th>
+          <th>Pickup Date</th>
           <th>Pickup Time</th>
           <th>Total Price</th>
           <th>Check off Order</th>
@@ -32,7 +33,8 @@
           <td><%= pendingOrders[i].name %></td>
           <td><%= pendingOrders[i].email %></td>
           <td><%= pendingOrders[i].orderNumber %></td>
-          <td><%= pendingOrders[i].date %> - Period <%= pendingOrders[i].period %><% if(pendingOrders[i].pickupTime) { %> (<%= pendingOrders[i].pickupTime %>)<% } %></td>
+          <td><%= pendingOrders[i].date %></td>
+          <td><%= pendingOrders[i].period %></td>
           <td>$<%= pendingOrders[i].totalPrice %></td>
           <td>
             <button class="check-off-order" order-id="<%=pendingOrders[i].id%>">
