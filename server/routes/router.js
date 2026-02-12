@@ -126,7 +126,7 @@ route.get("/addItem", isAdmin, (req, res) => {
 });
 
 // routes for getting admin inventory pages
-route.get("/inventorylist", isAdmin, async (req, res) => {
+route.get("/inventorylist", isVolunteer, async (req, res) => {
   const items = await Item.find();
 
   const formattedItems = items.map((item) => {
@@ -143,7 +143,7 @@ route.get("/inventorylist", isAdmin, async (req, res) => {
   });
 });
 
-route.get("/inventorylistprint", isAdmin, async (req, res) => {
+route.get("/inventorylistprint", isVolunteer, async (req, res) => {
   const items = await Item.find();
 
   const formattedItems = items.map((item) => {
@@ -242,7 +242,7 @@ route.post("/editTime", isAdmin, async (req, res) => {
 });
 
 // generate and return XLSX file for inventory list
-route.get("/inventorylist/xlsx", isAdmin, async (req, res) => {
+route.get("/inventorylist/xlsx", isVolunteer, async (req, res) => {
   const items = await Item.find();
 
   // see /server/exportXLSX.js for maintainability note on XLSX worksheet data
