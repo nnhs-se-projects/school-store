@@ -15,7 +15,7 @@
         value="<%- item.name %>"
         required
       />
-      <label for="price">Price</label>
+      <label for="price">Price ($)</label>
       <input
         type="float"
         id="price"
@@ -46,7 +46,9 @@
         <% if (item.sizes.placeholder === undefined) { %> <% for (let size in
         item.sizes) { %>
         <div class="size-entry">
+          <label>Size Type</label>
           <input type="text" class="size" value="<%= size %>" />
+          <label>Quantity</label>
           <input
             type="number"
             class="quantity"
