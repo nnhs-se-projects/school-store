@@ -1,4 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const exportXLSX = document.getElementById("completed-order-viewer-xlsx");
+  const exportXLSXText = exportXLSX.innerText;
+  const exportXLSXLoadingText = "Generating...";
+  const exportXLSXErrorText = "Error generating XLSX File";
+
   const viewCompletedItemsButtons = document.querySelectorAll(
     ".view-items-completed"
   );
@@ -43,4 +48,25 @@ document.addEventListener("DOMContentLoaded", () => {
     html += "</tbody></table>";
     return html;
   }
+
+  // download XLSX file when export button is clicked
+  exportXLSX.addEventListener("click", async () => {
+    exportXLSX.innerText = exportXLSXLoadingText;
+
+    try {
+      const response = await fetch("/completedOrderViewer/xlsx")
+      const data = await response.json();
+
+      const link = document.createElement("a");
+      link.href = data.xlsxDownload;
+      link.download = "completed_orders.xlsx";
+
+      link.click();
+
+      exportXLSX.innerText = exportXLSXText;
+    } catch(error) {
+      console.error("Error fetching XLSX:", error);
+      exportXLSX.innerText = exportXLSXErrorText;
+    }
+  });
 });

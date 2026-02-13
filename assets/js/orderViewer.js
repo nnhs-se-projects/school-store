@@ -3,6 +3,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const deleteButtons = document.querySelectorAll(".delete-order");
   const viewItemsButtons = document.querySelectorAll(".view-items");
 
+  const exportXLSX = document.getElementById("orderviewerxlsx");
+  const exportXLSXText = exportXLSX.innerText;
+  const exportXLSXLoadingText = "Generating...";
+  const exportXLSXErrorText = "Error generating XLSX File";
+
   viewItemsButtons.forEach((button) => {
     button.addEventListener("click", (event) => {
       const orderRow = button.closest("tr");
@@ -98,6 +103,27 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Failed to delete order");
       }
     });
+  });
+
+  // download XLSX file when export button is clicked
+  exportXLSX.addEventListener("click", async () => {
+    exportXLSX.innerText = exportXLSXLoadingText;
+
+    try {
+      const response = await fetch("/orderViewer/xlsx")
+      const data = await response.json();
+
+      const link = document.createElement("a");
+      link.href = data.xlsxDownload;
+      link.download = "current_orders.xlsx";
+
+      link.click();
+
+      exportXLSX.innerText = exportXLSXText;
+    } catch(error) {
+      console.error("Error fetching XLSX:", error);
+      exportXLSX.innerText = exportXLSXErrorText;
+    }
   });
 });
 
