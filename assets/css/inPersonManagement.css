@@ -1,0 +1,14 @@
+.mod-stock {
+  background-color: #002f55;
+  font-size: 15px;
+  color: white;
+  padding: 14px 20px;
+  margin: 2px 0;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.mod-stock:active {
+  background-color: #000f35;
+}

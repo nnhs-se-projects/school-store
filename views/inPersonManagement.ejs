@@ -1,0 +1,45 @@
+<!-- include header -->
+<%- include('include/_header') %>
+<!-- /include header -->
+
+<link rel="stylesheet" href="/css/admin.css">
+<link rel="stylesheet" href="/css/inPersonManagement.css" />
+
+<!-- Main Site -->
+
+<main>
+  <div class="wrapper">
+    <h1>In-Person Store Management</h1>
+    
+    <div class="overflow-wrapper">
+      <table>
+        <% items.forEach(function(item) { %>
+        <th colspan = 10>
+          <b> <%= item.name %> </b>
+        </th>
+        <tr></tr>
+          <% for (let size in item.sizes) { %>
+            <th>
+              <% if (size == "placeholder") { %>
+                <%= item.sizes[size] %>
+              <% } %>
+              <% if (size != "placeholder") { %>
+                <%= size + ": " + item.sizes[size] %>
+              <% } %>
+              <br>
+              <input class="mod-stock sub-stock" type="button" value="-">
+              <input class="mod-stock add-stock" type="button" value="+">
+            </th>
+          <% } %>
+        <tr></tr>
+        <% }) %>
+      </table>
+    </div>
+  </div>
+</main>
+
+<!-- /Main Site -->
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->

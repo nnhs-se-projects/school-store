@@ -109,6 +109,23 @@ route.get("/admin", isVolunteer, (req, res) => {
   return res.render("admin");
 });
 
+route.get("/inPersonManagement", isVolunteer, async (req, res) => {
+  const items = await Item.find();
+
+  const formattedItems = items.map((item) => {
+    return {
+      id: item._id,
+      name: item.name,
+      quantity: item.quantity,
+      sizes: item.sizes,
+    };
+  });
+
+  res.render("inPersonManagement", {
+    items: formattedItems,
+  });
+});
+
 // logout route
 route.get("/logout", (req, res) => {
   req.session.destroy((err) => {
