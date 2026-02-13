@@ -96,7 +96,7 @@ function isStudent(req, res, next) {
 route.get("/admin", isVolunteer, (req, res) => {
   // This will only be reached if the user is an admin
   // console.log("Rendering admin page router");
-  return res.render("admin");
+  return res.render("admin", { clearance: req.session.clearance });
 });
 
 // logout route
@@ -214,8 +214,8 @@ route.get("/api/stats", async (req, res) => {
     });
 
     res.json({
-      totalOrders: totalOrders,
-      totalItems: totalItems,
+      totalOrders,
+      totalItems,
     });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch stats" });

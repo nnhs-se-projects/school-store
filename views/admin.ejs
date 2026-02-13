@@ -9,21 +9,21 @@
     <h1><b>Manage Inventory</b></h1>
 
     <div>
-      <a class="admin-link" href="addItem" id="addItem"
-        ><strong>Add Item</strong></a
-      >
-      <a class="admin-link" href="orderViewer" id="orderViewer"
-        ><strong>View Orders</strong></a
-      >
-      <a class="admin-link" href="manageItems" id="editItem"
-        ><strong>Manage Items</strong></a
-      >
-      <a class="admin-link" href="inventorylist" id="inventorylist"
-        ><strong>View Inventory</strong></a
-      >
+      <% if (clearance >= 4) { %>
+        <a class="admin-link" href="addItem" id="addItem">
+          <strong>Add Item</strong>
+        </a>
+        <a class="admin-link" href="manageItems" id="editItem">
+          <strong>Manage Items</strong>
+        </a>
+      <% } %>
+      <a class="admin-link" href="orderViewer" id="orderViewer">
+        <strong>View Orders</strong>
+      </a>
+      <a class="admin-link" href="inventorylist" id="inventorylist" style="color: white; background-color: #ff4800;">
+        <strong>View Inventory</strong>
+      </a>
     </div>
-
-    
   </div>
 </main>
 
