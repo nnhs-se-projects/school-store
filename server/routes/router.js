@@ -267,17 +267,16 @@ function periodOverlapsInterval(period, openTime, closeTime) {
   const intervalCloseMinutes = timeToMinutes(closeTime);
 
   if (
-    [
-      startMinutes,
-      endMinutes,
-      intervalOpenMinutes,
-      intervalCloseMinutes,
-    ].some(Number.isNaN)
+    [startMinutes, endMinutes, intervalOpenMinutes, intervalCloseMinutes].some(
+      Number.isNaN,
+    )
   ) {
     return false;
   }
 
-  return startMinutes < intervalCloseMinutes && endMinutes > intervalOpenMinutes;
+  return (
+    startMinutes < intervalCloseMinutes && endMinutes > intervalOpenMinutes
+  );
 }
 
 route.post("/editTime", isAdmin, async (req, res) => {
@@ -288,18 +287,20 @@ route.post("/editTime", isAdmin, async (req, res) => {
       : "/setTimes";
   const timeEntry = await Time.findOne({ date: new Date(date + "T12:00:00") });
   if (!timeEntry || !timeEntry.times[index]) {
-    return res
-      .status(404)
-      .render("errorPage", {
-        message: "Time slot not found",
-        redirectUrl: setTimesRedirectUrl,
-      });
+    return res.status(404).render("errorPage", {
+      message: "Time slot not found",
+      redirectUrl: setTimesRedirectUrl,
+    });
   }
 
   const existingSlot = timeEntry.times[index];
   const ordersForDate = await Order.find({ date });
   const hasOrderInInterval = ordersForDate.some((order) =>
-    periodOverlapsInterval(order.period, existingSlot.openTime, existingSlot.closeTime),
+    periodOverlapsInterval(
+      order.period,
+      existingSlot.openTime,
+      existingSlot.closeTime,
+    ),
   );
 
   if (hasOrderInInterval) {
@@ -335,7 +336,8 @@ route.get("/inventorylist/xlsx", isAdmin, async (req, res) => {
   const mergeCellsRows = []; // track which rows should have merged cells (item name headers)
   let maxMergeLength = 0;
   // create <sheetData> data
-  for (let i = 0; i < items.length; i++) { // put each item in the spreadsheet
+  for (let i = 0; i < items.length; i++) {
+    // put each item in the spreadsheet
     // item name header
     sheetData += `<row r="${trackRow}"><c r="A${trackRow}" t="inlineStr"><is><t>${items[i].name}</t></is></c></row>`;
     mergeCellsRows.push(trackRow);
@@ -344,11 +346,13 @@ route.get("/inventorylist/xlsx", isAdmin, async (req, res) => {
     // item sizes/variants
     sheetData += `<row r="${trackRow}">`;
     let sizeCount = 0;
-    for (const size in items[i].sizes) { // note: `items[i].sizes` is an object, `size` are keys
+    for (const size in items[i].sizes) {
+      // note: `items[i].sizes` is an object, `size` are keys
       sheetData += `<c r="${abc[sizeCount] + trackRow}" t="inlineStr"><is><t>${size}</t></is></c>`;
       sizeCount++;
     }
-    if (sizeCount > maxMergeLength) { // adjust `maxMergeLength` as needed
+    if (sizeCount > maxMergeLength) {
+      // adjust `maxMergeLength` as needed
       maxMergeLength = sizeCount;
     }
     sheetData += `</row>`;
@@ -365,12 +369,12 @@ route.get("/inventorylist/xlsx", isAdmin, async (req, res) => {
   }
 
   const xlsxSheetXML = sheetData + mergeCells; // combine into worksheet XML
-  
+
   const xlsxDownload = await xlsx.exportXLSX([
-    xlsx.createSheet("Inventory List", xlsxSheetXML)
+    xlsx.createSheet("Inventory List", xlsxSheetXML),
   ]); // data URI string
 
-  res.json({xlsxDownload});
+  res.json({ xlsxDownload });
 });
 
 route.get("/contact", async (req, res) => {
