@@ -255,27 +255,42 @@ function timeToMinutes(timeStr) {
   return hours * 60 + minutes;
 }
 
-function periodOverlapsInterval(period, openTime, closeTime) {
+function parsePeriodToMinutes(period) {
   if (!period || typeof period !== "string") {
-    return false;
+    return null;
   }
 
   const [periodStart, periodEnd] = period.split("-").map((part) => part.trim());
   const startMinutes = timeToMinutes(periodStart);
   const endMinutes = timeToMinutes(periodEnd);
-  const intervalOpenMinutes = timeToMinutes(openTime);
-  const intervalCloseMinutes = timeToMinutes(closeTime);
 
-  if (
-    [startMinutes, endMinutes, intervalOpenMinutes, intervalCloseMinutes].some(
-      Number.isNaN,
-    )
-  ) {
+  if (Number.isNaN(startMinutes) || Number.isNaN(endMinutes)) {
+    return null;
+  }
+
+  return { startMinutes, endMinutes };
+}
+
+function slotContainsPeriod(slot, period) {
+  if (!slot) {
+    return false;
+  }
+
+  const periodMinutes = parsePeriodToMinutes(period);
+  if (!periodMinutes) {
+    return false;
+  }
+
+  const slotOpenMinutes = timeToMinutes(slot.openTime);
+  const slotCloseMinutes = timeToMinutes(slot.closeTime);
+
+  if (Number.isNaN(slotOpenMinutes) || Number.isNaN(slotCloseMinutes)) {
     return false;
   }
 
   return (
-    startMinutes < intervalCloseMinutes && endMinutes > intervalOpenMinutes
+    periodMinutes.startMinutes >= slotOpenMinutes &&
+    periodMinutes.endMinutes <= slotCloseMinutes
   );
 }
 
@@ -293,17 +308,20 @@ route.post("/editTime", isAdmin, async (req, res) => {
     });
   }
 
-  const existingSlot = timeEntry.times[index];
   const ordersForDate = await Order.find({ date });
-  const hasOrderInInterval = ordersForDate.some((order) =>
-    periodOverlapsInterval(
-      order.period,
-      existingSlot.openTime,
-      existingSlot.closeTime,
-    ),
-  );
+  const updatedTimes = [...timeEntry.times];
 
-  if (hasOrderInInterval) {
+  if (action === "delete") {
+    updatedTimes.splice(index, 1);
+  } else {
+    updatedTimes[index] = { openTime, closeTime };
+  }
+
+  const hasBlockedOrder = ordersForDate.some((order) => {
+    return !updatedTimes.some((slot) => slotContainsPeriod(slot, order.period));
+  });
+
+  if (hasBlockedOrder) {
     return res.status(409).render("errorPage", {
       message:
         "Cannot edit or delete this time slot because an order has already been placed in this interval.",
