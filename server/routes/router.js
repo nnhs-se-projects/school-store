@@ -317,14 +317,25 @@ route.post("/editTime", isAdmin, async (req, res) => {
     updatedTimes[index] = { openTime, closeTime };
   }
 
-  const hasBlockedOrder = ordersForDate.some((order) => {
+  const blockedOrders = ordersForDate.filter((order) => {
     return !updatedTimes.some((slot) => slotContainsPeriod(slot, order.period));
   });
 
-  if (hasBlockedOrder) {
+  if (blockedOrders.length > 0) {
+    const blockedEmails = [
+      ...new Set(
+        blockedOrders.map((order) => order.email).filter((email) => !!email),
+      ),
+    ];
+    const emailSuffix =
+      blockedEmails.length > 0
+        ? ` Students with affected orders: ${blockedEmails.join(", ")}.`
+        : "";
+
     return res.status(409).render("errorPage", {
       message:
-        "Cannot edit or delete this time slot because an order has already been placed in this interval.",
+        "Cannot edit or delete this time slot because an order has already been placed in this interval." +
+        emailSuffix,
       redirectUrl: setTimesRedirectUrl,
     });
   }
