@@ -3,6 +3,7 @@ const route = express.Router();
 
 // const User = require("../model/user");
 const Item = require("../model/item");
+const Order = require("../model/order");
 const Time = require("../model/time");
 const { format } = require("morgan");
 const xlsx = require("../exportXLSX");
@@ -220,14 +221,95 @@ route.post("/setTimes", isAdmin, async (req, res) => {
   res.redirect(redirectUrl);
 });
 
+function timeToMinutes(timeStr) {
+  if (!timeStr || typeof timeStr !== "string") {
+    return NaN;
+  }
+
+  const trimmed = timeStr.trim();
+
+  // Handles admin time input format: "HH:MM" (24-hour)
+  if (!trimmed.includes("AM") && !trimmed.includes("PM")) {
+    const [hours, minutes] = trimmed.split(":").map(Number);
+    if (Number.isNaN(hours) || Number.isNaN(minutes)) {
+      return NaN;
+    }
+    return hours * 60 + minutes;
+  }
+
+  // Handles order period format: "h:mm AM/PM"
+  const [time, period] = trimmed.split(" ");
+  let [hours, minutes] = time.split(":").map(Number);
+
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) {
+    return NaN;
+  }
+
+  if (period === "PM" && hours !== 12) {
+    hours += 12;
+  }
+  if (period === "AM" && hours === 12) {
+    hours = 0;
+  }
+
+  return hours * 60 + minutes;
+}
+
+function periodOverlapsInterval(period, openTime, closeTime) {
+  if (!period || typeof period !== "string") {
+    return false;
+  }
+
+  const [periodStart, periodEnd] = period.split("-").map((part) => part.trim());
+  const startMinutes = timeToMinutes(periodStart);
+  const endMinutes = timeToMinutes(periodEnd);
+  const intervalOpenMinutes = timeToMinutes(openTime);
+  const intervalCloseMinutes = timeToMinutes(closeTime);
+
+  if (
+    [
+      startMinutes,
+      endMinutes,
+      intervalOpenMinutes,
+      intervalCloseMinutes,
+    ].some(Number.isNaN)
+  ) {
+    return false;
+  }
+
+  return startMinutes < intervalCloseMinutes && endMinutes > intervalOpenMinutes;
+}
+
 route.post("/editTime", isAdmin, async (req, res) => {
   const { date, index, openTime, closeTime, action, offset } = req.body;
+  const setTimesRedirectUrl =
+    typeof offset !== "undefined"
+      ? "/setTimes?offset=" + encodeURIComponent(offset)
+      : "/setTimes";
   const timeEntry = await Time.findOne({ date: new Date(date + "T12:00:00") });
   if (!timeEntry || !timeEntry.times[index]) {
     return res
       .status(404)
-      .render("errorPage", { message: "Time slot not found" });
+      .render("errorPage", {
+        message: "Time slot not found",
+        redirectUrl: setTimesRedirectUrl,
+      });
   }
+
+  const existingSlot = timeEntry.times[index];
+  const ordersForDate = await Order.find({ date });
+  const hasOrderInInterval = ordersForDate.some((order) =>
+    periodOverlapsInterval(order.period, existingSlot.openTime, existingSlot.closeTime),
+  );
+
+  if (hasOrderInInterval) {
+    return res.status(409).render("errorPage", {
+      message:
+        "Cannot edit or delete this time slot because an order has already been placed in this interval.",
+      redirectUrl: setTimesRedirectUrl,
+    });
+  }
+
   if (action === "delete") {
     timeEntry.times.splice(index, 1);
   } else {
