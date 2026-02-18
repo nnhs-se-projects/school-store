@@ -294,6 +294,23 @@ function slotContainsPeriod(slot, period) {
   );
 }
 
+async function restoreInventoryAndDeleteOrder(order) {
+  for (let i = 0; i < order.items.length; i++) {
+    const orderItem = order.items[i];
+    const item = await Item.findById(orderItem.itemId);
+
+    if (!item) {
+      throw new Error("Item not found in inventory");
+    }
+
+    const size = orderItem.size;
+    item.sizes[size] += orderItem.quantity;
+    await item.save();
+  }
+
+  await Order.findByIdAndDelete(order._id);
+}
+
 route.post("/editTime", isAdmin, async (req, res) => {
   const { date, index, openTime, closeTime, action, offset } = req.body;
   const setTimesRedirectUrl =
@@ -334,9 +351,19 @@ route.post("/editTime", isAdmin, async (req, res) => {
 
     return res.status(409).render("errorPage", {
       message:
-        "Cannot edit or delete this time slot because an order has already been placed in this interval." +
+        "WARNING this time slot has an order that is placed in this interval. Please contact the student and let them know of the time change" +
         emailSuffix,
       redirectUrl: setTimesRedirectUrl,
+      overrideActionUrl: "/editTime/override",
+      overridePayload: {
+        date,
+        index,
+        openTime,
+        closeTime,
+        action,
+        offset,
+      },
+      overrideButtonLabel: "Update Anyway",
     });
   }
 
@@ -351,6 +378,61 @@ route.post("/editTime", isAdmin, async (req, res) => {
       ? "/setTimes?offset=" + encodeURIComponent(offset)
       : "/setTimes";
   res.redirect(redirectUrl);
+});
+
+route.post("/editTime/override", isAdmin, async (req, res) => {
+  try {
+    const { date, index, openTime, closeTime, action, offset } = req.body;
+    const redirectUrl =
+      typeof offset !== "undefined"
+        ? "/setTimes?offset=" + encodeURIComponent(offset)
+        : "/setTimes";
+    const timeEntry = await Time.findOne({
+      date: new Date(date + "T12:00:00"),
+    });
+
+    if (!timeEntry || !timeEntry.times[index]) {
+      return res.status(404).render("errorPage", {
+        message: "Time slot not found",
+        redirectUrl,
+      });
+    }
+
+    const ordersForDate = await Order.find({ date });
+    const updatedTimes = [...timeEntry.times];
+
+    if (action === "delete") {
+      updatedTimes.splice(index, 1);
+    } else {
+      updatedTimes[index] = { openTime, closeTime };
+    }
+
+    const blockedOrders = ordersForDate.filter((order) => {
+      return !updatedTimes.some((slot) =>
+        slotContainsPeriod(slot, order.period),
+      );
+    });
+
+    if (action === "delete") {
+      timeEntry.times.splice(index, 1);
+    } else {
+      timeEntry.times[index] = { openTime, closeTime };
+    }
+
+    for (let i = 0; i < blockedOrders.length; i++) {
+      if (blockedOrders[i].orderStatus !== "completed") {
+        await restoreInventoryAndDeleteOrder(blockedOrders[i]);
+      }
+    }
+
+    await timeEntry.save();
+    res.redirect(redirectUrl);
+  } catch (error) {
+    return res.status(500).render("errorPage", {
+      message: "Unable to apply override and cancel conflicting orders.",
+      redirectUrl: "/setTimes",
+    });
+  }
 });
 
 // generate and return XLSX file for inventory list
