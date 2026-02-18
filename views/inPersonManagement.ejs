@@ -24,7 +24,7 @@
               <% if (size != "placeholder") { %>
                 <%= size + ": " %>
               <% } %>
-              <span id="stock.<%= selectorStr %>"><%= item.sizes[size] %></span>
+              <%= item.sizes[size] %>
               <br>
               <input type="button" class="mod-stock sub-stock" id="sub.<%= selectorStr %>" value="-">
               <input type="button" class="mod-stock add-stock" id="add.<%= selectorStr %>" value="+">

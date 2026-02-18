@@ -126,6 +126,25 @@ route.get("/inPersonManagement", isVolunteer, async (req, res) => {
   });
 });
 
+route.post("/inPersonManagement", isVolunteer, async (req, res) => {
+  const { item, size, action } = req.body;
+  const dbItem = await Item.findOne({ name: item });
+
+  // FIXME: check if null before adding or subtracting stock
+
+  if (action === '+') {
+    dbItem.sizes[size]++;
+  } else if (action === '-') {
+    if (dbItem.sizes[size] > 0) {
+      dbItem.sizes[size]--;
+    }
+  }
+  
+  await dbItem.updateOne({ sizes: dbItem.sizes });
+
+  res.status(201).end();
+});
+
 // logout route
 route.get("/logout", (req, res) => {
   req.session.destroy((err) => {
