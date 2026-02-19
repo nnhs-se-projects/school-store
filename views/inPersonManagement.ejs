@@ -19,15 +19,15 @@
         </th>
         <tr>
           <% for (let size in item.sizes) { %>
-            <% const selectorStr = item.name + '.' + size; %>
+            <% const selectorStr = item.name + '\\' + size; %>
             <th>
               <% if (size != "placeholder") { %>
                 <%= size + ": " %>
               <% } %>
               <%= item.sizes[size] %>
               <br>
-              <input type="button" class="mod-stock sub-stock" id="sub.<%= selectorStr %>" value="-">
-              <input type="button" class="mod-stock add-stock" id="add.<%= selectorStr %>" value="+">
+              <input type="button" class="mod-stock sub-stock" id="sub\<%= selectorStr %>" value="-">
+              <input type="button" class="mod-stock add-stock" id="add\<%= selectorStr %>" value="+">
             </th>
           <% } %>
         </tr>

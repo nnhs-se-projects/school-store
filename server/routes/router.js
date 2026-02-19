@@ -130,7 +130,10 @@ route.post("/inPersonManagement", isVolunteer, async (req, res) => {
   const { item, size, action } = req.body;
   const dbItem = await Item.findOne({ name: item });
 
-  // FIXME: check if null before adding or subtracting stock
+  if (dbItem === null) {
+    res.status(404);
+    return;
+  }
 
   if (action === '+') {
     dbItem.sizes[size]++;

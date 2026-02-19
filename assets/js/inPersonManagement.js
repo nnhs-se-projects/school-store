@@ -1,5 +1,5 @@
 async function updateStock(id, action) {
-  const itemInfo = id.split(".").slice(1);
+  const itemInfo = id.split('\\').slice(1);
 
   const response = await fetch("/inPersonManagement/", {
     method: "POST",
