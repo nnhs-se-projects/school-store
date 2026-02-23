@@ -1,0 +1,109 @@
+.popup-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-modal.hidden {
+  display: none;
+}
+
+.popup-content {
+  position: relative;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  width: 600px;
+  height: 500px;
+  padding: 20px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: auto;
+}
+
+.popup-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 32px;
+  font-weight: bold;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #333;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.popup-close:hover {
+  color: #000;
+  font-weight: bolder;
+}
+
+.welcome-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 20px;
+}
+
+.welcome-mascot {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+h1 {
+  text-align: center;
+  font-size: 2.5rem;
+  color: #000;
+  margin: 0 0 20px 0;
+  padding: 10px;
+  display: block !important;
+  visibility: visible !important;
+  font-family: Georgia, serif;
+}
+
+.popup-content h1 {
+  margin-top: 0;
+}
+
+.popup-content p {
+  margin-top: -10px;
+  font-family: "Georgia", serif;
+}
+
+#stats-paragraph {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #707070;
+  margin-top: 10px;
+}
+
+.unavailable-dates {
+  font-size: 1.05rem;
+  margin-top: 20px !important;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+}
+
+@media (max-width: 768px) {
+  .popup-content {
+    width: 85vw;
+    height: auto;
+    max-height: 80vh;
+  }
+}

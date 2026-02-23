@@ -3,6 +3,7 @@ const route = express.Router();
 
 // const User = require("../model/user");
 const Item = require("../model/item");
+const Order = require("../model/order");
 const Time = require("../model/time");
 const { format } = require("morgan");
 const xlsx = require("../exportXLSX");
@@ -338,6 +339,29 @@ route.get("/manageItems", isAdmin, async (req, res) => {
 route.get("/deleteItem/:id", isAdmin, async (req, res) => {
   await Item.findByIdAndDelete(req.params.id);
   res.redirect("/manageItems");
+});
+
+// API endpoint to get order and item statistics
+route.get("/api/stats", async (req, res) => {
+  try {
+    const allOrders = await Order.find();
+    const totalOrders = allOrders.length;
+    
+    // Sum up all items across all orders
+    let totalItems = 0;
+    allOrders.forEach((order) => {
+      order.items.forEach((item) => {
+        totalItems += item.quantity;
+      });
+    });
+    
+    res.json({
+      totalOrders: totalOrders,
+      totalItems: totalItems,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch stats" });
+  }
 });
 
 // delegate all authentication to the auth.js router
