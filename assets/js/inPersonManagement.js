@@ -29,3 +29,4 @@ const addStockButtons = document.querySelectorAll('.add-stock');
 for (const addBtn of addStockButtons) {
   addBtn.addEventListener("click", async () => { await updateStock(addBtn.id, '+'); });
 }
+

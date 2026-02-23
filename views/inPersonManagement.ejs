@@ -18,20 +18,37 @@
           <b> <%= item.name %> </b>
         </th>
         <tr>
+          <th>Size / Type</th>
           <% for (let size in item.sizes) { %>
             <% const selectorStr = formatItemNameAndSize(item.name, size); %>
-            <th>
-              <% if (size != "placeholder") { %>
-                <%= "Size/Type: " + size %>
-                <br>
-              <% } %>
-              <%= "Total Stock: " + item.sizes[size] %>
-              <br>
-              <%= "Stock Reserved for Orders: " + itemsInOrders[selectorStr] %>
-              <br>
-              <input type="button" class="mod-stock sub-stock" id="sub\<%= selectorStr %>" value="-">
-              <input type="button" class="mod-stock add-stock" id="add\<%= selectorStr %>" value="+">
-            </th>
+          <th>
+            <% if (size != "placeholder") { %>
+              <%= size %>
+            <% } %>
+          </th>
+          <% } %>
+        </tr>
+
+        <tr>
+          <th>Total Stock</th>
+          <% for (let size in item.sizes) { %>
+            <% const selectorStr = formatItemNameAndSize(item.name, size); %>
+          <th>
+            <%= item.sizes[size] %>
+            <br>
+            <input type="button" class="mod-stock sub-stock" id="sub\<%= selectorStr %>" value="-">
+            <input type="button" class="mod-stock add-stock" id="add\<%= selectorStr %>" value="+">
+          </th>
+          <% } %>
+        </tr>
+
+        <tr>
+          <th>Stock Reserved for Orders</th>
+          <% for (let size in item.sizes) { %>
+            <% const selectorStr = formatItemNameAndSize(item.name, size); %>
+          <th>
+            <%= itemsInOrders[selectorStr] %>
+          </th>
           <% } %>
         </tr>
         <% }) %>
