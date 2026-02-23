@@ -1,14 +1,24 @@
 .mod-stock {
-  background-color: #002f55;
-  font-size: 15px;
-  color: white;
+  width: 5em;
+
   padding: 14px 20px;
   margin: 2px 0;
+
+  font-size: 15px;
+
+  background-color: #002f55;
+  color: white;
+
+  /*cursor: pointer;*/
+
   border: none;
-  cursor: pointer;
   border-radius: 8px;
 }
 
 .mod-stock:active {
   background-color: #000f35;
+}
+
+#inventory-table th {
+  padding: 10px;
 }

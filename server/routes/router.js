@@ -3,6 +3,7 @@ const route = express.Router();
 
 // const User = require("../model/user");
 const Item = require("../model/item");
+const Order = require("../model/order");
 const Time = require("../model/time");
 const { format } = require("morgan");
 const xlsx = require("../exportXLSX");
@@ -111,6 +112,7 @@ route.get("/admin", isVolunteer, (req, res) => {
 
 route.get("/inPersonManagement", isVolunteer, async (req, res) => {
   const items = await Item.find();
+  const orders = await Order.find({}).sort({ date: 1 });
 
   const formattedItems = items.map((item) => {
     return {
@@ -121,8 +123,31 @@ route.get("/inPersonManagement", isVolunteer, async (req, res) => {
     };
   });
 
+  const formatItemNameAndSize = (itemName, sizeName) => {
+    return itemName + '\\' + sizeName;
+  };
+
+  const itemsInOrders = {};
+
+  for (const item of formattedItems) {
+    for (const size in item.sizes) {
+      itemsInOrders[formatItemNameAndSize(item.name, size)] = 0;
+    }
+  }
+
+  for (const order of orders) {
+    if (order.orderStatus !== "completed") {
+      console.log(order); /////////////////////////
+      for (const item of order.items) {
+        itemsInOrders[formatItemNameAndSize(item.name, item.size)] += item.quantity;
+      }
+    }
+  }
+
   res.render("inPersonManagement", {
     items: formattedItems,
+    itemsInOrders,
+    formatItemNameAndSize
   });
 });
 

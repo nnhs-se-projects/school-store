@@ -14,17 +14,20 @@
     <div class="overflow-wrapper">
       <table id="inventory-table">
         <% items.forEach(function(item) { %>
-        <th colspan = 10>
+        <th colspan=16 style="background-color: #ccc;">
           <b> <%= item.name %> </b>
         </th>
         <tr>
           <% for (let size in item.sizes) { %>
-            <% const selectorStr = item.name + '\\' + size; %>
+            <% const selectorStr = formatItemNameAndSize(item.name, size); %>
             <th>
               <% if (size != "placeholder") { %>
-                <%= size + ": " %>
+                <%= "Size/Type: " + size %>
+                <br>
               <% } %>
-              <%= item.sizes[size] %>
+              <%= "Total Stock: " + item.sizes[size] %>
+              <br>
+              <%= "Stock Reserved for Orders: " + itemsInOrders[selectorStr] %>
               <br>
               <input type="button" class="mod-stock sub-stock" id="sub\<%= selectorStr %>" value="-">
               <input type="button" class="mod-stock add-stock" id="add\<%= selectorStr %>" value="+">
