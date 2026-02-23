@@ -5,6 +5,7 @@ const route = express.Router();
 const Item = require("../model/item");
 const Order = require("../model/order");
 const Time = require("../model/time");
+const nodemailer = require("nodemailer");
 const { format } = require("morgan");
 const xlsx = require("../exportXLSX");
 
@@ -311,6 +312,37 @@ async function restoreInventoryAndDeleteOrder(order) {
   await Order.findByIdAndDelete(order._id);
 }
 
+async function sendCancellationEmail(order) {
+  if (!order || !order.email) {
+    return;
+  }
+
+  const adminEmail = "napervillenorthschoolstore@gmail.com";
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: adminEmail,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+
+  const cancellationMessage =
+    "We regret to inform you that your pick up time slot is no longer available. We apologize for the inconvenience, please reorder the item(s) and select a new pick up time. We appreciate your business";
+
+  const mailOptions = {
+    from: adminEmail,
+    to: order.email,
+    subject: "Order Canceled",
+    text: cancellationMessage,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.error("Error sending cancellation email:", error);
+  }
+}
+
 route.post("/editTime", isAdmin, async (req, res) => {
   const { date, index, openTime, closeTime, action, offset } = req.body;
   const setTimesRedirectUrl =
@@ -373,11 +405,7 @@ route.post("/editTime", isAdmin, async (req, res) => {
     timeEntry.times[index] = { openTime, closeTime };
   }
   await timeEntry.save();
-  const redirectUrl =
-    typeof offset !== "undefined"
-      ? "/setTimes?offset=" + encodeURIComponent(offset)
-      : "/setTimes";
-  res.redirect(redirectUrl);
+  res.redirect(setTimesRedirectUrl);
 });
 
 route.post("/editTime/override", isAdmin, async (req, res) => {
@@ -421,6 +449,7 @@ route.post("/editTime/override", isAdmin, async (req, res) => {
 
     for (let i = 0; i < blockedOrders.length; i++) {
       if (blockedOrders[i].orderStatus !== "completed") {
+        await sendCancellationEmail(blockedOrders[i]);
         await restoreInventoryAndDeleteOrder(blockedOrders[i]);
       }
     }
