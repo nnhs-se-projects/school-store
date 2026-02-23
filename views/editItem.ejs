@@ -20,6 +20,7 @@
         type="float"
         id="price"
         name="price"
+        placeholder="0.00"
         value="<%- item.price %>"
         required
       />
@@ -47,11 +48,12 @@
         item.sizes) { %>
         <div class="size-entry">
           <label>Size Type</label>
-          <input type="text" class="size" value="<%= size %>" />
+          <input type="text" class="size" placeholder="Size Type" value="<%= size %>" />
           <label>Quantity</label>
           <input
             type="number"
             class="quantity"
+            placeholder="Quantity"
             value="<%= item.sizes[size] %>"
           />
           <button type="button" class="delete-size">- Remove Size</button>
