@@ -23,7 +23,9 @@
             <% for (let size in item.sizes) { %>
               <% const selectorStr = formatItemNameAndSize(item.name, size); %>
             <th>
-              <% if (size != "placeholder") { %>
+              <% if (size == "placeholder") { %>
+                <%= item.name %>
+              <% } else { %>
                 <%= size %>
               <% } %>
             </th>
