@@ -137,7 +137,6 @@ route.get("/inPersonManagement", isVolunteer, async (req, res) => {
 
   for (const order of orders) {
     if (order.orderStatus !== "completed") {
-      console.log(order); /////////////////////////
       for (const item of order.items) {
         itemsInOrders[formatItemNameAndSize(item.name, item.size)] += item.quantity;
       }

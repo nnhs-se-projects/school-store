@@ -30,3 +30,6 @@ for (const addBtn of addStockButtons) {
   addBtn.addEventListener("click", async () => { await updateStock(addBtn.id, '+'); });
 }
 
+setTimeout(() => {
+  location.reload(); // there should be no issues with page caching
+}, 60000);
