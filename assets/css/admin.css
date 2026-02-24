@@ -44,3 +44,7 @@ a.admin-link#orderViewer {
   background-color: #ff4800;
   color: white;
 }
+
+table {
+  width: fit-content;
+}
