@@ -29,9 +29,11 @@ document.addEventListener("DOMContentLoaded", function () {
   // updates the quantity when the webpage first loads
   updateQuantityOptions();
 
-  sizeSelector.addEventListener("change", function () {
-    updateQuantityOptions();
-  });
+  if (sizeSelector) {
+    sizeSelector.addEventListener("change", function () {
+      updateQuantityOptions();
+    });
+  }
 
   const addToCartButton = document.getElementById("add-to-cart");
   const itemId = document.getElementById("itemId").value;
@@ -39,8 +41,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const googleId = document.getElementById("googleId").value;
 
     addToCartButton.addEventListener("click", async () => {
-      const size = sizeSelector.value;
-      const sizeIndex = sizeSelector.selectedIndex;
+      const size = sizeSelector ? sizeSelector.value : "placeholder";
+      const sizeIndex = sizeSelector ? sizeSelector.selectedIndex : 0;
       const quantity = document.getElementById("quantity").value;
       console.log("googleID: ", googleId);
       const response = await fetch("/cart/add", {

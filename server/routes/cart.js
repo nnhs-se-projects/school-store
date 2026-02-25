@@ -121,14 +121,25 @@ route.get("/cart", isStudent, async (req, res) => {
     const maxQuantities = [];
     for (let i = 0; i < user.cart.length; i++) {
       const item = await Item.findById(user.cart[i].itemId);
-      const itemInventoryQuantity = item.sizes[user.cart[i].size];
 
       if (!item) {
+        const missingItemId = user.cart[i].itemId;
         user.cart.splice(i, 1);
         await user.save();
         i--; // Adjust index after removal
         warnUserOOS = true; // Item not found in inventory
-        console.log("Item not found in inventory: ", user.cart[i].itemId);
+        console.log("Item not found in inventory: ", missingItemId);
+        continue;
+      }
+
+      const itemInventoryQuantity = item.sizes[user.cart[i].size];
+
+      if (typeof itemInventoryQuantity === "undefined") {
+        warnUserOOS = true;
+        user.cart.splice(i, 1);
+        await user.save();
+        i--;
+        continue;
       } else if (itemInventoryQuantity < user.cart[i].quantity) {
         warnUserQuant = true; // Item quantity is less than requested
         console.log(
@@ -186,20 +197,27 @@ route.post("/cart/add", async (req, res) => {
   }
 
   const item = await Item.findById(itemId);
-  if (!item || item.sizes[sizeIndex] < quantity) {
+  const parsedSizeIndex = Number(sizeIndex);
+  const sizeKeys = item ? Object.keys(item.sizes) : [];
+  const selectedSize = size || sizeKeys[parsedSizeIndex];
+  const availableQuantity = item && selectedSize ? Number(item.sizes[selectedSize]) : 0;
+  const requestedQuantity = Number(quantity);
+
+  if (!item || !selectedSize || Number.isNaN(requestedQuantity) || requestedQuantity <= 0 || availableQuantity < requestedQuantity) {
     return res.status(400).send("Item not available or insufficient quantity");
   }
 
   const itemIndex = user.cart.findIndex(
-    (cartItem) => cartItem.itemId.toString() === itemId,
+    (cartItem) => cartItem.itemId.toString() === itemId && cartItem.size === selectedSize,
   );
-  if (itemIndex > -1 && user.cart[itemIndex].size === size) {
+  if (itemIndex > -1) {
     // If item already exists in the cart, update the quantity
     user.cart[itemIndex].quantity =
-      parseInt(user.cart[itemIndex].quantity) + parseInt(quantity);
+      parseInt(user.cart[itemIndex].quantity) + requestedQuantity;
   } else {
     // If item does not exist in the cart, add it
-    user.cart.push({ itemId, quantity, size, sizeIndex, name: item.name });
+    const selectedSizeIndex = sizeKeys.indexOf(selectedSize);
+    user.cart.push({ itemId, quantity: requestedQuantity, size: selectedSize, sizeIndex: selectedSizeIndex, name: item.name });
   }
 
   await item.save();
