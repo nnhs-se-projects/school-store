@@ -128,7 +128,7 @@ route.get("/addItem", isAdmin, (req, res) => {
 });
 
 // routes for getting admin inventory pages
-route.get("/inventorylist", isAdmin, async (req, res) => {
+route.get("/inventorylist", isVolunteer, async (req, res) => {
   const items = await Item.find();
 
   const formattedItems = items.map((item) => {
@@ -145,7 +145,7 @@ route.get("/inventorylist", isAdmin, async (req, res) => {
   });
 });
 
-route.get("/inventorylistprint", isAdmin, async (req, res) => {
+route.get("/inventorylistprint", isVolunteer, async (req, res) => {
   const items = await Item.find();
 
   const formattedItems = items.map((item) => {
@@ -160,6 +160,56 @@ route.get("/inventorylistprint", isAdmin, async (req, res) => {
   res.render("inventorylistprint", {
     items: formattedItems,
   });
+});
+
+// generate and return XLSX file for inventory list
+route.get("/inventorylist/xlsx", isVolunteer, async (req, res) => {
+  const items = await Item.find();
+
+  // see /server/exportXLSX.js for maintainability note on XLSX worksheet data
+  const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let trackRow = 1;
+  let sheetData = "<sheetData>";
+  let mergeCells = "";
+  const mergeCellsRows = []; // track which rows should have merged cells (item name headers)
+  let maxMergeLength = 0;
+  // create <sheetData> data
+  for (let i = 0; i < items.length; i++) { // put each item in the spreadsheet
+    // item name header
+    sheetData += `<row r="${trackRow}"><c r="A${trackRow}" t="inlineStr"><is><t>${items[i].name}</t></is></c></row>`;
+    mergeCellsRows.push(trackRow);
+    trackRow++;
+
+    // item sizes/variants
+    sheetData += `<row r="${trackRow}">`;
+    let sizeCount = 0;
+    for (const size in items[i].sizes) { // note: `items[i].sizes` is an object, `size` are keys
+      sheetData += `<c r="${abc[sizeCount] + trackRow}" t="inlineStr"><is><t>${size}</t></is></c>`;
+      sizeCount++;
+    }
+    if (sizeCount > maxMergeLength) { // adjust `maxMergeLength` as needed
+      maxMergeLength = sizeCount;
+    }
+    sheetData += `</row>`;
+    trackRow++;
+  }
+  sheetData += "</sheetData>";
+  // create <mergeCells> data
+  if (mergeCellsRows.length !== 0) {
+    mergeCells = `<mergeCells count="${mergeCellsRows.length}">`;
+    for (const row of mergeCellsRows) {
+      mergeCells += `<mergeCell ref="A${row}:${abc[maxMergeLength]}${row}"/>`;
+    }
+    mergeCells += `</mergeCells>`;
+  }
+
+  const xlsxSheetXML = sheetData + mergeCells; // combine into worksheet XML
+  
+  const xlsxDownload = await xlsx.exportXLSX([
+    xlsx.createSheet("Inventory List", xlsxSheetXML)
+  ]); // data URI string
+
+  res.json({xlsxDownload});
 });
 
 // Helper function to clean up times outside the visible calendar range
@@ -462,59 +512,6 @@ route.post("/editTime/override", isAdmin, async (req, res) => {
       redirectUrl: "/setTimes",
     });
   }
-});
-
-// generate and return XLSX file for inventory list
-route.get("/inventorylist/xlsx", isAdmin, async (req, res) => {
-  const items = await Item.find();
-
-  // see /server/exportXLSX.js for maintainability note on XLSX worksheet data
-  const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  let trackRow = 1;
-  let sheetData = "<sheetData>";
-  let mergeCells = "";
-  const mergeCellsRows = []; // track which rows should have merged cells (item name headers)
-  let maxMergeLength = 0;
-  // create <sheetData> data
-  for (let i = 0; i < items.length; i++) {
-    // put each item in the spreadsheet
-    // item name header
-    sheetData += `<row r="${trackRow}"><c r="A${trackRow}" t="inlineStr"><is><t>${items[i].name}</t></is></c></row>`;
-    mergeCellsRows.push(trackRow);
-    trackRow++;
-
-    // item sizes/variants
-    sheetData += `<row r="${trackRow}">`;
-    let sizeCount = 0;
-    for (const size in items[i].sizes) {
-      // note: `items[i].sizes` is an object, `size` are keys
-      sheetData += `<c r="${abc[sizeCount] + trackRow}" t="inlineStr"><is><t>${size}</t></is></c>`;
-      sizeCount++;
-    }
-    if (sizeCount > maxMergeLength) {
-      // adjust `maxMergeLength` as needed
-      maxMergeLength = sizeCount;
-    }
-    sheetData += `</row>`;
-    trackRow++;
-  }
-  sheetData += "</sheetData>";
-  // create <mergeCells> data
-  if (mergeCellsRows.length !== 0) {
-    mergeCells = `<mergeCells count="${mergeCellsRows.length}">`;
-    for (const row of mergeCellsRows) {
-      mergeCells += `<mergeCell ref="A${row}:${abc[maxMergeLength]}${row}"/>`;
-    }
-    mergeCells += `</mergeCells>`;
-  }
-
-  const xlsxSheetXML = sheetData + mergeCells; // combine into worksheet XML
-
-  const xlsxDownload = await xlsx.exportXLSX([
-    xlsx.createSheet("Inventory List", xlsxSheetXML),
-  ]); // data URI string
-
-  res.json({ xlsxDownload });
 });
 
 route.get("/contact", async (req, res) => {
