@@ -1,11 +1,12 @@
-
 <!-- include header -->
 <%- include('include/_header') %>
 <!-- /include header -->
 
 <!-- Main Site -->
 
-<%- include('splashPage') %>
+<% if (session && session.showSplash) { %>
+  <%- include('splashPage') %>
+<% } %>
 
 <main>
   <div class="wrapper">
@@ -82,6 +83,10 @@
 <!-- include footer -->
 <%- include('include/_footer') %>
 <!-- /include footer -->
+
+<script>
+  const showSplash = <%= JSON.stringify(session && session.showSplash) %>;
+</script>
 
 <script>
   let notLoggedInItems = document.querySelectorAll("#not-logged-in");

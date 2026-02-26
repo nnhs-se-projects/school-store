@@ -18,11 +18,32 @@ const Order = require("../model/order");
 
 */
 // directs to the homepage
+
 route.get("/", async (req, res) => {
   // get items from the database to display on the homepage
   const items = await Item.find();
 
   // format the items into a usable array
+
+  req.session.lastVisit = new Date();
+  // Check if the user has visited before and determine whether to show the splash page
+  if (req.session.hasVisited) {
+    // If the user has visited before, do not show the splash page
+    req.session.showSplash = false;
+  } else {
+    // If no previous visit, show the splash page and set hasVisited to true
+    req.session.showSplash = true;
+    req.session.hasVisited = true;
+  }
+
+  // Update the last visit time
+  req.session.lastVisit = new Date();
+
+  req.session.save((err) => {
+    if (err) {
+      console.error("Failed to save session:", err);
+    }
+  });
   const formattedItems = items.map((item) => {
     return {
       id: item._id,
@@ -204,7 +225,7 @@ route.get("/api/stats", async (req, res) => {
   try {
     const totalOrders = await Order.countDocuments();
     const allOrders = await Order.find();
-    
+
     // Sum up all items across all orders
     let totalItems = 0;
     allOrders.forEach((order) => {
@@ -212,7 +233,7 @@ route.get("/api/stats", async (req, res) => {
         totalItems += item.quantity;
       });
     });
-    
+
     res.json({
       totalOrders: totalOrders,
       totalItems: totalItems,

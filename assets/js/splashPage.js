@@ -31,7 +31,7 @@ async function fetchStats() {
   try {
     const response = await fetch("/api/stats");
     const data = await response.json();
-    
+
     document.getElementById("orders-count").textContent = data.totalOrders;
     document.getElementById("items-count").textContent = data.totalItems;
   } catch (error) {
