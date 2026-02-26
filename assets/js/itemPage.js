@@ -59,7 +59,8 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("error adding item to cart");
       }
     });
-  } else { // FIXME: users who have access level 1 should also not be able to add to cart
+  } else {
+    // FIXME: users who have access level 1 should also not be able to add to cart
     addToCartButton.addEventListener("click", () => {
       alert("Please log in as a student to add items to your cart.");
     });
