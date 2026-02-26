@@ -376,8 +376,17 @@ async function sendCancellationEmail(order) {
     },
   });
 
+  function printOrderItems(order) {
+    let orderItems = "";
+    for (let i = 0; i < order.items.length; i++) {
+      orderItems += `- ${order.items[i].quantity} x ${order.items[i].size} ${order.items[i].name}\n`;
+    }
+    return orderItems;
+  }
+
   const cancellationMessage =
-    "We regret to inform you that your pick up time slot is no longer available. We apologize for the inconvenience, please reorder the item(s) and select a new pick up time. We appreciate your business";
+    "We regret to inform you that your pick up time slot is no longer available. We apologize for the inconvenience, please reorder the item(s) and select a new pick up time. We appreciate your business"
+    + "\n\nOriginal Order Items:\n" + printOrderItems(order);
 
   const mailOptions = {
     from: adminEmail,
@@ -433,7 +442,7 @@ route.post("/editTime", isAdmin, async (req, res) => {
 
     return res.status(409).render("errorPage", {
       message:
-        "WARNING this time slot has an order that is placed in this interval. Please contact the student and let them know of the time change" +
+        "WARNING this time slot has an order(s) that is placed in this interval. If time interval is updated, the affected student(s) will be notified and their orders will be canceled." +
         emailSuffix,
       redirectUrl: setTimesRedirectUrl,
       overrideActionUrl: "/editTime/override",
