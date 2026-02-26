@@ -196,10 +196,11 @@ route.get("/cart", isStudent, async (req, res) => {
   }
 });
 
-route.post("/cart/add", async (req, res) => {
+route.post("/cart/add", isStudent, async (req, res) => {
   console.log("Adding item to cart");
   console.log(req.body);
-  const { googleId, itemId, quantity, size, sizeIndex } = req.body;
+  const { itemId, quantity, size, sizeIndex } = req.body;
+  const googleId = req.session.user.googleId;
 
   const user = await User.findOne({ googleId });
   if (!user) {

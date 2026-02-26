@@ -37,32 +37,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const addToCartButton = document.getElementById("add-to-cart");
   const itemId = document.getElementById("itemId").value;
-  if (document.getElementById("googleId").value !== "") {
-    const googleId = document.getElementById("googleId").value;
+  addToCartButton.addEventListener("click", async () => {
+    const size = sizeSelector?.value || "placeholder";
+    const sizeIndex = sizeSelector?.selectedIndex || 0;
+    const quantity = document.getElementById("quantity").value;
 
-    addToCartButton.addEventListener("click", async () => {
-      const size = sizeSelector ? sizeSelector.value : "placeholder";
-      const sizeIndex = sizeSelector ? sizeSelector.selectedIndex : 0;
-      const quantity = document.getElementById("quantity").value;
-      console.log("googleID: ", googleId);
-      const response = await fetch("/cart/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ googleId, itemId, quantity, size, sizeIndex }),
-      });
+    const response = await fetch("/cart/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ itemId, quantity, size, sizeIndex }),
+    });
 
-      if (response.ok) {
-        window.location = "/cart";
-      } else {
-        console.error("error adding item to cart");
-      }
-    });
-  } else {
-    // FIXME: users who have access level 1 should also not be able to add to cart
-    addToCartButton.addEventListener("click", () => {
-      alert("Please log in as a student to add items to your cart.");
-    });
-  }
+    if (response.ok) return (window.location = "/cart");
+    if ([401, 403].includes(response.status))
+      return alert("Please log in as a student to add items to your cart.");
+
+    console.error("error adding item to cart");
+  });
 });
