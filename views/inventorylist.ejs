@@ -7,23 +7,27 @@
 <main> 
   <h1>Inventory Spreadsheet</h1>
 
-  <table>
-    <% items.forEach(function(item) { %>
-    <th colspan = 10>
-      <b> <%= item.name %> </b>
-    </th>
-    <tr></tr>
-      <% for (let size in item.sizes) { %>
-        <% if (size == "placeholder") { %>
-          <th> <%= item.sizes[size] %> </th>
-        <% } %>
-        <% if (size != "placeholder") { %>
-          <th> <%= size + ": " + item.sizes[size] %> </th>
-        <% } %>
-      <% } %>
-    <tr></tr>
-    <% }) %>
-  </table>
+  <center>
+    <div class="overflow-wrapper">
+      <table>
+        <% items.forEach(function(item) { %>
+        <th colspan = 10>
+          <b> <%= item.name %> </b>
+        </th>
+        <tr></tr>
+          <% for (let size in item.sizes) { %>
+            <% if (size == "placeholder") { %>
+              <th> <%= item.sizes[size] %> </th>
+            <% } %>
+            <% if (size != "placeholder") { %>
+              <th> <%= size + ": " + item.sizes[size] %> </th>
+            <% } %>
+          <% } %>
+        <tr></tr>
+        <% }) %>
+      </table>
+    </div>
+  </center>
 
   <h1>Export</h1>
 

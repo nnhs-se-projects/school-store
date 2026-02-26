@@ -10,8 +10,8 @@ table {
 th {
   border: 2px solid;
   font-size: 20px;
-  width: 200px;
-  height: 40px;
+  min-width: 200px;
+  min-height: 40px;
 }
 
 tr {
@@ -43,4 +43,8 @@ a.admin-link {
 a.admin-link#orderViewer {
   background-color: #ff4800;
   color: white;
+}
+
+table {
+  width: fit-content;
 }

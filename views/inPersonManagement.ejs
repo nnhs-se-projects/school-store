@@ -1,0 +1,70 @@
+<!-- include header -->
+<%- include('include/_header') %>
+<!-- /include header -->
+
+<link rel="stylesheet" href="/css/admin.css">
+<link rel="stylesheet" href="/css/inPersonManagement.css" />
+
+<!-- Main Site -->
+
+<main>
+  <div class="wrapper">
+    <h1>In-Person Store Management</h1>
+    
+    <center>
+      <div class="overflow-wrapper">
+        <table id="inventory-table">
+          <% items.forEach(function(item) { %>
+          <th colspan=16 style="background-color: #ccc;">
+            <b> <%= item.name %> </b>
+          </th>
+          <tr>
+            <th>Size / Type</th>
+            <% for (let size in item.sizes) { %>
+              <% const selectorStr = formatItemNameAndSize(item.name, size); %>
+            <th>
+              <% if (size == "placeholder") { %>
+                <%= item.name %>
+              <% } else { %>
+                <%= size %>
+              <% } %>
+            </th>
+            <% } %>
+          </tr>
+
+          <tr>
+            <th>Total Stock</th>
+            <% for (let size in item.sizes) { %>
+              <% const selectorStr = formatItemNameAndSize(item.name, size); %>
+            <th>
+              <%= item.sizes[size] %>
+              <br>
+              <input type="button" class="mod-stock sub-stock" id="sub\<%= selectorStr %>" value="-">
+              <input type="button" class="mod-stock add-stock" id="add\<%= selectorStr %>" value="+">
+            </th>
+            <% } %>
+          </tr>
+
+          <tr>
+            <th>Stock Reserved for Orders</th>
+            <% for (let size in item.sizes) { %>
+              <% const selectorStr = formatItemNameAndSize(item.name, size); %>
+            <th>
+              <%= itemsInOrders[selectorStr] %>
+            </th>
+            <% } %>
+          </tr>
+          <% }) %>
+        </table>
+      </div>
+    </center>
+  </div>
+</main>
+
+<script src="/js/inPersonManagement.js"></script>
+
+<!-- /Main Site -->
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->
