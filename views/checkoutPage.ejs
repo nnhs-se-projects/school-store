@@ -31,13 +31,38 @@
     <div class = input-box>
     <div class="user-inputs">
       <label for="pickup-date">Select Pickup Date:</label>
-      <input type="date" id="pickup-date" name="pickup-date" required min="<%= new Date(Date.now() + 86400000).toISOString().split('T')[0] %>" />
-      <label for="pickup-time">Select Pickup Period:</label>
-      <select id="pickup-time" name="pickup-time" required>
-        <option value="" disabled selected>Select a period</option>
-        <option value="4">4th</option>
-        <option value="5">5th</option>
-        <option value="6">6th</option>
+      <select id="pickup-date" name="pickup-date" required>
+        <option value="" disabled selected>Select a date</option>
+        <% 
+        function localDateString(d) {
+          const dt = new Date(d);
+          const y = dt.getFullYear();
+          const m = String(dt.getMonth() + 1).padStart(2, '0');
+          const day = String(dt.getDate()).padStart(2, '0');
+          return `${y}-${m}-${day}`;
+        }
+        
+        function formatDateDisplay(d) {
+          const dt = new Date(d);
+          const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+          const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+          return `${days[dt.getDay()]}, ${months[dt.getMonth()]} ${dt.getDate()}`;
+        }
+        
+        storeHours.forEach(timeEntry => {
+          if (timeEntry.times && timeEntry.times.length > 0) {
+            const dateStr = localDateString(timeEntry.date);
+            const displayDate = formatDateDisplay(timeEntry.date);
+        %>
+        <option value="<%= dateStr %>"><%= displayDate %></option>
+        <% 
+          }
+        });
+        %>
+      </select>
+      <label for="pickup-time">Select Pickup Time:</label>
+      <select id="pickup-time" name="pickup-time" required disabled>
+        <option value="" disabled selected>Select a date first</option>
       </select>
     </div>
     </div>
@@ -49,6 +74,14 @@
 
 
 <!-- /Main Site -->
+
+<script>
+  // Store hours data for client-side use
+  const storeHoursData = <%- JSON.stringify(storeHours.map(entry => ({
+    date: entry.date,
+    times: entry.times
+  }))) %>;
+</script>
 
 <script src="/js/checkout.js"></script>
 

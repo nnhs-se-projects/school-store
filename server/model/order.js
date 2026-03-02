@@ -14,7 +14,7 @@ const OrderSchema = new mongoose.Schema({
     required: true,
   },
   period: {
-    type: Number,
+    type: String,
     required: true,
   },
   totalPrice: {

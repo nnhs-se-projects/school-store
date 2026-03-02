@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
   }
 
   checkoutButton.addEventListener("click", async (event) => {
-    event.preventDefault(); // Prevent the default form submission
+     event.preventDefault(); // Prevent the default form submission
     const quantitySelected = parseInt(
       document.querySelector(".quantity-selected").textContent.trim(),
       10

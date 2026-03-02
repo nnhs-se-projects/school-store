@@ -66,3 +66,11 @@ tr.late-order {
   background-color: #f8d7da !important; /* Light red background */
   color: #721c24; /* Dark red text */
 }
+
+.overflow-wrapper {
+  overflow-x: auto;
+}
+
+.check-off-order {
+  height: fit-content;
+}

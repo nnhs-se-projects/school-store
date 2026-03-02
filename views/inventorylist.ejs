@@ -5,12 +5,6 @@
 <link rel="stylesheet" href="/css/admin.css">
 
 <main> 
-  <h1>Print</h1>
-
-  <a class="admin-link" href="inventorylistprint" id="inventorylistprint"><strong>Print</strong></a>
-
-  
-
   <h1>Inventory Spreadsheet</h1>
 
   <table>
@@ -31,9 +25,16 @@
     <% }) %>
   </table>
 
+  <h1>Export</h1>
+
+  <a class="export-link" href="inventorylistprint" id="inventorylistprint">Print</a>
+  <a class="export-link" id="inventorylistxlsx">Download XLSX Spreadsheet</a>
+
+  <br>
+
 </main>
 
-
+<script src="/js/inventorylist.js"></script>
 
 <!-- include footer -->
 <%- include('include/_footer') %>
