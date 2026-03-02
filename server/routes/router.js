@@ -634,6 +634,11 @@ route.get("/deleteItem/:id", isAdmin, async (req, res) => {
   res.redirect("/manageItems");
 });
 
+// route to editEmails page
+route.get("/editEmails", isAdmin, (req, res) => {
+  return res.render("editEmail");
+});
+
 // delegate all authentication to the auth.js router
 route.use("/auth", require("./auth"));
 
