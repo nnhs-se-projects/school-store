@@ -23,8 +23,9 @@ async function sendCancellationEmail(order) {
   }
 
   const cancellationMessage =
-    "We regret to inform you that your pick up time slot is no longer available. We apologize for the inconvenience, please reorder the item(s) and select a new pick up time. We appreciate your business"
-    + "\n\nOriginal Order Items:\n" + printOrderItems(order);
+    "We regret to inform you that your pick up time slot is no longer available. We apologize for the inconvenience, please reorder the item(s) and select a new pick up time. We appreciate your business" +
+    "\n\nOriginal Order Items:\n" +
+    printOrderItems(order);
 
   const mailOptions = {
     from: adminEmail,
