@@ -111,6 +111,68 @@ route.get("/admin", isVolunteer, (req, res) => {
   return res.render("admin");
 });
 
+route.get("/inPersonManagement", isVolunteer, async (req, res) => {
+  const items = await Item.find();
+  const orders = await Order.find({}).sort({ date: 1 });
+
+  const formattedItems = items.map((item) => {
+    return {
+      id: item._id,
+      name: item.name,
+      quantity: item.quantity,
+      sizes: item.sizes,
+    };
+  });
+
+  const formatItemNameAndSize = (itemName, sizeName) => {
+    return itemName + '\\' + sizeName;
+  };
+
+  const itemsInOrders = {};
+
+  for (const item of formattedItems) {
+    for (const size in item.sizes) {
+      itemsInOrders[formatItemNameAndSize(item.name, size)] = 0;
+    }
+  }
+
+  for (const order of orders) {
+    if (order.orderStatus !== "completed") {
+      for (const item of order.items) {
+        itemsInOrders[formatItemNameAndSize(item.name, item.size)] += item.quantity;
+      }
+    }
+  }
+
+  res.render("inPersonManagement", {
+    items: formattedItems,
+    itemsInOrders,
+    formatItemNameAndSize
+  });
+});
+
+route.post("/inPersonManagement", isVolunteer, async (req, res) => {
+  const { item, size, action } = req.body;
+  const dbItem = await Item.findOne({ name: item });
+
+  if (dbItem === null) {
+    res.status(404);
+    return;
+  }
+
+  if (action === '+') {
+    dbItem.sizes[size]++;
+  } else if (action === '-') {
+    if (dbItem.sizes[size] > 0) {
+      dbItem.sizes[size]--;
+    }
+  }
+  
+  await dbItem.updateOne({ sizes: dbItem.sizes });
+
+  res.status(201).end();
+});
+
 // logout route
 route.get("/logout", (req, res) => {
   req.session.destroy((err) => {
