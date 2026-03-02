@@ -596,9 +596,9 @@ route.get("/deleteItem/:id", isAdmin, async (req, res) => {
 // API endpoint to get order and item statistics
 route.get("/api/stats", async (req, res) => {
   try {
-    const totalOrders = await Order.countDocuments();
     const allOrders = await Order.find();
-
+    const totalOrders = allOrders.length;
+    
     // Sum up all items across all orders
     let totalItems = 0;
     allOrders.forEach((order) => {
@@ -608,8 +608,8 @@ route.get("/api/stats", async (req, res) => {
     });
 
     res.json({
-      totalOrders: totalOrders,
-      totalItems: totalItems,
+      totalOrders,
+      totalItems,
     });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch stats" });
