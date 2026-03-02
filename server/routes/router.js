@@ -3,7 +3,9 @@ const route = express.Router();
 
 // const User = require("../model/user");
 const Item = require("../model/item");
+const Order = require("../model/order");
 const Time = require("../model/time");
+const nodemailer = require("nodemailer");
 const { format } = require("morgan");
 const xlsx = require("../exportXLSX");
 
@@ -270,25 +272,255 @@ route.post("/setTimes", isAdmin, async (req, res) => {
   res.redirect(redirectUrl);
 });
 
+function timeToMinutes(timeStr) {
+  if (!timeStr || typeof timeStr !== "string") {
+    return NaN;
+  }
+
+  const trimmed = timeStr.trim();
+
+  // Handles admin time input format: "HH:MM" (24-hour)
+  if (!trimmed.includes("AM") && !trimmed.includes("PM")) {
+    const [hours, minutes] = trimmed.split(":").map(Number);
+    if (Number.isNaN(hours) || Number.isNaN(minutes)) {
+      return NaN;
+    }
+    return hours * 60 + minutes;
+  }
+
+  // Handles order period format: "h:mm AM/PM"
+  const [time, period] = trimmed.split(" ");
+  let [hours, minutes] = time.split(":").map(Number);
+
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) {
+    return NaN;
+  }
+
+  if (period === "PM" && hours !== 12) {
+    hours += 12;
+  }
+  if (period === "AM" && hours === 12) {
+    hours = 0;
+  }
+
+  return hours * 60 + minutes;
+}
+
+function parsePeriodToMinutes(period) {
+  if (!period || typeof period !== "string") {
+    return null;
+  }
+
+  const [periodStart, periodEnd] = period.split("-").map((part) => part.trim());
+  const startMinutes = timeToMinutes(periodStart);
+  const endMinutes = timeToMinutes(periodEnd);
+
+  if (Number.isNaN(startMinutes) || Number.isNaN(endMinutes)) {
+    return null;
+  }
+
+  return { startMinutes, endMinutes };
+}
+
+function slotContainsPeriod(slot, period) {
+  if (!slot) {
+    return false;
+  }
+
+  const periodMinutes = parsePeriodToMinutes(period);
+  if (!periodMinutes) {
+    return false;
+  }
+
+  const slotOpenMinutes = timeToMinutes(slot.openTime);
+  const slotCloseMinutes = timeToMinutes(slot.closeTime);
+
+  if (Number.isNaN(slotOpenMinutes) || Number.isNaN(slotCloseMinutes)) {
+    return false;
+  }
+
+  return (
+    periodMinutes.startMinutes >= slotOpenMinutes &&
+    periodMinutes.endMinutes <= slotCloseMinutes
+  );
+}
+
+async function restoreInventoryAndDeleteOrder(order) {
+  for (let i = 0; i < order.items.length; i++) {
+    const orderItem = order.items[i];
+    const item = await Item.findById(orderItem.itemId);
+
+    if (!item) {
+      throw new Error("Item not found in inventory");
+    }
+
+    const size = orderItem.size;
+    item.sizes[size] += orderItem.quantity;
+    await item.save();
+  }
+
+  await Order.findByIdAndDelete(order._id);
+}
+
+async function sendCancellationEmail(order) {
+  if (!order || !order.email) {
+    return;
+  }
+
+  const adminEmail = "napervillenorthschoolstore@gmail.com";
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: adminEmail,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+
+  function printOrderItems(order) {
+    let orderItems = "";
+    for (let i = 0; i < order.items.length; i++) {
+      orderItems += `- ${order.items[i].quantity} x ${order.items[i].size} ${order.items[i].name}\n`;
+    }
+    return orderItems;
+  }
+
+  const cancellationMessage =
+    "We regret to inform you that your pick up time slot is no longer available. We apologize for the inconvenience, please reorder the item(s) and select a new pick up time. We appreciate your business"
+    + "\n\nOriginal Order Items:\n" + printOrderItems(order);
+
+  const mailOptions = {
+    from: adminEmail,
+    to: order.email,
+    subject: "Order Canceled",
+    text: cancellationMessage,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.error("Error sending cancellation email:", error);
+  }
+}
+
 route.post("/editTime", isAdmin, async (req, res) => {
   const { date, index, openTime, closeTime, action, offset } = req.body;
+  const setTimesRedirectUrl =
+    typeof offset !== "undefined"
+      ? "/setTimes?offset=" + encodeURIComponent(offset)
+      : "/setTimes";
   const timeEntry = await Time.findOne({ date: new Date(date + "T12:00:00") });
   if (!timeEntry || !timeEntry.times[index]) {
-    return res
-      .status(404)
-      .render("errorPage", { message: "Time slot not found" });
+    return res.status(404).render("errorPage", {
+      message: "Time slot not found",
+      redirectUrl: setTimesRedirectUrl,
+    });
   }
+
+  const ordersForDate = await Order.find({ date });
+  const updatedTimes = [...timeEntry.times];
+
+  if (action === "delete") {
+    updatedTimes.splice(index, 1);
+  } else {
+    updatedTimes[index] = { openTime, closeTime };
+  }
+
+  const blockedOrders = ordersForDate.filter((order) => {
+    return !updatedTimes.some((slot) => slotContainsPeriod(slot, order.period));
+  });
+
+  if (blockedOrders.length > 0) {
+    const blockedEmails = [
+      ...new Set(
+        blockedOrders.map((order) => order.email).filter((email) => !!email),
+      ),
+    ];
+    const emailSuffix =
+      blockedEmails.length > 0
+        ? ` Students with affected orders: ${blockedEmails.join(", ")}.`
+        : "";
+
+    return res.status(409).render("errorPage", {
+      message:
+        "WARNING this time slot has an order(s) that is placed in this interval. If time interval is updated, the affected student(s) will be notified and their orders will be canceled." +
+        emailSuffix,
+      redirectUrl: setTimesRedirectUrl,
+      overrideActionUrl: "/editTime/override",
+      overridePayload: {
+        date,
+        index,
+        openTime,
+        closeTime,
+        action,
+        offset,
+      },
+      overrideButtonLabel: "Update Anyway",
+    });
+  }
+
   if (action === "delete") {
     timeEntry.times.splice(index, 1);
   } else {
     timeEntry.times[index] = { openTime, closeTime };
   }
   await timeEntry.save();
-  const redirectUrl =
-    typeof offset !== "undefined"
-      ? "/setTimes?offset=" + encodeURIComponent(offset)
-      : "/setTimes";
-  res.redirect(redirectUrl);
+  res.redirect(setTimesRedirectUrl);
+});
+
+route.post("/editTime/override", isAdmin, async (req, res) => {
+  try {
+    const { date, index, openTime, closeTime, action, offset } = req.body;
+    const redirectUrl =
+      typeof offset !== "undefined"
+        ? "/setTimes?offset=" + encodeURIComponent(offset)
+        : "/setTimes";
+    const timeEntry = await Time.findOne({
+      date: new Date(date + "T12:00:00"),
+    });
+
+    if (!timeEntry || !timeEntry.times[index]) {
+      return res.status(404).render("errorPage", {
+        message: "Time slot not found",
+        redirectUrl,
+      });
+    }
+
+    const ordersForDate = await Order.find({ date });
+    const updatedTimes = [...timeEntry.times];
+
+    if (action === "delete") {
+      updatedTimes.splice(index, 1);
+    } else {
+      updatedTimes[index] = { openTime, closeTime };
+    }
+
+    const blockedOrders = ordersForDate.filter((order) => {
+      return !updatedTimes.some((slot) =>
+        slotContainsPeriod(slot, order.period),
+      );
+    });
+
+    if (action === "delete") {
+      timeEntry.times.splice(index, 1);
+    } else {
+      timeEntry.times[index] = { openTime, closeTime };
+    }
+
+    for (let i = 0; i < blockedOrders.length; i++) {
+      if (blockedOrders[i].orderStatus !== "completed") {
+        await sendCancellationEmail(blockedOrders[i]);
+        await restoreInventoryAndDeleteOrder(blockedOrders[i]);
+      }
+    }
+
+    await timeEntry.save();
+    res.redirect(redirectUrl);
+  } catch (error) {
+    return res.status(500).render("errorPage", {
+      message: "Unable to apply override and cancel conflicting orders.",
+      redirectUrl: "/setTimes",
+    });
+  }
 });
 
 route.get("/contact", async (req, res) => {
