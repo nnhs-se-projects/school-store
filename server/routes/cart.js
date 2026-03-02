@@ -6,6 +6,7 @@ const Item = require("../model/item");
 const Order = require("../model/order");
 const Time = require("../model/time");
 const nodemailer = require("nodemailer");
+const sendCancellationEmail = require("../utils/sendCancellationEmail");
 
 const xlsx = require("../exportXLSX");
 
@@ -504,6 +505,7 @@ route.post("/deleteOrder", async (req, res) => {
       }
     }
 
+    await sendCancellationEmail(order);
     await Order.findByIdAndDelete(orderId);
     res.status(200).send("Order deleted successfully");
   } catch (error) {

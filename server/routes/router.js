@@ -5,7 +5,7 @@ const route = express.Router();
 const Item = require("../model/item");
 const Order = require("../model/order");
 const Time = require("../model/time");
-const nodemailer = require("nodemailer");
+const sendCancellationEmail = require("../utils/sendCancellationEmail");
 const { format } = require("morgan");
 const xlsx = require("../exportXLSX");
 
@@ -422,46 +422,6 @@ async function restoreInventoryAndDeleteOrder(order) {
   }
 
   await Order.findByIdAndDelete(order._id);
-}
-
-async function sendCancellationEmail(order) {
-  if (!order || !order.email) {
-    return;
-  }
-
-  const adminEmail = "napervillenorthschoolstore@gmail.com";
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: adminEmail,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-  });
-
-  function printOrderItems(order) {
-    let orderItems = "";
-    for (let i = 0; i < order.items.length; i++) {
-      orderItems += `- ${order.items[i].quantity} x ${order.items[i].size} ${order.items[i].name}\n`;
-    }
-    return orderItems;
-  }
-
-  const cancellationMessage =
-    "We regret to inform you that your pick up time slot is no longer available. We apologize for the inconvenience, please reorder the item(s) and select a new pick up time. We appreciate your business"
-    + "\n\nOriginal Order Items:\n" + printOrderItems(order);
-
-  const mailOptions = {
-    from: adminEmail,
-    to: order.email,
-    subject: "Order Canceled",
-    text: cancellationMessage,
-  };
-
-  try {
-    await transporter.sendMail(mailOptions);
-  } catch (error) {
-    console.error("Error sending cancellation email:", error);
-  }
 }
 
 route.post("/editTime", isAdmin, async (req, res) => {
