@@ -56,7 +56,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
           currentMinutes += 30
         ) {
           const startTime = minutesToTime(currentMinutes);
-          const endTime = minutesToTime(currentMinutes + 30);
+          const endMinutes = Math.min(currentMinutes + 30, closeMinutes);
+          const endTime = minutesToTime(endMinutes);
           const option = document.createElement("option");
           option.value = `${startTime} - ${endTime}`;
           option.textContent = `${startTime} - ${endTime}`;

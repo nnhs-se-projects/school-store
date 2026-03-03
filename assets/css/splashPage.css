@@ -10,6 +10,10 @@
   align-items: center;
   z-index: 1000;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
 .popup-modal.hidden {
   display: none;
 }
@@ -26,6 +30,10 @@
   max-height: 90vh;
   overflow: auto;
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
 .popup-close {
   position: absolute;
   top: 10px;
@@ -45,6 +53,14 @@
   z-index: 10;
 }
 
+<<<<<<< HEAD
+=======
+.popup-close:hover {
+  color: #000;
+  font-weight: bolder;
+}
+
+>>>>>>> main
 .welcome-container {
   display: flex;
   justify-content: center;
@@ -70,6 +86,13 @@ h1 {
   font-family: Georgia, serif;
 }
 
+<<<<<<< HEAD
+=======
+.popup-content h1 {
+  margin-top: 0;
+}
+
+>>>>>>> main
 .popup-content p {
   margin-top: -10px;
   font-family: "Georgia", serif;
@@ -79,11 +102,21 @@ h1 {
   text-align: center;
   font-size: 0.75rem;
   color: #707070;
+<<<<<<< HEAD
   padding: 20px;
+=======
+  margin-top: 10px;
+>>>>>>> main
 }
 
 .unavailable-dates {
   font-size: 1.05rem;
+<<<<<<< HEAD
+=======
+  margin-top: 20px !important;
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+>>>>>>> main
 }
 
 @media (max-width: 768px) {

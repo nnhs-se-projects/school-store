@@ -56,7 +56,7 @@ async function createXLSXWithOrders(orders) {
 
   // create the headers
   let ordersXML =
-    '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c><c r="B1" t="inlineStr"><is><t>Name</t></is></c><c r="C1" t="inlineStr"><is><t>Email</t></is></c><c r="D1" t="inlineStr"><is><t>Date</t></is></c><c r="E1" t="inlineStr"><is><t>Period</t></is></c><c r="F1" t="inlineStr"><is><t>Total Price</t></is></c><c r="G1" t="inlineStr"><is><t>Status</t></is></c></row>';
+    '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c><c r="B1" t="inlineStr"><is><t>Name</t></is></c><c r="C1" t="inlineStr"><is><t>Email</t></is></c><c r="D1" t="inlineStr"><is><t>Pickup Date</t></is></c><c r="E1" t="inlineStr"><is><t>Pickup Time</t></is></c><c r="F1" t="inlineStr"><is><t>Total Price</t></is></c><c r="G1" t="inlineStr"><is><t>Status</t></is></c></row>';
   let orderItemsXML =
     '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c>';
 
@@ -380,7 +380,7 @@ route.post("/cart/order", async (req, res) => {
   res.status(200).send("Order placed");
 
   function printOrder(order) {
-    let orderDetails = `Student: ${order.name}\nEmail: ${order.email}\nPickup Date: ${date}\nPickup Period: ${order.period}\nTotal Cost: $${order.totalPrice}\nItems:\n`;
+    let orderDetails = `Student: ${order.name}\nEmail: ${order.email}\nPickup Date: ${date}\nPickup Time: ${order.period}\nTotal Cost: $${order.totalPrice}\nItems:\n`;
     for (let i = 0; i < order.items.length; i++) {
       orderDetails += `- ${order.items[i].quantity} x ${order.items[i].size} ${order.items[i].name}\n`;
     }
