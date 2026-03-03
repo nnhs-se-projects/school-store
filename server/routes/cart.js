@@ -396,7 +396,7 @@ route.post("/cart/order", async (req, res) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "napervillenorthschoolstore@gmail.com",
+      user: adminEmail,
       pass: process.env.EMAIL_PASSWORD,
     },
   });

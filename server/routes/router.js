@@ -5,6 +5,7 @@ const route = express.Router();
 const Item = require("../model/item");
 const Order = require("../model/order");
 const Time = require("../model/time");
+const EmailText = require("../model/emailText");
 const sendCancellationEmail = require("../utils/sendCancellationEmail");
 const { format } = require("morgan");
 const xlsx = require("../exportXLSX");
@@ -599,8 +600,58 @@ route.get("/deleteItem/:id", isAdmin, async (req, res) => {
 });
 
 // route to editEmails page
-route.get("/editEmails", isAdmin, (req, res) => {
-  return res.render("editEmail");
+route.get("/editEmails", isAdmin, async (req, res) => {
+  const confirmStoreTextEntry = await EmailText.findOne({ name: "confirm store text" });
+  const confirmStudentTextEntry = await EmailText.findOne({ name: "confirm student text" });
+  const cancelStudentTextEntry = await EmailText.findOne({ name: "cancel student text" });
+
+  return res.render("editEmail", {
+    confirmStoreText: confirmStoreTextEntry ? confirmStoreTextEntry.text : "",
+    confirmStudentText: confirmStudentTextEntry ? confirmStudentTextEntry.text : "",
+    cancelStudentText: cancelStudentTextEntry ? cancelStudentTextEntry.text : ""
+  });
+});
+
+route.post("/editEmail", isAdmin, async (req, res) => {
+  const { confirmStoreText, confirmStudentText, cancelStudentText } = req.body;
+  const confirmStoreTextEntry = await EmailText.findOne({ name: "confirm store text" });
+  const confirmStudentTextEntry = await EmailText.findOne({ name: "confirm student text" });
+  const cancelStudentTextEntry = await EmailText.findOne({ name: "cancel student text" });
+
+  if (confirmStoreTextEntry) {
+    confirmStoreTextEntry.text = confirmStoreText;
+    await confirmStoreTextEntry.save();
+  } else {
+    const newEmailEntry = new EmailText({
+      name: "confirm store text",
+      text: confirmStoreText
+    });
+    await newEmailEntry.save();
+  }
+
+  if (confirmStudentTextEntry) {
+    confirmStudentTextEntry.text = confirmStudentText;
+    await confirmStudentTextEntry.save();
+  } else {
+    const newEmailEntry = new EmailText({
+      name: "confirm student text",
+      text: confirmStudentText
+    });
+    await newEmailEntry.save();
+  }
+
+  if (cancelStudentTextEntry) {
+    cancelStudentTextEntry.text = cancelStudentText;
+    await cancelStudentTextEntry.save();
+  } else {
+    const newEmailEntry = new EmailText({
+      name: "cancel student text",
+      text: cancelStudentText
+    });
+    await newEmailEntry.save();
+  }
+
+  res.status(201).end();
 });
 
 // delegate all authentication to the auth.js router

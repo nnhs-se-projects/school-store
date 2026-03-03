@@ -10,17 +10,22 @@
 
     <h2>Order Confirmation</h2>
     <p>To School Store Email:</p>
-    <textarea></textarea>
+    <textarea id="confirm-store-text"><%= confirmStoreText %></textarea>
 
     <p>To Student Email:</p>
-    <textarea></textarea>
+    <textarea id="confirm-student-text"><%= confirmStudentText %></textarea>
 
     <h2>Order Cancellation</h2>
-    <textarea></textarea>
+    <textarea id="cancel-student-text"><%= cancelStudentText %></textarea>
+
+    <br>
+    <button id="save-btn">Save All</button>
   </div>
 </main>
 
 <!-- /Main Site -->
+
+<script src="/js/editEmail.js"></script>
 
 <!-- include footer -->
 <%- include('include/_footer') %>
