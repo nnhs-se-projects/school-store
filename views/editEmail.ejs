@@ -9,6 +9,18 @@
 
     font-family: Verdana, sans-serif;
   }
+
+  #embedded-text-table {
+    width: fit-content;
+
+    border-collapse: collapse;
+  }
+
+  #embedded-text-table td {
+    padding: 3px;
+
+    border: 1px solid #000;
+  }
 </style>
 
 <!-- Main Site -->
@@ -16,6 +28,26 @@
 <main>
   <div class="wrapper">
     <h1>Edit Email Text</h1>
+
+    <p>Supported texts that will be replaced by order/student data:</p>
+    <table id="embedded-text-table">
+      <tr>
+        <td><strong>Embedded Text</strong></td>
+        <td><strong>What It Does</strong></td>
+      </tr>
+      <tr>
+        <td>&lt;student name&gt;</td>
+        <td>Replaced by the name of the student who ordered.</td>
+      </tr>
+      <tr>
+        <td>&lt;full order&gt;</td>
+        <td>Replaced by the full order details.</td>
+      </tr>
+      <tr>
+        <td>&lt;order items&gt;</td>
+        <td>Replaced by the list of items in the order.</td>
+      </tr>
+    </table>
 
     <h2>Order Confirmation</h2>
     <p>To School Store Email:</p>
