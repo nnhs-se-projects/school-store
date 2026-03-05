@@ -2,8 +2,20 @@
 
 <link rel="stylesheet" href="/css/itemPage.css" />
 
+<style>
+  .item-image {
+    width: 100%;
+    max-width: 500px; /* Increase the maximum width */
+    height: auto;
+  }
+</style>
+
 <div class="wrapper">
-  <img class="item-image" src="<%= item.image %>" />
+  <div class="image-container" style="position: relative; display: inline-block;">
+    <img class="item-image" src="<%= item.image %>" id="primary-image" style="width: 100%; max-width: 1000px; height: auto;" />
+    <img class="item-image" src="<%= item.imageAlt && item.imageAlt.trim() !== '' ? item.imageAlt : '/img/placeholder.png' %>" id="secondary-image" style="display: none; width: 100%; max-width: 1000px; height: auto;" />
+    <button id="toggle-image" style="position: absolute; top: 50%; right: 0; transform: translateY(-50%);">&#9654;</button>
+  </div>
 
   <div class="item-container">
     <div class="item-info">
@@ -50,5 +62,30 @@
 <input type="hidden" id="placeholder" value="<%= item.sizes.placeholder%>" />
 
 <script src="/js/itemPage.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggleImageButton = document.getElementById("toggle-image");
+    const primaryImage = document.getElementById("primary-image");
+    const secondaryImage = document.getElementById("secondary-image");
+
+    if (!secondaryImage.src || secondaryImage.src.trim() === "") {
+      toggleImageButton.style.display = "none"; // Hide button if no second image
+      return;
+    }
+
+    toggleImageButton.addEventListener("click", () => {
+      if (primaryImage.style.display === "none") {
+        primaryImage.style.display = "block";
+        secondaryImage.style.display = "none";
+        toggleImageButton.textContent = "\u25B6"; // Right arrow
+      } else {
+        primaryImage.style.display = "none";
+        secondaryImage.style.display = "block";
+        toggleImageButton.textContent = "\u25C0"; // Left arrow
+      }
+    });
+  });
+</script>
 
 <%- include('include/_footer') -%>

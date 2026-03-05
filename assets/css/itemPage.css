@@ -27,6 +27,16 @@ img {
   align-self: flex-start;
   border: solid 5px #002f55;
 }
+.img-secondary {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+  object-fit: cover;
+  aspect-ratio: 1 / 1;
+  align-self: flex-start;
+  border: solid 5px #002f55;
+}
 
 p {
   color: #002f55;
@@ -109,6 +119,20 @@ select#size {
   box-sizing: border-box;
 }
 
+#toggle-image {
+  margin-top: 10px;
+  padding: 10px 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #002f55;
+  cursor: pointer;
+}
+
+#toggle-image:hover {
+  color: #004080;
+}
+
 @media (max-width: 768px) {
   .wrapper {
     flex-direction: column;
@@ -118,4 +142,10 @@ select#size {
     align-items: center;
     text-align: center;
   }
+}
+
+.item-image {
+  width: 100%;
+  max-width: 1200px; /* Set a larger maximum width */
+  height: auto;
 }
