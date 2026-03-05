@@ -8,7 +8,7 @@ const Time = require("../model/time");
 const nodemailer = require("nodemailer");
 const sendEmail = require("../utils/sendEmail");
 
-const xlsx = require("../exportXLSX");
+const xlsx = require("../utils/exportXLSX");
 
 function isStudent(req, res, next) {
   // check if the session exists (user is logged in), and if they are an admin

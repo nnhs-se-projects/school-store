@@ -8,7 +8,7 @@ const Time = require("../model/time");
 const EmailText = require("../model/emailText");
 const sendEmail = require("../utils/sendEmail");
 const { format } = require("morgan");
-const xlsx = require("../exportXLSX");
+const xlsx = require("../utils/exportXLSX");
 
 /*
   How to create a get route
