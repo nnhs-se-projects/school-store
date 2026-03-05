@@ -6,7 +6,7 @@ const Item = require("../model/item");
 const Order = require("../model/order");
 const Time = require("../model/time");
 const EmailText = require("../model/emailText");
-const sendCancellationEmail = require("../utils/sendCancellationEmail");
+const sendEmail = require("../utils/sendEmail");
 const { format } = require("morgan");
 const xlsx = require("../exportXLSX");
 
@@ -535,7 +535,7 @@ route.post("/editTime/override", isAdmin, async (req, res) => {
 
     for (let i = 0; i < blockedOrders.length; i++) {
       if (blockedOrders[i].orderStatus !== "completed") {
-        await sendCancellationEmail(blockedOrders[i]);
+        await sendEmail.sendCancellationEmail(blockedOrders[i]);
         await restoreInventoryAndDeleteOrder(blockedOrders[i]);
       }
     }

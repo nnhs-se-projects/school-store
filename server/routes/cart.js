@@ -6,7 +6,7 @@ const Item = require("../model/item");
 const Order = require("../model/order");
 const Time = require("../model/time");
 const nodemailer = require("nodemailer");
-const sendCancellationEmail = require("../utils/sendCancellationEmail");
+const sendEmail = require("../utils/sendEmail");
 
 const xlsx = require("../exportXLSX");
 
@@ -380,66 +380,7 @@ route.post("/cart/order", async (req, res) => {
   await user.save();
   res.status(200).send("Order placed");
 
-  function printOrder(order) {
-    let orderDetails = `Student: ${order.name}\nEmail: ${order.email}\nPickup Date: ${date}\nPickup Time: ${order.period}\nTotal Cost: $${order.totalPrice}\nItems:\n`;
-    for (let i = 0; i < order.items.length; i++) {
-      orderDetails += `- ${order.items[i].quantity} x ${order.items[i].size} ${order.items[i].name}\n`;
-    }
-    return orderDetails;
-  }
-
-  // send email to user
-  // Configure the transporter
-
-  const adminEmail = "napervillenorthschoolstore@gmail.com";
-  // console.log(process.env.EMAIL_PASSWORD);
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: adminEmail,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-  });
-
-  const userEmailText =
-    `Thank you for your order, ${user.name}!\n\nPlease bring CASH as well as your student ID to the school store to pay for your order at your designated date and period.\n\n` +
-    printOrder(order) +
-    `We appreciate your business!`;
-
-  // Email details
-  const userMailOptions = {
-    from: adminEmail, // Replace with your email
-    to: user.email, // Send to the user's email
-    subject: "Order Confirmation",
-    text: userEmailText,
-  };
-
-  try {
-    await transporter.sendMail(userMailOptions);
-    console.log("Order confirmation email sent to user");
-  } catch (error) {
-    console.error("Error sending email:", error);
-  }
-
-  const volunteerMailText =
-    `New order received!\n\n` +
-    printOrder(order) +
-    `\n\nPlease check the order panel for more details.`;
-
-  // send email to admin
-  const volunteerMailOptions = {
-    from: adminEmail,
-    to: adminEmail,
-    subject: "New Order Received",
-    text: volunteerMailText,
-  };
-
-  try {
-    await transporter.sendMail(volunteerMailOptions);
-    console.log("Order notification email sent to admin");
-  } catch (error) {
-    console.error("Error sending email:", error);
-  }
+  await sendEmail.sendOrderEmails(order, user, date);
 
   console.log("Order placed successfully and emails sent");
 });
@@ -516,7 +457,7 @@ route.post("/deleteOrder", async (req, res) => {
       }
     }
 
-    await sendCancellationEmail(order);
+    await sendEmail.sendCancellationEmail(order);
     await Order.findByIdAndDelete(orderId);
     res.status(200).send("Order deleted successfully");
   } catch (error) {
