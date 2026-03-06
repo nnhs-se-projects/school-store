@@ -1,10 +1,53 @@
 module.exports = { sendCancellationEmail, sendOrderEmails };
 
+const User = require("../model/user");
+const EmailText = require("../model/emailText");
 const nodemailer = require("nodemailer");
 
 const adminEmail = "napervillenorthschoolstore@gmail.com";
 
+function processEmbeddedText(text, order, user, date) {
+  const studentNameBlocks = text.split("<student name>");
+  let studentNameProcessed = studentNameBlocks[0];
+  for (let i = 1; i < studentNameBlocks.length; i++) {
+    const block = studentNameBlocks[i];
+
+    studentNameProcessed += user.name + block;
+  }
+
+  const fullOrderBlocks = studentNameProcessed.split("<full order>");
+  let fullOrderProcessed = fullOrderBlocks[0];
+  for (let i = 1; i < fullOrderBlocks.length; i++) {
+    const block = fullOrderBlocks[i];
+
+    let orderDetails = `Student: ${order.name}\nEmail: ${order.email}\nPickup Date: ${date}\nPickup Time: ${order.period}\nTotal Cost: $${order.totalPrice}\nItems:\n`;
+    for (let i = 0; i < order.items.length; i++) {
+      orderDetails += `- ${order.items[i].quantity} x ${order.items[i].size} ${order.items[i].name}\n`;
+    }
+
+    fullOrderProcessed += orderDetails + block;
+  }
+
+  const orderItemsBlocks = fullOrderProcessed.split("<order items>");
+  let orderItemsProcessed = orderItemsBlocks[0];
+  for (let i = 1; i < orderItemsBlocks.length; i++) {
+    const block = orderItemsBlocks[i];
+
+    let orderItems = "";
+    for (let i = 0; i < order.items.length; i++) {
+      orderItems += `- ${order.items[i].quantity} x ${order.items[i].size} ${order.items[i].name}\n`;
+    }
+
+    orderItemsProcessed += orderItems + block;
+  }
+
+  return orderItemsProcessed;
+}
+
 async function sendCancellationEmail(order) {
+  const cancelStudentTextEntry = await EmailText.findOne({ name: "cancel student text" });
+  const user = await User.findOne({ email: order.email });
+
   if (!order || !order.email) {
     return;
   }
@@ -17,18 +60,14 @@ async function sendCancellationEmail(order) {
     },
   });
 
-  function printOrderItems(targetOrder) {
-    let orderItems = "";
-    for (let i = 0; i < targetOrder.items.length; i++) {
-      orderItems += `- ${targetOrder.items[i].quantity} x ${targetOrder.items[i].size} ${targetOrder.items[i].name}\n`;
-    }
-    return orderItems;
-  }
+  const unformattedDate = new Date(order.date);
+  const date = unformattedDate.toLocaleDateString("en-US", {
+    month: "2-digit",
+    day: "2-digit",
+    year: "2-digit",
+  });
 
-  const cancellationMessage =
-    "We regret to inform you that your pick up time slot is no longer available. We apologize for the inconvenience, please reorder the item(s) and select a new pick up time. We appreciate your business" +
-    "\n\nOriginal Order Items:\n" +
-    printOrderItems(order);
+  const cancellationMessage = processEmbeddedText(cancelStudentTextEntry.text, order, user, date);
 
   const mailOptions = {
     from: adminEmail,
@@ -46,13 +85,8 @@ async function sendCancellationEmail(order) {
 
 
 async function sendOrderEmails(order, user, date) {
-  function printOrder(order) {
-    let orderDetails = `Student: ${order.name}\nEmail: ${order.email}\nPickup Date: ${date}\nPickup Time: ${order.period}\nTotal Cost: $${order.totalPrice}\nItems:\n`;
-    for (let i = 0; i < order.items.length; i++) {
-      orderDetails += `- ${order.items[i].quantity} x ${order.items[i].size} ${order.items[i].name}\n`;
-    }
-    return orderDetails;
-  }
+  const confirmStoreTextEntry = await EmailText.findOne({ name: "confirm store text" });
+  const confirmStudentTextEntry = await EmailText.findOne({ name: "confirm student text" });
 
   // send email to user
   // Configure the transporter
@@ -66,10 +100,7 @@ async function sendOrderEmails(order, user, date) {
     },
   });
 
-  const userEmailText =
-    `Thank you for your order, ${user.name}!\n\nPlease bring CASH as well as your student ID to the school store to pay for your order at your designated date and period.\n\n` +
-    printOrder(order) +
-    `We appreciate your business!`;
+  const userEmailText = processEmbeddedText(confirmStudentTextEntry.text, order, user, date);
 
   // Email details
   const userMailOptions = {
@@ -86,10 +117,7 @@ async function sendOrderEmails(order, user, date) {
     console.error("Error sending email:", error);
   }
 
-  const volunteerMailText =
-    `New order received!\n\n` +
-    printOrder(order) +
-    `\n\nPlease check the order panel for more details.`;
+  const volunteerMailText = processEmbeddedText(confirmStoreTextEntry.text, order, user, date);
 
   // send email to admin
   const volunteerMailOptions = {
