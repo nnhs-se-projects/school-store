@@ -56,10 +56,9 @@ async function createXLSXWithOrders(orders) {
   const items = await Item.find();
 
   // create the headers
-  let ordersXML =
-    '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c><c r="B1" t="inlineStr"><is><t>Name</t></is></c><c r="C1" t="inlineStr"><is><t>Email</t></is></c><c r="D1" t="inlineStr"><is><t>Date</t></is></c><c r="E1" t="inlineStr"><is><t>Period</t></is></c><c r="F1" t="inlineStr"><is><t>Total Price</t></is></c><c r="G1" t="inlineStr"><is><t>Status</t></is></c></row>';
-  let orderItemsXML =
-    '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c>';
+
+  let ordersXML = '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c><c r="B1" t="inlineStr"><is><t>Name</t></is></c><c r="C1" t="inlineStr"><is><t>Email</t></is></c><c r="D1" t="inlineStr"><is><t>Pickup Date</t></is></c><c r="E1" t="inlineStr"><is><t>Pickup Time</t></is></c><c r="F1" t="inlineStr"><is><t>Total Price</t></is></c><c r="G1" t="inlineStr"><is><t>Status</t></is></c></row>';
+  let orderItemsXML = '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c>';
 
   // order item headers
   const itemColumnMap = new Map(); // create a Map to map different items (and sizes/variants) to a column in the spreadsheet

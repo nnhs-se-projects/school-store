@@ -23,11 +23,32 @@ const xlsx = require("../utils/exportXLSX");
 
 */
 // directs to the homepage
+
 route.get("/", async (req, res) => {
   // get items from the database to display on the homepage
   const items = await Item.find();
 
   // format the items into a usable array
+
+  req.session.lastVisit = new Date();
+  // Check if the user has visited before and determine whether to show the splash page
+  if (req.session.hasVisited) {
+    // If the user has visited before, do not show the splash page
+    req.session.showSplash = false;
+  } else {
+    // If no previous visit, show the splash page and set hasVisited to true
+    req.session.showSplash = true;
+    req.session.hasVisited = true;
+  }
+
+  // Update the last visit time
+  req.session.lastVisit = new Date();
+
+  req.session.save((err) => {
+    if (err) {
+      console.error("Failed to save session:", err);
+    }
+  });
   const formattedItems = items.map((item) => {
     return {
       id: item._id,
@@ -652,6 +673,29 @@ route.post("/editEmail", isAdmin, async (req, res) => {
   }
 
   res.status(201).end();
+});
+
+// API endpoint to get order and item statistics
+route.get("/api/stats", async (req, res) => {
+  try {
+    const allOrders = await Order.find();
+    const totalOrders = allOrders.length;
+    
+    // Sum up all items across all orders
+    let totalItems = 0;
+    allOrders.forEach((order) => {
+      order.items.forEach((item) => {
+        totalItems += item.quantity;
+      });
+    });
+
+    res.json({
+      totalOrders,
+      totalItems,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch stats" });
+  }
 });
 
 // delegate all authentication to the auth.js router
