@@ -125,6 +125,39 @@ function isStudent(req, res, next) {
   }
 }
 
+const formatItemNameAndSize = (itemName, sizeName) => {
+  return itemName + '\\' + sizeName;
+};
+
+function getItemsInOrders(orders, items) {
+  const formattedItems = items.map((item) => {
+    return {
+      id: item._id,
+      name: item.name,
+      quantity: item.quantity,
+      sizes: item.sizes,
+    };
+  });
+
+  const itemsInOrders = {};
+
+  for (const item of formattedItems) {
+    for (const size in item.sizes) {
+      itemsInOrders[formatItemNameAndSize(item.name, size)] = 0;
+    }
+  }
+
+  for (const order of orders) {
+    if (order.orderStatus !== "completed") {
+      for (const item of order.items) {
+        itemsInOrders[formatItemNameAndSize(item.name, item.size)] += item.quantity;
+      }
+    }
+  }
+
+  return itemsInOrders;
+}
+
 // uses the isAdmin middleware before rendering the page
 route.get("/admin", isVolunteer, (req, res) => {
   // This will only be reached if the user is an admin
@@ -145,25 +178,7 @@ route.get("/inPersonManagement", isVolunteer, async (req, res) => {
     };
   });
 
-  const formatItemNameAndSize = (itemName, sizeName) => {
-    return itemName + '\\' + sizeName;
-  };
-
-  const itemsInOrders = {};
-
-  for (const item of formattedItems) {
-    for (const size in item.sizes) {
-      itemsInOrders[formatItemNameAndSize(item.name, size)] = 0;
-    }
-  }
-
-  for (const order of orders) {
-    if (order.orderStatus !== "completed") {
-      for (const item of order.items) {
-        itemsInOrders[formatItemNameAndSize(item.name, item.size)] += item.quantity;
-      }
-    }
-  }
+  const itemsInOrders = getItemsInOrders(orders, items);
 
   res.render("inPersonManagement", {
     items: formattedItems,
@@ -613,7 +628,21 @@ route.get("/contact", async (req, res) => {
 // displays product page for a specific item
 route.get("/item/:id", async (req, res) => {
   const item = await Item.findById(req.params.id);
-  res.render("itemPage", { item });
+
+  const orders = await Order.find({}).sort({ date: 1 });
+
+  const itemsInOrders = getItemsInOrders(orders, [item]);
+
+  console.log("items in orders for first size: " + itemsInOrders[formatItemNameAndSize(item.name, Object.keys(item.sizes)[0])]); // FIXME: remove
+  console.log(Math.min(10, item.sizes[0] - itemsInOrders[formatItemNameAndSize(item.name, Object.keys(item.sizes)[0])])); // FIXME: remove
+  console.log(item.sizes[0] - itemsInOrders[formatItemNameAndSize(item.name, Object.keys(item.sizes)[0])]); // FIXME: remove
+  console.log(item.sizes[0]); // FIXME: remove
+
+  res.render("itemPage", {
+    item,
+    itemsInOrders,
+    formatItemNameAndSize
+  });
 });
 
 route.get("/editItem/:id", isAdmin, async (req, res) => {

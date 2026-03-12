@@ -30,10 +30,11 @@
         <div class="quantity-selector">
           <label for="quantity" id="quantity-label">Quantity:</label>
           <select id="quantity">
-            <% for (let i = 1; i <= Math.min(10, item.sizes[0]); i++) { %>
+            <% for (let i = 1; i <= Math.min(10, item.sizes[0] - itemsInOrders[formatItemNameAndSize(item.name, Object.keys(item.sizes)[0])]); i++) { %>
             <option value="<%= i %>"><%= i %></option>
             <% } %>
           </select>
+          <p><strong>REMOVE!!!!!!!!!!!!!!!!!!!!!!!</strong>First in orders: <%= itemsInOrders[formatItemNameAndSize(item.name, Object.keys(item.sizes)[0])] %></p>
         </div>
         <input
           type="submit"
