@@ -64,7 +64,7 @@ async function verify(token) {
 route.post("/", async (req, res) => {
   try {
     const { googleId, email, name, clearance } = await verify(
-      req.body.credential
+      req.body.credential,
     );
     let user = await User.findOne({ googleId });
 
