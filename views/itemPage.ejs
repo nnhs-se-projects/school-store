@@ -8,7 +8,7 @@
   <div class="item-container">
     <div class="item-info">
       <div class="item-content">
-        <h1><strong><%= item.name %></strong></h1>
+        <h1 id="item-name"><strong><%= item.name %></strong></h1>
         <p><strong>Price: $<%= item.price %></strong></p>
         <p><%= item.description %></p>
 
@@ -29,12 +29,7 @@
       <div class="item-actions">
         <div class="quantity-selector">
           <label for="quantity" id="quantity-label">Quantity:</label>
-          <select id="quantity">
-            <% for (let i = 1; i <= Math.min(10, item.sizes[0] - itemsInOrders[formatItemNameAndSize(item.name, Object.keys(item.sizes)[0])]); i++) { %>
-            <option value="<%= i %>"><%= i %></option>
-            <% } %>
-          </select>
-          <p><strong>REMOVE!!!!!!!!!!!!!!!!!!!!!!!</strong>First in orders: <%= itemsInOrders[formatItemNameAndSize(item.name, Object.keys(item.sizes)[0])] %></p>
+          <select id="quantity"></select>
         </div>
         <input
           type="submit"
@@ -50,6 +45,12 @@
 <input type="hidden" id="googleId" value="<% if (session && session.clearance >= 2) { %><%= session.user.googleId %><% } %>" />
 <input type="hidden" id="placeholder" value="<%= item.sizes.placeholder%>" />
 
+<script>
+  const itemName = "<%= item.name %>";
+  const itemSizes = <%- JSON.stringify(item.sizes) %>;
+  const itemsInOrders = <%- JSON.stringify(itemsInOrders) %>;
+  const formatItemNameAndSize = <%- formatItemNameAndSize %>;
+</script>
 <script src="/js/itemPage.js"></script>
 
 <%- include('include/_footer') -%>

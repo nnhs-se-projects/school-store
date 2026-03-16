@@ -9,8 +9,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!sizeSelector) {
       maxQuantity = document.getElementById("placeholder").value; // Fallback to a placeholder value if sizeSelector is not present
     } else {
-      const selectedOption = sizeSelector.options[sizeSelector.selectedIndex];
-      maxQuantity = parseInt(selectedOption.getAttribute("data-quantity"), 10);
+      //const selectedOption = sizeSelector.options[sizeSelector.selectedIndex];
+      //maxQuantity = parseInt(selectedOption.getAttribute("data-quantity"), 10);
+      maxQuantity = itemSizes[Object.keys(itemSizes)[sizeSelector.selectedIndex]] - itemsInOrders[formatItemNameAndSize(itemName, Object.keys(itemSizes)[sizeSelector.selectedIndex])]; // `itemSizes`, `itemName`, `itemsInOrders`, and `formatItemNameAndSize` are defined in the EJS
     }
 
     // Clear existing options

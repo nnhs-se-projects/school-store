@@ -150,7 +150,10 @@ function getItemsInOrders(orders, items) {
   for (const order of orders) {
     if (order.orderStatus !== "completed") {
       for (const item of order.items) {
-        itemsInOrders[formatItemNameAndSize(item.name, item.size)] += item.quantity;
+        const itemNameAndSize = formatItemNameAndSize(item.name, item.size);
+        if (itemsInOrders[itemNameAndSize] !== undefined) {
+          itemsInOrders[itemNameAndSize] += item.quantity;
+        }
       }
     }
   }
@@ -632,11 +635,6 @@ route.get("/item/:id", async (req, res) => {
   const orders = await Order.find({}).sort({ date: 1 });
 
   const itemsInOrders = getItemsInOrders(orders, [item]);
-
-  console.log("items in orders for first size: " + itemsInOrders[formatItemNameAndSize(item.name, Object.keys(item.sizes)[0])]); // FIXME: remove
-  console.log(Math.min(10, item.sizes[0] - itemsInOrders[formatItemNameAndSize(item.name, Object.keys(item.sizes)[0])])); // FIXME: remove
-  console.log(item.sizes[0] - itemsInOrders[formatItemNameAndSize(item.name, Object.keys(item.sizes)[0])]); // FIXME: remove
-  console.log(item.sizes[0]); // FIXME: remove
 
   res.render("itemPage", {
     item,
