@@ -6,8 +6,10 @@
 
 const express = require("express");
 const route = express.Router();
+const fs = require("fs/promises");
+const path = require("path");
 
-const { adminEmails, volunteerEmails } = require("../../whitelist.json");
+const whitelistPath = path.resolve(__dirname, "../../whitelist.json");
 
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 
@@ -16,12 +18,19 @@ const { OAuth2Client } = require("google-auth-library");
 const User = require("../model/user");
 
 const client = new OAuth2Client();
+
+async function getWhitelist() {
+  const whitelistContents = await fs.readFile(whitelistPath, "utf8");
+  return JSON.parse(whitelistContents);
+}
+
 async function verify(token) {
   const ticket = await client.verifyIdToken({
     idToken: token,
     audience: CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
   });
   const { sub, email, name } = ticket.getPayload();
+  const { adminEmails = [], volunteerEmails = [] } = await getWhitelist();
 
   const domain = email.split("@")[1];
   const isAdmin = adminEmails.includes(email);

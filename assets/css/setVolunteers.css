@@ -1,0 +1,75 @@
+.wrapper {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+}
+
+h1 {
+  display: flex;
+  font-size: 4em;
+  color: #ff4800;
+  font-family: Arial, sans-serif;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.page-copy {
+  font-family: Arial, sans-serif;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.status-message {
+  width: fit-content;
+  margin: 0 auto 20px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  background: #e7f7ec;
+  color: #186033;
+  font-family: Arial, sans-serif;
+  font-weight: 700;
+}
+
+.volunteer-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.volunteer-form label {
+  font-family: Arial, sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.volunteer-form textarea {
+  width: 100%;
+  min-height: 280px;
+  padding: 14px;
+  border: 2px solid #01447a;
+  border-radius: 6px;
+  font-family: Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.volunteer-form button {
+  width: fit-content;
+  padding: 14px 22px;
+  border: 0;
+  border-radius: 6px;
+  background: #01447a;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.volunteer-form button:hover {
+  background: #022f53;
+}

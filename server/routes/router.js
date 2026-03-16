@@ -1,5 +1,7 @@
 const express = require("express");
 const route = express.Router();
+const fs = require("fs/promises");
+const path = require("path");
 
 // const User = require("../model/user");
 const Item = require("../model/item");
@@ -8,6 +10,17 @@ const Time = require("../model/time");
 const nodemailer = require("nodemailer");
 const { format } = require("morgan");
 const xlsx = require("../exportXLSX");
+
+const whitelistPath = path.resolve(__dirname, "../../whitelist.json");
+
+async function readWhitelist() {
+  const whitelistContents = await fs.readFile(whitelistPath, "utf8");
+  return JSON.parse(whitelistContents);
+}
+
+async function writeWhitelist(whitelist) {
+  await fs.writeFile(whitelistPath, JSON.stringify(whitelist, null, 2) + "\n");
+}
 
 /*
   How to create a get route
@@ -353,6 +366,28 @@ route.post("/setTimes", isAdmin, async (req, res) => {
       ? "/setTimes?offset=" + encodeURIComponent(offset)
       : "/setTimes";
   res.redirect(redirectUrl);
+});
+
+route.get("/setVolunteers", isAdmin, async (req, res) => {
+  const whitelist = await readWhitelist();
+
+  res.render("setVolunteers", {
+    volunteerEmails: whitelist.volunteerEmails || [],
+    query: req.query,
+  });
+});
+
+route.post("/setVolunteers", isAdmin, async (req, res) => {
+  const whitelist = await readWhitelist();
+  const volunteerEmails = (req.body.volunteerEmails || "")
+    .split(/\r?\n|,/)
+    .map((email) => email.trim())
+    .filter(Boolean);
+
+  whitelist.volunteerEmails = [...new Set(volunteerEmails)];
+  await writeWhitelist(whitelist);
+
+  res.redirect("/setVolunteers?saved=1");
 });
 
 function timeToMinutes(timeStr) {
