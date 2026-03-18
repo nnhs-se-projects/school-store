@@ -125,7 +125,7 @@ function isStudent(req, res, next) {
   }
 }
 
-// uses the isAdmin middleware before rendering the page
+// uses the isVolunteer middleware before rendering the page
 route.get("/admin", isVolunteer, (req, res) => {
   // This will only be reached if the user is an admin or volunteer
   return res.render("admin", {
