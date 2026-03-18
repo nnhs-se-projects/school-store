@@ -16,6 +16,7 @@ const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 // from: https://developers.google.com/identity/gsi/web/guides/verify-google-id-token#node.js
 const { OAuth2Client } = require("google-auth-library");
 const User = require("../model/user");
+const VolunteerEmail = require("../model/volunteerEmail");
 
 const client = new OAuth2Client();
 
@@ -30,11 +31,17 @@ async function verify(token) {
     audience: CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
   });
   const { sub, email, name } = ticket.getPayload();
-  const { adminEmails = [], volunteerEmails = [] } = await getWhitelist();
+  const { adminEmails = [] } = await getWhitelist();
+  const normalizedEmail = email.toLowerCase();
 
-  const domain = email.split("@")[1];
-  const isAdmin = adminEmails.includes(email);
-  const isVolunteer = volunteerEmails.includes(email);
+  const domain = normalizedEmail.split("@")[1] || "";
+  const normalizedAdminEmails = adminEmails.map((adminEmail) =>
+    adminEmail.toLowerCase(),
+  );
+  const isAdmin = normalizedAdminEmails.includes(normalizedEmail);
+  const isVolunteer = Boolean(
+    await VolunteerEmail.exists({ email: normalizedEmail }),
+  );
 
   let clearance = 0;
   // Clearance 0 is used for people who don't login, should have same permissions as clearance 1

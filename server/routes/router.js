@@ -1,26 +1,14 @@
 const express = require("express");
 const route = express.Router();
-const fs = require("fs/promises");
-const path = require("path");
 
 // const User = require("../model/user");
 const Item = require("../model/item");
 const Order = require("../model/order");
 const Time = require("../model/time");
+const VolunteerEmail = require("../model/volunteerEmail");
 const nodemailer = require("nodemailer");
 const { format } = require("morgan");
 const xlsx = require("../exportXLSX");
-
-const whitelistPath = path.resolve(__dirname, "../../whitelist.json");
-
-async function readWhitelist() {
-  const whitelistContents = await fs.readFile(whitelistPath, "utf8");
-  return JSON.parse(whitelistContents);
-}
-
-async function writeWhitelist(whitelist) {
-  await fs.writeFile(whitelistPath, JSON.stringify(whitelist, null, 2) + "\n");
-}
 
 /*
   How to create a get route
@@ -373,23 +361,28 @@ route.post("/setTimes", isAdmin, async (req, res) => {
 });
 
 route.get("/setVolunteers", isAdmin, async (req, res) => {
-  const whitelist = await readWhitelist();
+  const volunteerEmailDocs = await VolunteerEmail.find().sort({ email: 1 });
 
   res.render("setVolunteers", {
-    volunteerEmails: whitelist.volunteerEmails || [],
+    volunteerEmails: volunteerEmailDocs.map((entry) => entry.email),
     query: req.query,
   });
 });
 
 route.post("/setVolunteers", isAdmin, async (req, res) => {
-  const whitelist = await readWhitelist();
   const volunteerEmails = (req.body.volunteerEmails || "")
     .split(/\r?\n|,/)
-    .map((email) => email.trim())
+    .map((email) => email.trim().toLowerCase())
     .filter(Boolean);
 
-  whitelist.volunteerEmails = [...new Set(volunteerEmails)];
-  await writeWhitelist(whitelist);
+  const uniqueVolunteerEmails = [...new Set(volunteerEmails)];
+
+  await VolunteerEmail.deleteMany({});
+  if (uniqueVolunteerEmails.length > 0) {
+    await VolunteerEmail.insertMany(
+      uniqueVolunteerEmails.map((email) => ({ email })),
+    );
+  }
 
   res.redirect("/setVolunteers?saved=1");
 });
