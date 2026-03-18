@@ -133,7 +133,7 @@ route.get("/admin", isVolunteer, (req, res) => {
   });
 });
 
-route.get("/inPersonManagement", isVolunteer, async (req, res) => {
+route.get("/inventoryManagement", isVolunteer, async (req, res) => {
   const items = await Item.find();
   const orders = await Order.find({}).sort({ date: 1 });
 
@@ -166,14 +166,14 @@ route.get("/inPersonManagement", isVolunteer, async (req, res) => {
     }
   }
 
-  res.render("inPersonManagement", {
+  res.render("inventoryManagement", {
     items: formattedItems,
     itemsInOrders,
     formatItemNameAndSize
   });
 });
 
-route.post("/inPersonManagement", isVolunteer, async (req, res) => {
+route.post("/inventoryManagement", isVolunteer, async (req, res) => {
   const { item, size, action } = req.body;
   const dbItem = await Item.findOne({ name: item });
 
