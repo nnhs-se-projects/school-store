@@ -6,26 +6,42 @@
 
 const express = require("express");
 const route = express.Router();
+const fs = require("fs/promises");
+const path = require("path");
 
-const { adminEmails, volunteerEmails } = require("../../whitelist.json");
+const whitelistPath = path.resolve(__dirname, "../../whitelist.json");
 
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 
 // from: https://developers.google.com/identity/gsi/web/guides/verify-google-id-token#node.js
 const { OAuth2Client } = require("google-auth-library");
 const User = require("../model/user");
+const VolunteerEmail = require("../model/volunteerEmail");
 
 const client = new OAuth2Client();
+
+async function getWhitelist() {
+  const whitelistContents = await fs.readFile(whitelistPath, "utf8");
+  return JSON.parse(whitelistContents);
+}
+
 async function verify(token) {
   const ticket = await client.verifyIdToken({
     idToken: token,
     audience: CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
   });
   const { sub, email, name } = ticket.getPayload();
+  const { adminEmails = [] } = await getWhitelist();
+  const normalizedEmail = email.toLowerCase();
 
-  const domain = email.split("@")[1];
-  const isAdmin = adminEmails.includes(email);
-  const isVolunteer = volunteerEmails.includes(email);
+  const domain = normalizedEmail.split("@")[1] || "";
+  const normalizedAdminEmails = adminEmails.map((adminEmail) =>
+    adminEmail.toLowerCase(),
+  );
+  const isAdmin = normalizedAdminEmails.includes(normalizedEmail);
+  const isVolunteer = Boolean(
+    await VolunteerEmail.exists({ email: normalizedEmail }),
+  );
 
   let clearance = 0;
   // Clearance 0 is used for people who don't login, should have same permissions as clearance 1
@@ -55,7 +71,7 @@ async function verify(token) {
 route.post("/", async (req, res) => {
   try {
     const { googleId, email, name, clearance } = await verify(
-      req.body.credential
+      req.body.credential,
     );
     let user = await User.findOne({ googleId });
 
