@@ -45,6 +45,15 @@ a.admin-link#orderViewer {
   color: white;
 }
 
+a.admin-link#inventorylist {
+  background-color: #ff4800;
+  color: white;
+}
+
+a.admin-link#inPersonManagement {
+  background-color: #ff4800;
+  color: white;
+}
 table {
   width: fit-content;
 }
