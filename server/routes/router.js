@@ -126,14 +126,15 @@ function isStudent(req, res, next) {
   }
 }
 
-// uses the isAdmin middleware before rendering the page
+// uses the isVolunteer middleware before rendering the page
 route.get("/admin", isVolunteer, (req, res) => {
-  // This will only be reached if the user is an admin
-  // console.log("Rendering admin page router");
-  return res.render("admin");
+  // This will only be reached if the user is an admin or volunteer
+  return res.render("admin", {
+    clearance: req.session.clearance || 0, // Pass the clearance level to the template
+  });
 });
 
-route.get("/inPersonManagement", isVolunteer, async (req, res) => {
+route.get("/inventoryManagement", isVolunteer, async (req, res) => {
   const items = await Item.find();
   const orders = await Order.find({}).sort({ date: 1 });
 
@@ -167,14 +168,14 @@ route.get("/inPersonManagement", isVolunteer, async (req, res) => {
     }
   }
 
-  res.render("inPersonManagement", {
+  res.render("inventoryManagement", {
     items: formattedItems,
     itemsInOrders,
     formatItemNameAndSize,
   });
 });
 
-route.post("/inPersonManagement", isVolunteer, async (req, res) => {
+route.post("/inventoryManagement", isVolunteer, async (req, res) => {
   const { item, size, action } = req.body;
   const dbItem = await Item.findOne({ name: item });
 
