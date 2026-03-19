@@ -126,6 +126,42 @@ function isStudent(req, res, next) {
   }
 }
 
+const formatItemNameAndSize = (itemName, sizeName) => {
+  return itemName + "\\" + sizeName;
+};
+
+function getItemsInOrders(orders, items) {
+  const formattedItems = items.map((item) => {
+    return {
+      id: item._id,
+      name: item.name,
+      quantity: item.quantity,
+      sizes: item.sizes,
+    };
+  });
+
+  const itemsInOrders = {};
+
+  for (const item of formattedItems) {
+    for (const size in item.sizes) {
+      itemsInOrders[formatItemNameAndSize(item.name, size)] = 0;
+    }
+  }
+
+  for (const order of orders) {
+    if (order.orderStatus !== "completed") {
+      for (const item of order.items) {
+        const itemNameAndSize = formatItemNameAndSize(item.name, item.size);
+        if (itemsInOrders[itemNameAndSize] !== undefined) {
+          itemsInOrders[itemNameAndSize] += item.quantity;
+        }
+      }
+    }
+  }
+
+  return itemsInOrders;
+}
+
 // uses the isVolunteer middleware before rendering the page
 route.get("/admin", isVolunteer, (req, res) => {
   // This will only be reached if the user is an admin or volunteer
@@ -147,26 +183,7 @@ route.get("/inventoryManagement", isVolunteer, async (req, res) => {
     };
   });
 
-  const formatItemNameAndSize = (itemName, sizeName) => {
-    return itemName + "\\" + sizeName;
-  };
-
-  const itemsInOrders = {};
-
-  for (const item of formattedItems) {
-    for (const size in item.sizes) {
-      itemsInOrders[formatItemNameAndSize(item.name, size)] = 0;
-    }
-  }
-
-  for (const order of orders) {
-    if (order.orderStatus !== "completed") {
-      for (const item of order.items) {
-        itemsInOrders[formatItemNameAndSize(item.name, item.size)] +=
-          item.quantity;
-      }
-    }
-  }
+  const itemsInOrders = getItemsInOrders(orders, items);
 
   res.render("inventoryManagement", {
     items: formattedItems,
@@ -451,6 +468,47 @@ async function restoreInventoryAndDeleteOrder(order) {
   await Order.findByIdAndDelete(order._id);
 }
 
+async function sendCancellationEmail(order) {
+  if (!order || !order.email) {
+    return;
+  }
+
+  const adminEmail = "napervillenorthschoolstore@gmail.com";
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: adminEmail,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+
+  function printOrderItems(order) {
+    let orderItems = "";
+    for (let i = 0; i < order.items.length; i++) {
+      orderItems += `- ${order.items[i].quantity} x ${order.items[i].size} ${order.items[i].name}\n`;
+    }
+    return orderItems;
+  }
+
+  const cancellationMessage =
+    "We regret to inform you that your pick up time slot is no longer available. We apologize for the inconvenience, please reorder the item(s) and select a new pick up time. We appreciate your business" +
+    "\n\nOriginal Order Items:\n" +
+    printOrderItems(order);
+
+  const mailOptions = {
+    from: adminEmail,
+    to: order.email,
+    subject: "Order Canceled",
+    text: cancellationMessage,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.error("Error sending cancellation email:", error);
+  }
+}
+
 route.post("/editTime", isAdmin, async (req, res) => {
   const { date, index, openTime, closeTime, action, offset } = req.body;
   const setTimesRedirectUrl =
@@ -579,7 +637,16 @@ route.get("/contact", async (req, res) => {
 // displays product page for a specific item
 route.get("/item/:id", async (req, res) => {
   const item = await Item.findById(req.params.id);
-  res.render("itemPage", { item });
+
+  const orders = await Order.find({}).sort({ date: 1 });
+
+  const itemsInOrders = getItemsInOrders(orders, [item]);
+
+  res.render("itemPage", {
+    item,
+    itemsInOrders,
+    formatItemNameAndSize,
+  });
 });
 
 route.get("/editItem/:id", isAdmin, async (req, res) => {
@@ -681,7 +748,7 @@ route.get("/api/stats", async (req, res) => {
   try {
     const allOrders = await Order.find();
     const totalOrders = allOrders.length;
-    
+
     // Sum up all items across all orders
     let totalItems = 0;
     allOrders.forEach((order) => {

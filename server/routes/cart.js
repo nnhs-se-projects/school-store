@@ -8,7 +8,8 @@ const Time = require("../model/time");
 const nodemailer = require("nodemailer");
 const sendEmail = require("../utils/sendEmail");
 
-const xlsx = require("../utils/exportXLSX");
+const xlsx = require("../exportXLSX");
+const order = require("../model/order");
 
 function isStudent(req, res, next) {
   // check if the session exists (user is logged in), and if they are an admin
@@ -468,7 +469,19 @@ route.post("/deleteOrder", async (req, res) => {
 route.post("/checkOffOrder", async (req, res) => {
   const orderId = req.body.orderId;
   console.log("orderId: " + orderId);
+
+  const items = await Item.find();
+
   const orderToUpdate = await Order.findById(orderId);
+
+  for (const orderItem of orderToUpdate.items) {
+    const item = items.find((i) => i._id.toString() === orderItem.itemId.toString());
+    
+    item.sizes[orderItem.size] -= orderItem.quantity;
+
+    await item.updateOne({sizes: item.sizes});
+  }
+
   if (!orderToUpdate) {
     return res.status(404).send("Order not found");
   }
