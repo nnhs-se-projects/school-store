@@ -5,9 +5,10 @@ const route = express.Router();
 const Item = require("../model/item");
 const Order = require("../model/order");
 const Time = require("../model/time");
-const nodemailer = require("nodemailer");
+const EmailText = require("../model/emailText");
+const sendEmail = require("../utils/sendEmail");
 const { format } = require("morgan");
-const xlsx = require("../exportXLSX");
+const xlsx = require("../utils/exportXLSX");
 
 /*
   How to create a get route
@@ -147,7 +148,7 @@ route.get("/inventoryManagement", isVolunteer, async (req, res) => {
   });
 
   const formatItemNameAndSize = (itemName, sizeName) => {
-    return itemName + '\\' + sizeName;
+    return itemName + "\\" + sizeName;
   };
 
   const itemsInOrders = {};
@@ -161,7 +162,8 @@ route.get("/inventoryManagement", isVolunteer, async (req, res) => {
   for (const order of orders) {
     if (order.orderStatus !== "completed") {
       for (const item of order.items) {
-        itemsInOrders[formatItemNameAndSize(item.name, item.size)] += item.quantity;
+        itemsInOrders[formatItemNameAndSize(item.name, item.size)] +=
+          item.quantity;
       }
     }
   }
@@ -169,7 +171,7 @@ route.get("/inventoryManagement", isVolunteer, async (req, res) => {
   res.render("inventoryManagement", {
     items: formattedItems,
     itemsInOrders,
-    formatItemNameAndSize
+    formatItemNameAndSize,
   });
 });
 
@@ -182,14 +184,14 @@ route.post("/inventoryManagement", isVolunteer, async (req, res) => {
     return;
   }
 
-  if (action === '+') {
+  if (action === "+") {
     dbItem.sizes[size]++;
-  } else if (action === '-') {
+  } else if (action === "-") {
     if (dbItem.sizes[size] > 0) {
       dbItem.sizes[size]--;
     }
   }
-  
+
   await dbItem.updateOne({ sizes: dbItem.sizes });
 
   res.status(201).end();
@@ -258,7 +260,8 @@ route.get("/inventorylist/xlsx", isVolunteer, async (req, res) => {
   const mergeCellsRows = []; // track which rows should have merged cells (item name headers)
   let maxMergeLength = 0;
   // create <sheetData> data
-  for (let i = 0; i < items.length; i++) { // put each item in the spreadsheet
+  for (let i = 0; i < items.length; i++) {
+    // put each item in the spreadsheet
     // item name header
     sheetData += `<row r="${trackRow}"><c r="A${trackRow}" t="inlineStr"><is><t>${items[i].name}</t></is></c></row>`;
     mergeCellsRows.push(trackRow);
@@ -267,11 +270,13 @@ route.get("/inventorylist/xlsx", isVolunteer, async (req, res) => {
     // item sizes/variants
     sheetData += `<row r="${trackRow}">`;
     let sizeCount = 0;
-    for (const size in items[i].sizes) { // note: `items[i].sizes` is an object, `size` are keys
+    for (const size in items[i].sizes) {
+      // note: `items[i].sizes` is an object, `size` are keys
       sheetData += `<c r="${abc[sizeCount] + trackRow}" t="inlineStr"><is><t>${size}</t></is></c>`;
       sizeCount++;
     }
-    if (sizeCount > maxMergeLength) { // adjust `maxMergeLength` as needed
+    if (sizeCount > maxMergeLength) {
+      // adjust `maxMergeLength` as needed
       maxMergeLength = sizeCount;
     }
     sheetData += `</row>`;
@@ -288,12 +293,12 @@ route.get("/inventorylist/xlsx", isVolunteer, async (req, res) => {
   }
 
   const xlsxSheetXML = sheetData + mergeCells; // combine into worksheet XML
-  
+
   const xlsxDownload = await xlsx.exportXLSX([
-    xlsx.createSheet("Inventory List", xlsxSheetXML)
+    xlsx.createSheet("Inventory List", xlsxSheetXML),
   ]); // data URI string
 
-  res.json({xlsxDownload});
+  res.json({ xlsxDownload });
 });
 
 // Helper function to clean up times outside the visible calendar range
@@ -446,46 +451,6 @@ async function restoreInventoryAndDeleteOrder(order) {
   await Order.findByIdAndDelete(order._id);
 }
 
-async function sendCancellationEmail(order) {
-  if (!order || !order.email) {
-    return;
-  }
-
-  const adminEmail = "napervillenorthschoolstore@gmail.com";
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: adminEmail,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-  });
-
-  function printOrderItems(order) {
-    let orderItems = "";
-    for (let i = 0; i < order.items.length; i++) {
-      orderItems += `- ${order.items[i].quantity} x ${order.items[i].size} ${order.items[i].name}\n`;
-    }
-    return orderItems;
-  }
-
-  const cancellationMessage =
-    "We regret to inform you that your pick up time slot is no longer available. We apologize for the inconvenience, please reorder the item(s) and select a new pick up time. We appreciate your business"
-    + "\n\nOriginal Order Items:\n" + printOrderItems(order);
-
-  const mailOptions = {
-    from: adminEmail,
-    to: order.email,
-    subject: "Order Canceled",
-    text: cancellationMessage,
-  };
-
-  try {
-    await transporter.sendMail(mailOptions);
-  } catch (error) {
-    console.error("Error sending cancellation email:", error);
-  }
-}
-
 route.post("/editTime", isAdmin, async (req, res) => {
   const { date, index, openTime, closeTime, action, offset } = req.body;
   const setTimesRedirectUrl =
@@ -592,7 +557,7 @@ route.post("/editTime/override", isAdmin, async (req, res) => {
 
     for (let i = 0; i < blockedOrders.length; i++) {
       if (blockedOrders[i].orderStatus !== "completed") {
-        await sendCancellationEmail(blockedOrders[i]);
+        await sendEmail.sendCancellationEmail(blockedOrders[i]);
         await restoreInventoryAndDeleteOrder(blockedOrders[i]);
       }
     }
@@ -654,6 +619,61 @@ route.get("/manageItems", isAdmin, async (req, res) => {
 route.get("/deleteItem/:id", isAdmin, async (req, res) => {
   await Item.findByIdAndDelete(req.params.id);
   res.redirect("/manageItems");
+});
+
+// route to editEmails page
+route.get("/editEmails", isAdmin, async (req, res) => {
+  const confirmStoreTextEntry = await EmailText.findOne({ name: "confirm store text" });
+  const confirmStudentTextEntry = await EmailText.findOne({ name: "confirm student text" });
+  const cancelStudentTextEntry = await EmailText.findOne({ name: "cancel student text" });
+
+  return res.render("editEmail", {
+    confirmStoreText: confirmStoreTextEntry ? confirmStoreTextEntry.text : "",
+    confirmStudentText: confirmStudentTextEntry ? confirmStudentTextEntry.text : "",
+    cancelStudentText: cancelStudentTextEntry ? cancelStudentTextEntry.text : ""
+  });
+});
+
+route.post("/editEmail", isAdmin, async (req, res) => {
+  const { confirmStoreText, confirmStudentText, cancelStudentText } = req.body;
+  const confirmStoreTextEntry = await EmailText.findOne({ name: "confirm store text" });
+  const confirmStudentTextEntry = await EmailText.findOne({ name: "confirm student text" });
+  const cancelStudentTextEntry = await EmailText.findOne({ name: "cancel student text" });
+
+  if (confirmStoreTextEntry) {
+    confirmStoreTextEntry.text = confirmStoreText;
+    await confirmStoreTextEntry.save();
+  } else {
+    const newEmailEntry = new EmailText({
+      name: "confirm store text",
+      text: confirmStoreText
+    });
+    await newEmailEntry.save();
+  }
+
+  if (confirmStudentTextEntry) {
+    confirmStudentTextEntry.text = confirmStudentText;
+    await confirmStudentTextEntry.save();
+  } else {
+    const newEmailEntry = new EmailText({
+      name: "confirm student text",
+      text: confirmStudentText
+    });
+    await newEmailEntry.save();
+  }
+
+  if (cancelStudentTextEntry) {
+    cancelStudentTextEntry.text = cancelStudentText;
+    await cancelStudentTextEntry.save();
+  } else {
+    const newEmailEntry = new EmailText({
+      name: "cancel student text",
+      text: cancelStudentText
+    });
+    await newEmailEntry.save();
+  }
+
+  res.status(201).end();
 });
 
 // API endpoint to get order and item statistics
