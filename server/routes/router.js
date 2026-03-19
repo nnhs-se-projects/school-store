@@ -126,7 +126,7 @@ function isStudent(req, res, next) {
 }
 
 const formatItemNameAndSize = (itemName, sizeName) => {
-  return itemName + '\\' + sizeName;
+  return itemName + "\\" + sizeName;
 };
 
 function getItemsInOrders(orders, items) {
@@ -161,14 +161,15 @@ function getItemsInOrders(orders, items) {
   return itemsInOrders;
 }
 
-// uses the isAdmin middleware before rendering the page
+// uses the isVolunteer middleware before rendering the page
 route.get("/admin", isVolunteer, (req, res) => {
-  // This will only be reached if the user is an admin
-  // console.log("Rendering admin page router");
-  return res.render("admin");
+  // This will only be reached if the user is an admin or volunteer
+  return res.render("admin", {
+    clearance: req.session.clearance || 0, // Pass the clearance level to the template
+  });
 });
 
-route.get("/inPersonManagement", isVolunteer, async (req, res) => {
+route.get("/inventoryManagement", isVolunteer, async (req, res) => {
   const items = await Item.find();
   const orders = await Order.find({}).sort({ date: 1 });
 
@@ -183,14 +184,14 @@ route.get("/inPersonManagement", isVolunteer, async (req, res) => {
 
   const itemsInOrders = getItemsInOrders(orders, items);
 
-  res.render("inPersonManagement", {
+  res.render("inventoryManagement", {
     items: formattedItems,
     itemsInOrders,
-    formatItemNameAndSize
+    formatItemNameAndSize,
   });
 });
 
-route.post("/inPersonManagement", isVolunteer, async (req, res) => {
+route.post("/inventoryManagement", isVolunteer, async (req, res) => {
   const { item, size, action } = req.body;
   const dbItem = await Item.findOne({ name: item });
 
@@ -199,14 +200,14 @@ route.post("/inPersonManagement", isVolunteer, async (req, res) => {
     return;
   }
 
-  if (action === '+') {
+  if (action === "+") {
     dbItem.sizes[size]++;
-  } else if (action === '-') {
+  } else if (action === "-") {
     if (dbItem.sizes[size] > 0) {
       dbItem.sizes[size]--;
     }
   }
-  
+
   await dbItem.updateOne({ sizes: dbItem.sizes });
 
   res.status(201).end();
@@ -275,7 +276,8 @@ route.get("/inventorylist/xlsx", isVolunteer, async (req, res) => {
   const mergeCellsRows = []; // track which rows should have merged cells (item name headers)
   let maxMergeLength = 0;
   // create <sheetData> data
-  for (let i = 0; i < items.length; i++) { // put each item in the spreadsheet
+  for (let i = 0; i < items.length; i++) {
+    // put each item in the spreadsheet
     // item name header
     sheetData += `<row r="${trackRow}"><c r="A${trackRow}" t="inlineStr"><is><t>${items[i].name}</t></is></c></row>`;
     mergeCellsRows.push(trackRow);
@@ -284,11 +286,13 @@ route.get("/inventorylist/xlsx", isVolunteer, async (req, res) => {
     // item sizes/variants
     sheetData += `<row r="${trackRow}">`;
     let sizeCount = 0;
-    for (const size in items[i].sizes) { // note: `items[i].sizes` is an object, `size` are keys
+    for (const size in items[i].sizes) {
+      // note: `items[i].sizes` is an object, `size` are keys
       sheetData += `<c r="${abc[sizeCount] + trackRow}" t="inlineStr"><is><t>${size}</t></is></c>`;
       sizeCount++;
     }
-    if (sizeCount > maxMergeLength) { // adjust `maxMergeLength` as needed
+    if (sizeCount > maxMergeLength) {
+      // adjust `maxMergeLength` as needed
       maxMergeLength = sizeCount;
     }
     sheetData += `</row>`;
@@ -305,12 +309,12 @@ route.get("/inventorylist/xlsx", isVolunteer, async (req, res) => {
   }
 
   const xlsxSheetXML = sheetData + mergeCells; // combine into worksheet XML
-  
+
   const xlsxDownload = await xlsx.exportXLSX([
-    xlsx.createSheet("Inventory List", xlsxSheetXML)
+    xlsx.createSheet("Inventory List", xlsxSheetXML),
   ]); // data URI string
 
-  res.json({xlsxDownload});
+  res.json({ xlsxDownload });
 });
 
 // Helper function to clean up times outside the visible calendar range
@@ -486,8 +490,9 @@ async function sendCancellationEmail(order) {
   }
 
   const cancellationMessage =
-    "We regret to inform you that your pick up time slot is no longer available. We apologize for the inconvenience, please reorder the item(s) and select a new pick up time. We appreciate your business"
-    + "\n\nOriginal Order Items:\n" + printOrderItems(order);
+    "We regret to inform you that your pick up time slot is no longer available. We apologize for the inconvenience, please reorder the item(s) and select a new pick up time. We appreciate your business" +
+    "\n\nOriginal Order Items:\n" +
+    printOrderItems(order);
 
   const mailOptions = {
     from: adminEmail,
@@ -639,7 +644,7 @@ route.get("/item/:id", async (req, res) => {
   res.render("itemPage", {
     item,
     itemsInOrders,
-    formatItemNameAndSize
+    formatItemNameAndSize,
   });
 });
 
@@ -687,7 +692,7 @@ route.get("/api/stats", async (req, res) => {
   try {
     const allOrders = await Order.find();
     const totalOrders = allOrders.length;
-    
+
     // Sum up all items across all orders
     let totalItems = 0;
     allOrders.forEach((order) => {

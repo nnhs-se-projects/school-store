@@ -40,11 +40,17 @@ a.admin-link {
   margin-top: 10px;
 }
 
-a.admin-link#orderViewer {
+a.volunteer-link {
   background-color: #ff4800;
-  color: white;
+  padding: 20px;
+  border-radius: 5px;
+  margin-right: 35%;
+  margin-left: 35%;
+  display: flex;
+  color: rgb(255, 255, 255);
+  justify-content: center;
+  margin-top: 10px;
 }
-
 table {
   width: fit-content;
 }
