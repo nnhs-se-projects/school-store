@@ -6,23 +6,20 @@
 
 const express = require("express");
 const route = express.Router();
-const fs = require("fs/promises");
-const path = require("path");
-
-const whitelistPath = path.resolve(__dirname, "../../whitelist.json");
 
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 
 // from: https://developers.google.com/identity/gsi/web/guides/verify-google-id-token#node.js
 const { OAuth2Client } = require("google-auth-library");
 const User = require("../model/user");
+const AdminEmail = require("../model/adminEmail");
 const VolunteerEmail = require("../model/volunteerEmail");
 
 const client = new OAuth2Client();
 
-async function getWhitelist() {
-  const whitelistContents = await fs.readFile(whitelistPath, "utf8");
-  return JSON.parse(whitelistContents);
+async function getAdminEmails() {
+  const adminEmailDocs = await AdminEmail.find().sort({ email: 1 });
+  return adminEmailDocs.map((entry) => entry.email);
 }
 
 async function verify(token) {
@@ -31,7 +28,7 @@ async function verify(token) {
     audience: CLIENT_ID, // Specify the CLIENT_ID of the app that accesses the backend
   });
   const { sub, email, name } = ticket.getPayload();
-  const { adminEmails = [] } = await getWhitelist();
+  const adminEmails = await getAdminEmails();
   const normalizedEmail = email.toLowerCase();
 
   const domain = normalizedEmail.split("@")[1] || "";

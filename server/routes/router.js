@@ -2,6 +2,7 @@ const express = require("express");
 const route = express.Router();
 
 // const User = require("../model/user");
+const AdminEmail = require("../model/adminEmail");
 const Item = require("../model/item");
 const Order = require("../model/order");
 const Time = require("../model/time");
@@ -386,6 +387,34 @@ route.post("/setVolunteers", isAdmin, async (req, res) => {
   }
 
   res.redirect("/setVolunteers?saved=1");
+});
+
+route.get("/setAdmins", isAdmin, async (req, res) => {
+  const adminEmailDocs = await AdminEmail.find().sort({ email: 1 });
+  const adminEmails = adminEmailDocs.map((entry) => entry.email);
+
+  res.render("setAdmins", {
+    adminEmails: [...adminEmails].sort((a, b) =>
+      a.toLowerCase().localeCompare(b.toLowerCase()),
+    ),
+    query: req.query,
+  });
+});
+
+route.post("/setAdmins", isAdmin, async (req, res) => {
+  const adminEmails = (req.body.adminEmails || "")
+    .split(/\r?\n|,/)
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean);
+
+  const uniqueAdminEmails = [...new Set(adminEmails)];
+
+  await AdminEmail.deleteMany({});
+  if (uniqueAdminEmails.length > 0) {
+    await AdminEmail.insertMany(uniqueAdminEmails.map((email) => ({ email })));
+  }
+
+  res.redirect("/setAdmins?saved=1");
 });
 
 function timeToMinutes(timeStr) {
