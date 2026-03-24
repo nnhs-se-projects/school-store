@@ -363,59 +363,67 @@ route.post("/setTimes", isAdmin, async (req, res) => {
 });
 
 route.get("/setVolunteers", isAdmin, async (req, res) => {
-  const volunteerEmailDocs = await VolunteerEmail.find().sort({ email: 1 });
+  res.redirect("/setPermissions");
+});
 
-  res.render("setVolunteers", {
+route.get("/setPermissions", isAdmin, async (req, res) => {
+  const volunteerEmailDocs = await VolunteerEmail.find().sort({ email: 1 });
+  const adminEmailDocs = await AdminEmail.find().sort({ email: 1 });
+
+  res.render("setPermissions", {
     volunteerEmails: volunteerEmailDocs.map((entry) => entry.email),
+    adminEmails: adminEmailDocs.map((entry) => entry.email),
     query: req.query,
   });
 });
 
-route.post("/setVolunteers", isAdmin, async (req, res) => {
-  const volunteerEmails = (req.body.volunteerEmails || "")
-    .split(/\r?\n|,/)
-    .map((email) => email.trim().toLowerCase())
-    .filter(Boolean);
+route.post(
+  ["/setPermissions/volunteers", "/setVolunteers"],
+  isAdmin,
+  async (req, res) => {
+    const volunteerEmails = (req.body.volunteerEmails || "")
+      .split(/\r?\n|,/)
+      .map((email) => email.trim().toLowerCase())
+      .filter(Boolean);
 
-  const uniqueVolunteerEmails = [...new Set(volunteerEmails)];
+    const uniqueVolunteerEmails = [...new Set(volunteerEmails)];
 
-  await VolunteerEmail.deleteMany({});
-  if (uniqueVolunteerEmails.length > 0) {
-    await VolunteerEmail.insertMany(
-      uniqueVolunteerEmails.map((email) => ({ email })),
-    );
-  }
+    await VolunteerEmail.deleteMany({});
+    if (uniqueVolunteerEmails.length > 0) {
+      await VolunteerEmail.insertMany(
+        uniqueVolunteerEmails.map((email) => ({ email })),
+      );
+    }
 
-  res.redirect("/setVolunteers?saved=1");
-});
+    res.redirect("/setPermissions?volunteersSaved=1");
+  },
+);
 
 route.get("/setAdmins", isAdmin, async (req, res) => {
-  const adminEmailDocs = await AdminEmail.find().sort({ email: 1 });
-  const adminEmails = adminEmailDocs.map((entry) => entry.email);
-
-  res.render("setAdmins", {
-    adminEmails: [...adminEmails].sort((a, b) =>
-      a.toLowerCase().localeCompare(b.toLowerCase()),
-    ),
-    query: req.query,
-  });
+  res.redirect("/setPermissions");
 });
 
-route.post("/setAdmins", isAdmin, async (req, res) => {
-  const adminEmails = (req.body.adminEmails || "")
-    .split(/\r?\n|,/)
-    .map((email) => email.trim().toLowerCase())
-    .filter(Boolean);
+route.post(
+  ["/setPermissions/admins", "/setAdmins"],
+  isAdmin,
+  async (req, res) => {
+    const adminEmails = (req.body.adminEmails || "")
+      .split(/\r?\n|,/)
+      .map((email) => email.trim().toLowerCase())
+      .filter(Boolean);
 
-  const uniqueAdminEmails = [...new Set(adminEmails)];
+    const uniqueAdminEmails = [...new Set(adminEmails)];
 
-  await AdminEmail.deleteMany({});
-  if (uniqueAdminEmails.length > 0) {
-    await AdminEmail.insertMany(uniqueAdminEmails.map((email) => ({ email })));
-  }
+    await AdminEmail.deleteMany({});
+    if (uniqueAdminEmails.length > 0) {
+      await AdminEmail.insertMany(
+        uniqueAdminEmails.map((email) => ({ email })),
+      );
+    }
 
-  res.redirect("/setAdmins?saved=1");
-});
+    res.redirect("/setPermissions?adminsSaved=1");
+  },
+);
 
 function timeToMinutes(timeStr) {
   if (!timeStr || typeof timeStr !== "string") {
