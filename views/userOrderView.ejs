@@ -2,11 +2,38 @@
 <%- include('include/_header') %>
 <!-- /include header -->
 
+<link rel="stylesheet" href="/css/userOrderView.css" />
+
 <!-- Main Site -->
 
 <main>
   <div class="wrapper">
     <h1>Your Orders</h1>
+
+    <div class="overflow-wrapper">
+      <% for (const order of userOrders) { %>
+      <div class="order-block">
+        <h2>Date: <%= order.date %></h2> <% // FIXME: Format the date in a more readable way %>
+        <h2>Total: $<%= order.totalPrice %></h2>
+        <p><strong>Items:</strong></p>
+        <table class="order-items">
+          <tr>
+            <th>Name</th>
+            <th>Size</th>
+            <th>Quantity</th>
+          </tr>
+        <% for (const item of order.items) { %>
+          <tr>
+            <td><%= item.name %></td>
+            <td><%= item.size %></td>
+            <td><%= item.quantity %></td>
+          </tr>
+        <% } %>
+        </table>
+        <p>Order #<%= order.orderNumber %></p>
+      </div>
+      <% } %>
+    </div>
   </div>
 </main>
 
