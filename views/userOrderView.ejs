@@ -13,10 +13,13 @@
     <div class="overflow-wrapper">
       <% for (const order of userOrders) { %>
       <div class="order-block">
-        <h2>Date: <%= order.date %></h2> <% // FIXME: Format the date in a more readable way %>
+        <h2>Date: <%= ((new Date(order.date)).toUTCString()).split(" 00:00:00 GMT")[0] %></h2>
+      <!-- FIXME: Need to add pickup time -->
         <h2>Total: $<%= order.totalPrice %></h2>
-        <p><strong>Items:</strong></p>
         <table class="order-items">
+          <tr>
+            <th colspan="3" class="main-heading">Items</th>
+          </tr>
           <tr>
             <th>Name</th>
             <th>Size</th>

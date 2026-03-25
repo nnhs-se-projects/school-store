@@ -22,6 +22,10 @@
   border: 1px solid #000;
 }
 
+.order-items .main-heading {
+  background-color: #002f55;
+}
+
 .order-items th {
   background-color: #ff4800;
   color: #fff;
