@@ -2,9 +2,11 @@ const express = require("express");
 const route = express.Router();
 
 // const User = require("../model/user");
+const AdminEmail = require("../model/adminEmail");
 const Item = require("../model/item");
 const Order = require("../model/order");
 const Time = require("../model/time");
+const VolunteerEmail = require("../model/volunteerEmail");
 const EmailText = require("../model/emailText");
 const sendEmail = require("../utils/sendEmail");
 const { format } = require("morgan");
@@ -378,6 +380,69 @@ route.post("/setTimes", isAdmin, async (req, res) => {
   res.redirect(redirectUrl);
 });
 
+route.get("/setVolunteers", isAdmin, async (req, res) => {
+  res.redirect("/setPermissions");
+});
+
+route.get("/setPermissions", isAdmin, async (req, res) => {
+  const volunteerEmailDocs = await VolunteerEmail.find().sort({ email: 1 });
+  const adminEmailDocs = await AdminEmail.find().sort({ email: 1 });
+
+  res.render("setPermissions", {
+    volunteerEmails: volunteerEmailDocs.map((entry) => entry.email),
+    adminEmails: adminEmailDocs.map((entry) => entry.email),
+    query: req.query,
+  });
+});
+
+route.post(
+  ["/setPermissions/volunteers", "/setVolunteers"],
+  isAdmin,
+  async (req, res) => {
+    const volunteerEmails = (req.body.volunteerEmails || "")
+      .split(/\r?\n|,/)
+      .map((email) => email.trim().toLowerCase())
+      .filter(Boolean);
+
+    const uniqueVolunteerEmails = [...new Set(volunteerEmails)];
+
+    await VolunteerEmail.deleteMany({});
+    if (uniqueVolunteerEmails.length > 0) {
+      await VolunteerEmail.insertMany(
+        uniqueVolunteerEmails.map((email) => ({ email })),
+      );
+    }
+
+    res.redirect("/setPermissions?volunteersSaved=1");
+  },
+);
+
+route.get("/setAdmins", isAdmin, async (req, res) => {
+  res.redirect("/setPermissions");
+});
+
+route.post(
+  ["/setPermissions/admins", "/setAdmins"],
+  isAdmin,
+  async (req, res) => {
+    const adminEmails = (req.body.adminEmails || "")
+      .split(/\r?\n|,/)
+      .map((email) => email.trim().toLowerCase())
+      .filter(Boolean);
+
+    const uniqueAdminEmails = [...new Set(adminEmails)];
+
+    await AdminEmail.deleteMany({});
+    if (uniqueAdminEmails.length > 0) {
+      await AdminEmail.insertMany(
+        uniqueAdminEmails.map((email) => ({ email })),
+      );
+    }
+
+    res.redirect("/setPermissions?adminsSaved=1");
+  },
+);
+
 function timeToMinutes(timeStr) {
   if (!timeStr || typeof timeStr !== "string") {
     return NaN;
@@ -466,47 +531,6 @@ async function restoreInventoryAndDeleteOrder(order) {
   }
 
   await Order.findByIdAndDelete(order._id);
-}
-
-async function sendCancellationEmail(order) {
-  if (!order || !order.email) {
-    return;
-  }
-
-  const adminEmail = "napervillenorthschoolstore@gmail.com";
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: adminEmail,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-  });
-
-  function printOrderItems(order) {
-    let orderItems = "";
-    for (let i = 0; i < order.items.length; i++) {
-      orderItems += `- ${order.items[i].quantity} x ${order.items[i].size} ${order.items[i].name}\n`;
-    }
-    return orderItems;
-  }
-
-  const cancellationMessage =
-    "We regret to inform you that your pick up time slot is no longer available. We apologize for the inconvenience, please reorder the item(s) and select a new pick up time. We appreciate your business" +
-    "\n\nOriginal Order Items:\n" +
-    printOrderItems(order);
-
-  const mailOptions = {
-    from: adminEmail,
-    to: order.email,
-    subject: "Order Canceled",
-    text: cancellationMessage,
-  };
-
-  try {
-    await transporter.sendMail(mailOptions);
-  } catch (error) {
-    console.error("Error sending cancellation email:", error);
-  }
 }
 
 route.post("/editTime", isAdmin, async (req, res) => {
