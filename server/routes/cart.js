@@ -477,7 +477,7 @@ route.get("/completedOrderViewer/xlsx", isVolunteer, async (req, res) => {
   res.json({xlsxDownload});
 });
 
-route.post("/deleteOrder", async (req, res) => {
+route.post("/deleteOrder", isVolunteer, async (req, res) => {
   const orderId = req.body.orderId;
   try {
     const order = await Order.findById(orderId);
@@ -544,6 +544,48 @@ route.get("/userOrderView/:id", isStudent, async (req, res) => {
       title: "Please log in to view your orders",
       redirectUrl: "/",
     });
+  }
+});
+
+route.post("/userDeleteOrder", isStudent, async (req, res) => {
+  const orderId = req.body.orderId;
+  try {
+    const order = await Order.findById(orderId);
+
+    const orderEmail = order.email;
+    const userEmail = req.session.user.email;
+
+    if (orderEmail !== userEmail) {
+      res.status(403).send("Order deletion unauthorized");
+    } else {
+      if (!order) {
+        return res.status(404).send("Order not found");
+      }
+
+      for (let i = 0; i < order.items.length; i++) {
+        const item = await Item.findById(order.items[i].itemId);
+        if (item) {
+          const size = order.items[i].size;
+          item.sizes[size] += order.items[i].quantity;
+          await item.save();
+          console.log(
+            "Item inventory updated: ",
+            item.name,
+            size,
+            item.sizes[size],
+          );
+        } else {
+          console.log("Item not found in inventory: ", order.items[i].itemId);
+          return res.status(404).send("Item not found in inventory");
+        }
+      }
+
+      await Order.findByIdAndDelete(orderId);
+      res.status(200).send("Order deleted successfully");
+    }
+  } catch (error) {
+    console.error("Error deleting order:", error);
+    res.status(500).send("Error deleting order");
   }
 });
 

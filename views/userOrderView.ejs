@@ -33,6 +33,9 @@
           </tr>
         <% } %>
         </table>
+        <button class="delete-order" order-id="<%= order.id %>">
+          Cancel Order
+        </button>
         <p>Order <em>#<%= order.orderNumber %></em></p>
       </div>
       <% } %>
@@ -41,6 +44,8 @@
 </main>
 
 <!-- /Main Site -->
+
+<script src="/js/userOrderView.js"></script>
 
 <!-- include footer -->
 <%- include('include/_footer') %>
