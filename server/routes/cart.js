@@ -8,7 +8,7 @@ const Time = require("../model/time");
 const nodemailer = require("nodemailer");
 const sendEmail = require("../utils/sendEmail");
 
-const xlsx = require("../exportXLSX");
+const xlsx = require("../utils/exportXLSX");
 const order = require("../model/order");
 
 function isStudent(req, res, next) {
