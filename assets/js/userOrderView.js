@@ -1,4 +1,14 @@
+import("./checkout.js").then((dateTimeFunctions) => {
+  console.log("Date and Time Functions: ", dateTimeFunctions);
+  // FIXME: store functions to variables to use later. Also need to get the times loaded
+});
+
 const deleteButtons = document.querySelectorAll(".delete-order");
+const changeTimeButtons = document.querySelectorAll(".change-time");
+
+const changeTimeDialog = document.getElementById("change-time-dialog");
+const quitTimeDialogButton = document.getElementById("quit-time-dialog");
+const changeTimeButton = document.getElementById("change-time-button");
 
 deleteButtons.forEach((button) => {
   button.addEventListener("click", async (event) => {
@@ -24,5 +34,21 @@ deleteButtons.forEach((button) => {
     } else {
       console.error("Failed to delete order");
     }
+  });
+});
+
+quitTimeDialogButton.addEventListener("click", () => {
+  changeTimeDialog.close();
+});
+
+changeTimeButton.addEventListener("click", () => {
+  changeTimeDialog.close();
+});
+
+changeTimeButtons.forEach((button) => {
+  button.addEventListener("click", async (event) => {
+    const orderId = button.getAttribute("order-id");
+
+    changeTimeDialog.showModal();
   });
 });

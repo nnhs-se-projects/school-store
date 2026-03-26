@@ -528,15 +528,29 @@ route.get("/userOrderView/:id", isStudent, async (req, res) => {
   const pageID = req.params.id;
   const userID = req.session.user.googleId;
 
-  if (userID === pageID) { // FIXME: check if google id matches page
+  if (userID === pageID) {
     const userOrders = (await Order.find({ email: req.session.user.email }).sort({ date: -1 })).filter(
       (order) => order.orderStatus !== "completed",
     );
+  
+    // Query store hours for next two weeks only (starting tomorrow)
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+
+    const twoWeeksFromNow = new Date();
+    twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
+    twoWeeksFromNow.setHours(23, 59, 59, 999);
+
+    const storeHours = await Time.find({
+      date: { $gte: tomorrow, $lte: twoWeeksFromNow },
+    }).sort({ date: 1 });
 
     res.render(
       "userOrderView",
       {
-        userOrders
+        userOrders,
+        storeHours
       }
     );
   } else {
