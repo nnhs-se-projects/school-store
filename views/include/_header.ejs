@@ -41,6 +41,9 @@
           <% } else { %>
             <li><button class = "nav-button" id="alert-button-2"><strong>Cart</strong></button></li>
           <% } %>
+          <% if (session && session.clearance >= 2) { %>
+          <li><a href="/userOrderView/<%= session.user.googleId %>"><strong>Your Orders</strong></a></li>
+          <% } %>
           <li><a href="/contact"><strong>Contact</strong></a></li>
           <% if ( session.email) { %>
           <li><a href="/logout"><strong>Logout</strong></a></li>
