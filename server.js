@@ -25,7 +25,9 @@ dotenv.config({ path: ".env" });
 
 // connect to the database
 const connectDB = require("./server/database/connection");
-const { startOrderReminderScheduler } = require("./server/utils/reminderScheduler");
+const {
+  startOrderReminderScheduler,
+} = require("./server/utils/reminderScheduler");
 connectDB();
 
 // import the express-session module, which is used to manage sessions
@@ -35,7 +37,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-  })
+  }),
 );
 
 // app.post("/upload", upload.single("file"), (req, res) => {

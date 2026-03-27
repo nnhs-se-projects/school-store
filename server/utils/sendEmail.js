@@ -49,7 +49,9 @@ function processEmbeddedText(text, order, user, date) {
 }
 
 async function sendCancellationEmail(order) {
-  const cancelStudentTextEntry = await EmailText.findOne({ name: "cancel student text" });
+  const cancelStudentTextEntry = await EmailText.findOne({
+    name: "cancel student text",
+  });
   const user = await User.findOne({ email: order.email });
 
   if (!order || !order.email) {
@@ -71,7 +73,12 @@ async function sendCancellationEmail(order) {
     year: "2-digit",
   });
 
-  const cancellationMessage = processEmbeddedText(cancelStudentTextEntry.text, order, user, date);
+  const cancellationMessage = processEmbeddedText(
+    cancelStudentTextEntry.text,
+    order,
+    user,
+    date,
+  );
 
   const mailOptions = {
     from: adminEmail,
@@ -87,10 +94,13 @@ async function sendCancellationEmail(order) {
   }
 }
 
-
 async function sendOrderEmails(order, user, date) {
-  const confirmStoreTextEntry = await EmailText.findOne({ name: "confirm store text" });
-  const confirmStudentTextEntry = await EmailText.findOne({ name: "confirm student text" });
+  const confirmStoreTextEntry = await EmailText.findOne({
+    name: "confirm store text",
+  });
+  const confirmStudentTextEntry = await EmailText.findOne({
+    name: "confirm student text",
+  });
 
   // send email to user
   // Configure the transporter
@@ -104,7 +114,12 @@ async function sendOrderEmails(order, user, date) {
     },
   });
 
-  const userEmailText = processEmbeddedText(confirmStudentTextEntry.text, order, user, date);
+  const userEmailText = processEmbeddedText(
+    confirmStudentTextEntry.text,
+    order,
+    user,
+    date,
+  );
 
   // Email details
   const userMailOptions = {
@@ -121,7 +136,12 @@ async function sendOrderEmails(order, user, date) {
     console.error("Error sending email:", error);
   }
 
-  const volunteerMailText = processEmbeddedText(confirmStoreTextEntry.text, order, user, date);
+  const volunteerMailText = processEmbeddedText(
+    confirmStoreTextEntry.text,
+    order,
+    user,
+    date,
+  );
 
   // send email to admin
   const volunteerMailOptions = {
@@ -144,9 +164,14 @@ async function sendPickupReminderEmail(order) {
     return false;
   }
 
-  const reminderTextEntry = await EmailText.findOne({ name: "pickup reminder text" });
+  const reminderTextEntry = await EmailText.findOne({
+    name: "pickup reminder text",
+  });
   const user = await User.findOne({ email: order.email });
-  const safeUser = user || { name: order.name || "Student", email: order.email };
+  const safeUser = user || {
+    name: order.name || "Student",
+    email: order.email,
+  };
 
   const transporter = nodemailer.createTransport({
     service: "gmail",
