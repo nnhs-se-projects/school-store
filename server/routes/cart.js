@@ -603,4 +603,9 @@ route.post("/userDeleteOrder", isStudent, async (req, res) => {
   }
 });
 
+route.post("/userChangePickupTime", isStudent, async (req, res) => {
+  res.status(404).send("Unimplemented");
+  // FIXME: need to update pickup time in order
+});
+
 module.exports = route;

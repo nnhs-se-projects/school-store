@@ -1,5 +1,12 @@
+export {
+  localDateString,
+  timeToMinutes,
+  minutesToTime,
+  populateTimeOptions
+};
+
 // Function to format date string for comparison
-export function localDateString(d) {
+function localDateString(d) {
   const dt = new Date(d);
   const y = dt.getFullYear();
   const m = String(dt.getMonth() + 1).padStart(2, "0");
@@ -8,7 +15,7 @@ export function localDateString(d) {
 }
 
 // Function to convert time string (e.g., "9:00 AM") to minutes since midnight
-export function timeToMinutes(timeStr) {
+function timeToMinutes(timeStr) {
   const [time, period] = timeStr.split(" ");
   let [hours, minutes] = time.split(":").map(Number);
   if (period === "PM" && hours !== 12) hours += 12;
@@ -17,7 +24,7 @@ export function timeToMinutes(timeStr) {
 }
 
 // Function to convert minutes since midnight back to time string
-export function minutesToTime(minutes) {
+function minutesToTime(minutes) {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
   const period = hours >= 12 ? "PM" : "AM";
@@ -25,13 +32,7 @@ export function minutesToTime(minutes) {
   return `${displayHours}:${String(mins).padStart(2, "0")} ${period}`;
 }
 
-document.addEventListener("DOMContentLoaded", (event) => {
-  const googleId = document.getElementById("googleId").value;
-  const checkoutButton = document.getElementById("checkout-button");
-  const pickupDateSelect = document.getElementById("pickup-date");
-  const pickupTimeSelect = document.getElementById("pickup-time");
-
-
+function populateTimeOptions(pickupDateSelect, pickupTimeSelect, storeHoursData) {
   // Populate time options when a date is selected
   pickupDateSelect.addEventListener("change", function () {
     const selectedDate = this.value;
@@ -67,6 +68,15 @@ document.addEventListener("DOMContentLoaded", (event) => {
       });
     }
   });
+}
+
+document.addEventListener("DOMContentLoaded", (event) => {
+  const googleId = document.getElementById("googleId").value;
+  const checkoutButton = document.getElementById("checkout-button");
+  const pickupDateSelect = document.getElementById("pickup-date");
+  const pickupTimeSelect = document.getElementById("pickup-time");
+
+  populateTimeOptions(pickupDateSelect, pickupTimeSelect, storeHoursData);
 
   checkoutButton.addEventListener("click", async (event) => {
     const pickUpDate = pickupDateSelect.value;
