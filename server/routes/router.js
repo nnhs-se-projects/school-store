@@ -690,22 +690,38 @@ route.get("/deleteItem/:id", isAdmin, async (req, res) => {
 
 // route to editEmails page
 route.get("/editEmails", isAdmin, async (req, res) => {
-  const confirmStoreTextEntry = await EmailText.findOne({ name: "confirm store text" });
-  const confirmStudentTextEntry = await EmailText.findOne({ name: "confirm student text" });
-  const cancelStudentTextEntry = await EmailText.findOne({ name: "cancel student text" });
+  const confirmStoreTextEntry = await EmailText.findOne({
+    name: "confirm store text",
+  });
+  const confirmStudentTextEntry = await EmailText.findOne({
+    name: "confirm student text",
+  });
+  const cancelStudentTextEntry = await EmailText.findOne({
+    name: "cancel student text",
+  });
 
   return res.render("editEmail", {
     confirmStoreText: confirmStoreTextEntry ? confirmStoreTextEntry.text : "",
-    confirmStudentText: confirmStudentTextEntry ? confirmStudentTextEntry.text : "",
-    cancelStudentText: cancelStudentTextEntry ? cancelStudentTextEntry.text : ""
+    confirmStudentText: confirmStudentTextEntry
+      ? confirmStudentTextEntry.text
+      : "",
+    cancelStudentText: cancelStudentTextEntry
+      ? cancelStudentTextEntry.text
+      : "",
   });
 });
 
 route.post("/editEmail", isAdmin, async (req, res) => {
   const { confirmStoreText, confirmStudentText, cancelStudentText } = req.body;
-  const confirmStoreTextEntry = await EmailText.findOne({ name: "confirm store text" });
-  const confirmStudentTextEntry = await EmailText.findOne({ name: "confirm student text" });
-  const cancelStudentTextEntry = await EmailText.findOne({ name: "cancel student text" });
+  const confirmStoreTextEntry = await EmailText.findOne({
+    name: "confirm store text",
+  });
+  const confirmStudentTextEntry = await EmailText.findOne({
+    name: "confirm student text",
+  });
+  const cancelStudentTextEntry = await EmailText.findOne({
+    name: "cancel student text",
+  });
 
   if (confirmStoreTextEntry) {
     confirmStoreTextEntry.text = confirmStoreText;
@@ -713,7 +729,7 @@ route.post("/editEmail", isAdmin, async (req, res) => {
   } else {
     const newEmailEntry = new EmailText({
       name: "confirm store text",
-      text: confirmStoreText
+      text: confirmStoreText,
     });
     await newEmailEntry.save();
   }
@@ -724,7 +740,7 @@ route.post("/editEmail", isAdmin, async (req, res) => {
   } else {
     const newEmailEntry = new EmailText({
       name: "confirm student text",
-      text: confirmStudentText
+      text: confirmStudentText,
     });
     await newEmailEntry.save();
   }
@@ -735,12 +751,32 @@ route.post("/editEmail", isAdmin, async (req, res) => {
   } else {
     const newEmailEntry = new EmailText({
       name: "cancel student text",
-      text: cancelStudentText
+      text: cancelStudentText,
     });
     await newEmailEntry.save();
   }
 
   res.status(201).end();
+});
+
+// Add a POST route to handle splash page updates
+route.post("/editSplash", async (req, res) => {
+  try {
+    const { confirmUpdateText } = req.body;
+
+    // Save the updated text to the database or a file
+    // Example: Assuming you have a model for splash content
+    await EmailText.updateOne(
+      { key: "splashText" },
+      { value: confirmUpdateText },
+      { upsert: true }, // Create if it doesn't exist
+    );
+
+    res.status(200).send("Splash page updated successfully.");
+  } catch (error) {
+    console.error("Error updating splash page:", error);
+    res.status(500).send("Failed to update splash page.");
+  }
 });
 
 // API endpoint to get order and item statistics
