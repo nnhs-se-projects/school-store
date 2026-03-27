@@ -25,6 +25,7 @@ dotenv.config({ path: ".env" });
 
 // connect to the database
 const connectDB = require("./server/database/connection");
+const { startOrderReminderScheduler } = require("./server/utils/reminderScheduler");
 connectDB();
 
 // import the express-session module, which is used to manage sessions
@@ -105,4 +106,6 @@ app.use(express.static(path.join(__dirname, "public")));
 const PORT = process.env.PORT || 8087;
 server.listen(PORT, () => {
   console.log("Server started on http://localhost:" + PORT);
+  startOrderReminderScheduler();
+  console.log("Order reminder scheduler started");
 });

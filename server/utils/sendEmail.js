@@ -1,4 +1,8 @@
-module.exports = { sendCancellationEmail, sendOrderEmails };
+module.exports = {
+  sendCancellationEmail,
+  sendOrderEmails,
+  sendPickupReminderEmail,
+};
 
 const User = require("../model/user");
 const EmailText = require("../model/emailText");
@@ -132,5 +136,65 @@ async function sendOrderEmails(order, user, date) {
     console.log("Order notification email sent to admin");
   } catch (error) {
     console.error("Error sending email:", error);
+  }
+}
+
+async function sendPickupReminderEmail(order) {
+  if (!order || !order.email) {
+    return false;
+  }
+
+  const reminderTextEntry = await EmailText.findOne({ name: "pickup reminder text" });
+  const user = await User.findOne({ email: order.email });
+  const safeUser = user || { name: order.name || "Student", email: order.email };
+
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: adminEmail,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+
+  const unformattedDate = new Date(order.date);
+  const date = unformattedDate.toLocaleDateString("en-US", {
+    month: "2-digit",
+    day: "2-digit",
+    year: "2-digit",
+  });
+
+  const fallbackMessage =
+    "Hi " +
+    safeUser.name +
+    ",\n\n" +
+    "This is a reminder that your School Store order will be ready for pickup in 24 hours.\n\n" +
+    "Pickup Date: " +
+    date +
+    "\n" +
+    "Pickup Time: " +
+    order.period +
+    "\n" +
+    "Order Number: " +
+    order.orderNumber +
+    "\n\n" +
+    "Thanks for ordering from the School Store!";
+
+  const reminderMessage = reminderTextEntry
+    ? processEmbeddedText(reminderTextEntry.text, order, safeUser, date)
+    : fallbackMessage;
+
+  const mailOptions = {
+    from: adminEmail,
+    to: order.email,
+    subject: "Pickup Reminder",
+    text: reminderMessage,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    return true;
+  } catch (error) {
+    console.error("Error sending pickup reminder email:", error);
+    return false;
   }
 }

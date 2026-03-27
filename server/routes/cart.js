@@ -11,6 +11,54 @@ const sendEmail = require("../utils/sendEmail");
 const xlsx = require("../utils/exportXLSX");
 const order = require("../model/order");
 
+function parseTimeTo24Hour(timeString) {
+  if (!timeString || typeof timeString !== "string") {
+    return null;
+  }
+
+  const match = timeString.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!match) {
+    return null;
+  }
+
+  let hours = parseInt(match[1], 10);
+  const minutes = parseInt(match[2], 10);
+  const period = match[3].toUpperCase();
+
+  if (period === "PM" && hours !== 12) {
+    hours += 12;
+  }
+
+  if (period === "AM" && hours === 12) {
+    hours = 0;
+  }
+
+  return { hours, minutes };
+}
+
+function buildReminderTimes(pickUpDate, pickUpPeriod) {
+  if (!pickUpDate || !pickUpPeriod) {
+    return { pickupAt: null, sendReminderTime: null };
+  }
+
+  const baseDate = new Date(pickUpDate + "T12:00:00");
+  if (Number.isNaN(baseDate.getTime())) {
+    return { pickupAt: null, sendReminderTime: null };
+  }
+
+  const periodStart = pickUpPeriod.split("-")[0].trim();
+  const parsedTime = parseTimeTo24Hour(periodStart);
+  if (!parsedTime) {
+    return { pickupAt: null, sendReminderTime: null };
+  }
+
+  const pickupAt = new Date(baseDate);
+  pickupAt.setHours(parsedTime.hours, parsedTime.minutes, 0, 0);
+
+  const sendReminderTime = new Date(pickupAt.getTime() - 24 * 60 * 60 * 1000);
+  return { pickupAt, sendReminderTime };
+}
+
 function isStudent(req, res, next) {
   // check if the session exists (user is logged in), and if they are an admin
   if (req.session && req.session.clearance >= 2) {
@@ -321,12 +369,18 @@ route.post("/cart/order", async (req, res) => {
 
   // generate order number
   const orderNum = Math.floor(Math.random() * 1000000);
+  const { pickupAt, sendReminderTime } = buildReminderTimes(
+    pickUpDate,
+    pickUpPeriod,
+  );
 
   const order = {
     name: user.name,
     email: user.email,
     date: pickUpDate,
     period: pickUpPeriod,
+    pickupAt,
+    sendReminderTime,
     totalPrice: totalCost,
     orderNumber: orderNum,
     orderStatus: "pending",

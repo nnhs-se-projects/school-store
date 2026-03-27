@@ -717,19 +717,24 @@ route.get("/editEmails", isAdmin, async (req, res) => {
   const confirmStoreTextEntry = await EmailText.findOne({ name: "confirm store text" });
   const confirmStudentTextEntry = await EmailText.findOne({ name: "confirm student text" });
   const cancelStudentTextEntry = await EmailText.findOne({ name: "cancel student text" });
+  const pickupReminderTextEntry = await EmailText.findOne({ name: "pickup reminder text" });
+
+  const defaultReminderText = "Hi <student name>,\n\nThis is a reminder that your School Store order will be ready for pickup in 24 hours.\n\n<full order>\n\nThanks for ordering from the School Store!";
 
   return res.render("editEmail", {
     confirmStoreText: confirmStoreTextEntry ? confirmStoreTextEntry.text : "",
     confirmStudentText: confirmStudentTextEntry ? confirmStudentTextEntry.text : "",
-    cancelStudentText: cancelStudentTextEntry ? cancelStudentTextEntry.text : ""
+    cancelStudentText: cancelStudentTextEntry ? cancelStudentTextEntry.text : "",
+    pickupReminderText: pickupReminderTextEntry ? pickupReminderTextEntry.text : defaultReminderText
   });
 });
 
 route.post("/editEmail", isAdmin, async (req, res) => {
-  const { confirmStoreText, confirmStudentText, cancelStudentText } = req.body;
+  const { confirmStoreText, confirmStudentText, cancelStudentText, pickupReminderText } = req.body;
   const confirmStoreTextEntry = await EmailText.findOne({ name: "confirm store text" });
   const confirmStudentTextEntry = await EmailText.findOne({ name: "confirm student text" });
   const cancelStudentTextEntry = await EmailText.findOne({ name: "cancel student text" });
+  const pickupReminderTextEntry = await EmailText.findOne({ name: "pickup reminder text" });
 
   if (confirmStoreTextEntry) {
     confirmStoreTextEntry.text = confirmStoreText;
@@ -760,6 +765,17 @@ route.post("/editEmail", isAdmin, async (req, res) => {
     const newEmailEntry = new EmailText({
       name: "cancel student text",
       text: cancelStudentText
+    });
+    await newEmailEntry.save();
+  }
+
+  if (pickupReminderTextEntry) {
+    pickupReminderTextEntry.text = pickupReminderText;
+    await pickupReminderTextEntry.save();
+  } else {
+    const newEmailEntry = new EmailText({
+      name: "pickup reminder text",
+      text: pickupReminderText
     });
     await newEmailEntry.save();
   }
