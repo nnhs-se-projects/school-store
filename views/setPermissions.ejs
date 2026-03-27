@@ -1,0 +1,47 @@
+<%- include('include/_header') %>
+
+<link rel="stylesheet" href="/css/setPermissions.css" />
+
+<main>
+  <div class="wrapper">
+    <h1>Set Permissions</h1>
+    <p class="page-copy">
+      Enter one email per line. Changes are saved to the database and will apply
+      to future sign-ins immediately.
+    </p>
+
+    <h2>Set Volunteers</h2>
+    <% if (query.volunteersSaved) { %>
+    <p class="status-message">Volunteer emails saved.</p>
+    <% } %>
+
+    <form action="/setPermissions/volunteers" method="POST" class="volunteer-form">
+      <label for="volunteerEmails">Volunteer Emails</label>
+      <textarea
+        id="volunteerEmails"
+        name="volunteerEmails"
+        rows="12"
+        spellcheck="false"
+      ><%= volunteerEmails.join('\n') %></textarea>
+      <button type="submit">Save Volunteers</button>
+    </form>
+
+    <h2>Set Admins</h2>
+    <% if (query.adminsSaved) { %>
+    <p class="status-message">Admin emails saved.</p>
+    <% } %>
+
+    <form action="/setPermissions/admins" method="POST" class="volunteer-form">
+      <label for="adminEmails">Admin Emails</label>
+      <textarea
+        id="adminEmails"
+        name="adminEmails"
+        rows="12"
+        spellcheck="false"
+      ><%= adminEmails.join('\n') %></textarea>
+      <button type="submit">Save Admins</button>
+    </form>
+  </div>
+</main>
+
+<%- include('include/_footer') %>

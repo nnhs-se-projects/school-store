@@ -6,8 +6,10 @@ const Item = require("../model/item");
 const Order = require("../model/order");
 const Time = require("../model/time");
 const nodemailer = require("nodemailer");
+const sendEmail = require("../utils/sendEmail");
 
-const xlsx = require("../exportXLSX");
+const xlsx = require("../utils/exportXLSX");
+const order = require("../model/order");
 
 function isStudent(req, res, next) {
   // check if the session exists (user is logged in), and if they are an admin
@@ -38,7 +40,8 @@ function isVolunteer(req, res, next) {
 async function createXLSXWithOrders(orders) {
   // see /server/exportXLSX.js for maintainability note on XLSX worksheet data
 
-  function getABC(n) { // used for getting column name strings
+  function getABC(n) {
+    // used for getting column name strings
     const abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     let row = "";
@@ -54,6 +57,7 @@ async function createXLSXWithOrders(orders) {
   const items = await Item.find();
 
   // create the headers
+
   let ordersXML = '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c><c r="B1" t="inlineStr"><is><t>Name</t></is></c><c r="C1" t="inlineStr"><is><t>Email</t></is></c><c r="D1" t="inlineStr"><is><t>Pickup Date</t></is></c><c r="E1" t="inlineStr"><is><t>Pickup Time</t></is></c><c r="F1" t="inlineStr"><is><t>Total Price</t></is></c><c r="G1" t="inlineStr"><is><t>Status</t></is></c></row>';
   let orderItemsXML = '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c>';
 
@@ -62,7 +66,9 @@ async function createXLSXWithOrders(orders) {
 
   let columnCount = 1; // keep track of the next open column
   for (let i = 0; i < items.length; i++) {
-    const sizes = Object.keys(items[i].sizes).sort((a, b) => a.localeCompare(b)); // sort objects by their sizes/variants for consistency
+    const sizes = Object.keys(items[i].sizes).sort((a, b) =>
+      a.localeCompare(b),
+    ); // sort objects by their sizes/variants for consistency
     for (const size of sizes) {
       const itemDesc = items[i].name + " " + size;
 
@@ -73,35 +79,41 @@ async function createXLSXWithOrders(orders) {
       columnCount++;
     }
   }
-  orderItemsXML += '</row>';
+  orderItemsXML += "</row>";
 
   // add the orders into the sheets
   for (let row = 2; row < orders.length + 2; row++) {
     // add order info
     const order = orders[row - 2];
     ordersXML += `<row r="${row}"><c r="A${row}"><v>${order.orderNumber}</v></c><c r="B${row}" t="inlineStr"><is><t>${order.name}</t></is></c><c r="C${row}" t="inlineStr"><is><t>${order.email}</t></is></c><c r="D${row}" t="inlineStr"><is><t>${order.date}</t></is></c><c r="E${row}" t="inlineStr"><is><t>${order.period}</t></is></c><c r="F${row}"><v>${order.totalPrice}</v></c><c r="G${row}" t="inlineStr"><is><t>${order.orderStatus}</t></is></c></row>`;
-    
+
     // add order items
     orderItemsXML += `<row r="${row}"><c r="A${row}"><v>${order.orderNumber}</v></c>`; // order number
-    const orderItems = order.items.sort((a, b) => (itemColumnMap.get(a.name + " " + a.size) - itemColumnMap.get(b.name + " " + b.size)));
+    const orderItems = order.items.sort(
+      (a, b) =>
+        itemColumnMap.get(a.name + " " + a.size) -
+        itemColumnMap.get(b.name + " " + b.size),
+    );
     for (const item of orderItems) {
       const itemDesc = item.name + " " + item.size;
       const itemColumn = itemColumnMap.get(itemDesc);
-      
+
       orderItemsXML += `<c r="${getABC(itemColumn)}${row}"><v>${item.quantity}</v></c>`; // order items
     }
     orderItemsXML += `</row>`;
   }
-  ordersXML += '</sheetData>';
-  orderItemsXML += '</sheetData>';
+  ordersXML += "</sheetData>";
+  orderItemsXML += "</sheetData>";
 
-  orderItemsXML = `<cols><col min="2" max="${columnCount}" width="20" customWidth="1"/></cols>` + orderItemsXML; // adjust column width for order items
+  orderItemsXML =
+    `<cols><col min="2" max="${columnCount}" width="20" customWidth="1"/></cols>` +
+    orderItemsXML; // adjust column width for order items
 
   const xlsxDownload = await xlsx.exportXLSX([
     xlsx.createSheet("Orders", ordersXML),
-    xlsx.createSheet("Order Items", orderItemsXML)
+    xlsx.createSheet("Order Items", orderItemsXML),
   ]); // data URI string
-  
+
   return xlsxDownload;
 }
 
@@ -368,66 +380,7 @@ route.post("/cart/order", async (req, res) => {
   await user.save();
   res.status(200).send("Order placed");
 
-  function printOrder(order) {
-    let orderDetails = `Student: ${order.name}\nEmail: ${order.email}\nPickup Date: ${date}\nPickup Time: ${order.period}\nTotal Cost: $${order.totalPrice}\nItems:\n`;
-    for (let i = 0; i < order.items.length; i++) {
-      orderDetails += `- ${order.items[i].quantity} x ${order.items[i].size} ${order.items[i].name}\n`;
-    }
-    return orderDetails;
-  }
-
-  // send email to user
-  // Configure the transporter
-
-  const adminEmail = "napervillenorthschoolstore@gmail.com";
-  // console.log(process.env.EMAIL_PASSWORD);
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: "napervillenorthschoolstore@gmail.com",
-      pass: process.env.EMAIL_PASSWORD,
-    },
-  });
-
-  const userEmailText =
-    `Thank you for your order, ${user.name}!\n\nPlease bring CASH as well as your student ID to the school store to pay for your order at your designated date and period.\n\n` +
-    printOrder(order) +
-    `We appreciate your business!`;
-
-  // Email details
-  const userMailOptions = {
-    from: adminEmail, // Replace with your email
-    to: user.email, // Send to the user's email
-    subject: "Order Confirmation",
-    text: userEmailText,
-  };
-
-  try {
-    await transporter.sendMail(userMailOptions);
-    console.log("Order confirmation email sent to user");
-  } catch (error) {
-    console.error("Error sending email:", error);
-  }
-
-  const volunteerMailText =
-    `New order received!\n\n` +
-    printOrder(order) +
-    `\n\nPlease check the order panel for more details.`;
-
-  // send email to admin
-  const volunteerMailOptions = {
-    from: adminEmail,
-    to: "napervillenorthschoolstore@gmail.com",
-    subject: "New Order Received",
-    text: volunteerMailText,
-  };
-
-  try {
-    await transporter.sendMail(volunteerMailOptions);
-    console.log("Order notification email sent to admin");
-  } catch (error) {
-    console.error("Error sending email:", error);
-  }
+  await sendEmail.sendOrderEmails(order, user, date);
 
   console.log("Order placed successfully and emails sent");
 });
@@ -452,12 +405,12 @@ route.get("/orderViewer/xlsx", isVolunteer, async (req, res) => {
   const orders = await Order.find({}).sort({ date: 1 });
 
   const pendingOrders = orders.filter(
-    (order) => order.orderStatus !== "completed"
+    (order) => order.orderStatus !== "completed",
   );
 
   const xlsxDownload = await createXLSXWithOrders(pendingOrders);
 
-  res.json({xlsxDownload});
+  res.json({ xlsxDownload });
 });
 
 route.get("/completedOrderViewer", isVolunteer, async (req, res) => {
@@ -474,7 +427,7 @@ route.get("/completedOrderViewer/xlsx", isVolunteer, async (req, res) => {
 
   const xlsxDownload = await createXLSXWithOrders(completedOrders);
 
-  res.json({xlsxDownload});
+  res.json({ xlsxDownload });
 });
 
 route.post("/deleteOrder", isVolunteer, async (req, res) => {
@@ -504,6 +457,7 @@ route.post("/deleteOrder", isVolunteer, async (req, res) => {
       }
     }
 
+    await sendEmail.sendCancellationEmail(order);
     await Order.findByIdAndDelete(orderId);
     res.status(200).send("Order deleted successfully");
   } catch (error) {
@@ -515,7 +469,19 @@ route.post("/deleteOrder", isVolunteer, async (req, res) => {
 route.post("/checkOffOrder", async (req, res) => {
   const orderId = req.body.orderId;
   console.log("orderId: " + orderId);
+
+  const items = await Item.find();
+
   const orderToUpdate = await Order.findById(orderId);
+
+  for (const orderItem of orderToUpdate.items) {
+    const item = items.find((i) => i._id.toString() === orderItem.itemId.toString());
+    
+    item.sizes[orderItem.size] -= orderItem.quantity;
+
+    await item.updateOne({sizes: item.sizes});
+  }
+
   if (!orderToUpdate) {
     return res.status(404).send("Order not found");
   }
