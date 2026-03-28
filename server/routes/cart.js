@@ -468,7 +468,6 @@ route.post("/deleteOrder", isVolunteer, async (req, res) => {
 
 route.post("/checkOffOrder", async (req, res) => {
   const orderId = req.body.orderId;
-  console.log("orderId: " + orderId);
 
   const items = await Item.find();
 
@@ -548,12 +547,6 @@ route.post("/userDeleteOrder", isStudent, async (req, res) => {
           const size = order.items[i].size;
           item.sizes[size] += order.items[i].quantity;
           await item.save();
-          console.log(
-            "Item inventory updated: ",
-            item.name,
-            size,
-            item.sizes[size],
-          );
         } else {
           console.log("Item not found in inventory: ", order.items[i].itemId);
           return res.status(404).send("Item not found in inventory");
@@ -570,8 +563,22 @@ route.post("/userDeleteOrder", isStudent, async (req, res) => {
 });
 
 route.post("/userChangePickupTime", isStudent, async (req, res) => {
-  res.status(404).send("Unimplemented");
-  // FIXME: need to update pickup time in order
+  const orderId = req.body.orderId;
+  const order = await Order.findById(orderId);
+
+  const orderEmail = order.email;
+  const userEmail = req.session.user.email;
+
+  if (orderEmail !== userEmail) {
+    res.status(403).send("Order pickup time change unauthorized");
+  } else {
+    order.date = req.body.pickUpDate;
+    order.period = req.body.pickUpTime;
+
+    await order.save();
+
+    res.status(200).send("Order pickup time changed successfully");
+  }
 });
 
 module.exports = route;

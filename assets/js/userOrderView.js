@@ -20,7 +20,7 @@ populateTimeOptions(pickupDateSelect, pickupTimeSelect, storeHoursData);
 deleteButtons.forEach((button) => {
   button.addEventListener("click", async (event) => {
     const confirmDelete = confirm(
-      "Please refrain from canceling orders within 48 hours of their pickup time.\nAre you sure you want to delete this order?"
+      "Please try to avoid canceling orders within 48 hours of their pickup time.\nAre you sure you want to delete this order?"
     );
     if (!confirmDelete) {
       event.preventDefault();
@@ -57,13 +57,13 @@ changeTimeButton.addEventListener("click", async () => {
     return;
   }
   const userConfirmed = confirm(
-    "All orders must be paid for IN CASH at the time of pickup at the school store.",
+    "Please try to avoid changing order times within 48 hours of their pickup time.\nAll orders must be paid for IN CASH at the time of pickup at the school store.",
   );
   if (!userConfirmed) {
     return;
   }
 
-  const response = await fetch("/userChangeTime", {
+  const response = await fetch("/userChangePickupTime", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -76,7 +76,7 @@ changeTimeButton.addEventListener("click", async () => {
   });
 
   if (response.ok) {
-    window.location.reload();
+    window.location = window.location.href;
   } else {
     alert("Failed to change pickup time. Please try again.");
   }
