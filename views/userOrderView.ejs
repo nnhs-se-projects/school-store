@@ -12,6 +12,11 @@
     <h1>Your Orders</h1>
 
     <div class="overflow-wrapper">
+      <% if (userOrders.length === 0) { %>
+      <h2>You have no current orders.</h2>
+      <p>Check out our <a href="/#item-list-skip">store page</a> to see what we have!</p>
+      <% } %>
+
       <% for (const order of userOrders) { %>
       <div class="order-block">
         <h2>Date: <em><%= ((new Date(order.date)).toUTCString()).split(" 00:00:00 GMT")[0] %></em></h2>
