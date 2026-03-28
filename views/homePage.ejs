@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="/css/times.css" />
+<link rel="stylesheet" href="/css/homePage.css" />
 
 <!-- include header -->
 <%- include('include/_header') %>
@@ -14,6 +15,10 @@
   <div class="wrapper">
 
     <img src = "/img/Store-Front.png" class = "store-front" alt = "Store Front" />
+
+    <div id="jump-to-store">
+        <h3><span>Jump to Store</span></h3>
+    </div>
   
   <section class="store-info">
     <h1>Naperville North Huskie Store</h1>
@@ -98,7 +103,7 @@
   <img id="imagePreview" alt="Image Preview" style="display:none;">
 
 
-  <div class = "item-list"> 
+  <div id="item-list-skip" class="item-list"> 
     <% items.forEach(function(item) { %>
       <div class = "item" onclick= "window.location.href='/item/<%= item.id %>'">
         <img src="<%= item.image %>">
@@ -122,21 +127,4 @@
 
 <script>
   const showSplash = <%= JSON.stringify(session && session.showSplash) %>;
-</script>
-
-<script>
-  let notLoggedInItems = document.querySelectorAll("#not-logged-in");
-  let notLoggedInAsStudentItems = document.querySelectorAll("#not-logged-in-as-student");
-
-  notLoggedInItems.forEach(item => {
-    item.addEventListener("click", function() {
-      alert("Please log in to view item details.");
-    });
-  });
-
-  notLoggedInAsStudentItems.forEach(item => {
-    item.addEventListener("click", function() {
-      alert("Please log in as a student to view item details.");
-    });
-  });
 </script>
