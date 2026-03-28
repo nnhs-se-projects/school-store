@@ -5,12 +5,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const quantitySelector = document.getElementById("quantity");
 
   function updateQuantityOptions() {
-    let maxQuantity;
-    if (!sizeSelector) {
-      maxQuantity = document.getElementById("placeholder").value; // Fallback to a placeholder value if sizeSelector is not present
-    } else {
-      maxQuantity = itemSizes[Object.keys(itemSizes)[sizeSelector.selectedIndex]] - itemsInOrders[formatItemNameAndSize(itemName, Object.keys(itemSizes)[sizeSelector.selectedIndex])]; // `itemSizes`, `itemName`, `itemsInOrders`, and `formatItemNameAndSize` are defined in the EJS
-    }
+    const sizeSelectorText = sizeSelector ? Object.keys(itemSizes)[sizeSelector.selectedIndex] : "N/A";
+    const maxQuantity = itemSizes[sizeSelectorText] - itemsInOrders[formatItemNameAndSize(itemName, sizeSelectorText)]; // `itemSizes`, `itemName`, `itemsInOrders`, and `formatItemNameAndSize` are defined in the EJS
 
     // Clear existing options
     quantitySelector.innerHTML = "";
