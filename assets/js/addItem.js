@@ -45,7 +45,7 @@ submitButton.addEventListener("click", async () => {
       }
     });
   } else {
-    sizes.placeholder = parseInt(
+    sizes["N/A"] = parseInt(
       document.querySelector("input#generic-quantity").value,
       10
     );

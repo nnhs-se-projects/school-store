@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const addToCartButton = document.getElementById("add-to-cart");
   const itemId = document.getElementById("itemId").value;
   addToCartButton.addEventListener("click", async () => {
-    const size = sizeSelector?.value || "placeholder";
+    const size = sizeSelector?.value || "N/A";
     const sizeIndex = sizeSelector?.selectedIndex || 0;
     const quantity = document.getElementById("quantity").value;
 

@@ -12,7 +12,7 @@
         <p><strong>Price: $<%= item.price %></strong></p>
         <p><%= item.description %></p>
 
-        <% if (item.sizes.placeholder === undefined) { %>
+        <% if (item.sizes["N/A"] === undefined) { %>
         <div class="size-selector">
           <label for="size">Type:</label>
           <select id="size" name="size">
@@ -46,7 +46,7 @@
   </div>
 </div>
 <input type="hidden" id="itemId" value="<%= item.id %>" />
-<input type="hidden" id="placeholder" value="<%= item.sizes.placeholder%>" />
+<input type="hidden" id="placeholder" value="<%= item.sizes['N/A']%>" />
 
 <script src="/js/itemPage.js"></script>
 
