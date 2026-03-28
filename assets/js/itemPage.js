@@ -5,13 +5,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const quantitySelector = document.getElementById("quantity");
 
   function updateQuantityOptions() {
-    let maxQuantity;
-    if (!sizeSelector) {
-      maxQuantity = document.getElementById("placeholder").value; // Fallback to a placeholder value if sizeSelector is not present
-    } else {
-      const selectedOption = sizeSelector.options[sizeSelector.selectedIndex];
-      maxQuantity = parseInt(selectedOption.getAttribute("data-quantity"), 10);
-    }
+    const sizeSelectorText = sizeSelector ? Object.keys(itemSizes)[sizeSelector.selectedIndex] : "N/A";
+    const maxQuantity = itemSizes[sizeSelectorText] - itemsInOrders[formatItemNameAndSize(itemName, sizeSelectorText)]; // `itemSizes`, `itemName`, `itemsInOrders`, and `formatItemNameAndSize` are defined in the EJS
 
     // Clear existing options
     quantitySelector.innerHTML = "";
@@ -38,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const addToCartButton = document.getElementById("add-to-cart");
   const itemId = document.getElementById("itemId").value;
   addToCartButton.addEventListener("click", async () => {
-    const size = sizeSelector?.value || "placeholder";
+    const size = sizeSelector?.value || "N/A";
     const sizeIndex = sizeSelector?.selectedIndex || 0;
     const quantity = document.getElementById("quantity").value;
 

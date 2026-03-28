@@ -8,10 +8,10 @@
     </th>
     <tr></tr>
       <% for (let size in item.sizes) { %>
-        <% if (size == "placeholder") { %>
+        <% if (size == "N/A") { %>
           <th> <%= item.sizes[size] %> </th>
         <% } %>
-        <% if (size != "placeholder") { %>
+        <% if (size != "N/A") { %>
           <th> <%= size + ": " + item.sizes[size] %> </th>
         <% } %>
       <% } %>

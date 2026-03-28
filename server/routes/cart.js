@@ -6,8 +6,10 @@ const Item = require("../model/item");
 const Order = require("../model/order");
 const Time = require("../model/time");
 const nodemailer = require("nodemailer");
+const sendEmail = require("../utils/sendEmail");
 
-const xlsx = require("../exportXLSX");
+const xlsx = require("../utils/exportXLSX");
+const order = require("../model/order");
 
 function isStudent(req, res, next) {
   // check if the session exists (user is logged in), and if they are an admin
@@ -55,10 +57,9 @@ async function createXLSXWithOrders(orders) {
   const items = await Item.find();
 
   // create the headers
-  let ordersXML =
-    '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c><c r="B1" t="inlineStr"><is><t>Name</t></is></c><c r="C1" t="inlineStr"><is><t>Email</t></is></c><c r="D1" t="inlineStr"><is><t>Date</t></is></c><c r="E1" t="inlineStr"><is><t>Period</t></is></c><c r="F1" t="inlineStr"><is><t>Total Price</t></is></c><c r="G1" t="inlineStr"><is><t>Status</t></is></c></row>';
-  let orderItemsXML =
-    '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c>';
+
+  let ordersXML = '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c><c r="B1" t="inlineStr"><is><t>Name</t></is></c><c r="C1" t="inlineStr"><is><t>Email</t></is></c><c r="D1" t="inlineStr"><is><t>Pickup Date</t></is></c><c r="E1" t="inlineStr"><is><t>Pickup Time</t></is></c><c r="F1" t="inlineStr"><is><t>Total Price</t></is></c><c r="G1" t="inlineStr"><is><t>Status</t></is></c></row>';
+  let orderItemsXML = '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c>';
 
   // order item headers
   const itemColumnMap = new Map(); // create a Map to map different items (and sizes/variants) to a column in the spreadsheet
@@ -412,66 +413,7 @@ route.post("/cart/order", async (req, res) => {
   await user.save();
   res.status(200).send("Order placed");
 
-  function printOrder(order) {
-    let orderDetails = `Student: ${order.name}\nEmail: ${order.email}\nPickup Date: ${date}\nPickup Period: ${order.period}\nTotal Cost: $${order.totalPrice}\nItems:\n`;
-    for (let i = 0; i < order.items.length; i++) {
-      orderDetails += `- ${order.items[i].quantity} x ${order.items[i].size} ${order.items[i].name}\n`;
-    }
-    return orderDetails;
-  }
-
-  // send email to user
-  // Configure the transporter
-
-  const adminEmail = "napervillenorthschoolstore@gmail.com";
-  // console.log(process.env.EMAIL_PASSWORD);
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: "napervillenorthschoolstore@gmail.com",
-      pass: process.env.EMAIL_PASSWORD,
-    },
-  });
-
-  const userEmailText =
-    `Thank you for your order, ${user.name}!\n\nPlease bring CASH as well as your student ID to the school store to pay for your order at your designated date and period.\n\n` +
-    printOrder(order) +
-    `We appreciate your business!`;
-
-  // Email details
-  const userMailOptions = {
-    from: adminEmail, // Replace with your email
-    to: user.email, // Send to the user's email
-    subject: "Order Confirmation",
-    text: userEmailText,
-  };
-
-  try {
-    await transporter.sendMail(userMailOptions);
-    console.log("Order confirmation email sent to user");
-  } catch (error) {
-    console.error("Error sending email:", error);
-  }
-
-  const volunteerMailText =
-    `New order received!\n\n` +
-    printOrder(order) +
-    `\n\nPlease check the order panel for more details.`;
-
-  // send email to admin
-  const volunteerMailOptions = {
-    from: adminEmail,
-    to: adminEmail,
-    subject: "New Order Received",
-    text: volunteerMailText,
-  };
-
-  try {
-    await transporter.sendMail(volunteerMailOptions);
-    console.log("Order notification email sent to admin");
-  } catch (error) {
-    console.error("Error sending email:", error);
-  }
+  await sendEmail.sendOrderEmails(order, user, date);
 
   console.log("Order placed successfully and emails sent");
 });
@@ -548,6 +490,7 @@ route.post("/deleteOrder", async (req, res) => {
       }
     }
 
+    await sendEmail.sendCancellationEmail(order);
     await Order.findByIdAndDelete(orderId);
     res.status(200).send("Order deleted successfully");
   } catch (error) {
@@ -559,13 +502,48 @@ route.post("/deleteOrder", async (req, res) => {
 route.post("/checkOffOrder", async (req, res) => {
   const orderId = req.body.orderId;
   console.log("orderId: " + orderId);
+
+  const items = await Item.find();
+
   const orderToUpdate = await Order.findById(orderId);
+
+  for (const orderItem of orderToUpdate.items) {
+    const item = items.find((i) => i._id.toString() === orderItem.itemId.toString());
+    
+    item.sizes[orderItem.size] -= orderItem.quantity;
+
+    await item.updateOne({sizes: item.sizes});
+  }
+
   if (!orderToUpdate) {
     return res.status(404).send("Order not found");
   }
   orderToUpdate.orderStatus = "completed";
   res.status(200).send("Order checked off successfully");
   await orderToUpdate.save();
+});
+
+route.get("/userOrderView/:id", isStudent, async (req, res) => {
+  const pageID = req.params.id;
+  const userID = req.session.user.googleId;
+
+  if (userID === pageID) { // FIXME: check if google id matches page
+    const userOrders = (await Order.find({ email: req.session.user.email }).sort({ date: -1 })).filter(
+      (order) => order.orderStatus !== "completed",
+    );
+
+    res.render(
+      "userOrderView",
+      {
+        userOrders
+      }
+    );
+  } else {
+    return res.status(403).render("errorPage", {
+      title: "Please log in to view your orders",
+      redirectUrl: "/",
+    });
+  }
 });
 
 module.exports = route;

@@ -9,23 +9,36 @@
     <h1><b>Manage Store</b></h1>
 
     <div>
+      <a class="volunteer-link" href="inventoryManagement" id="inventoryManagement">
+        <strong>Inventory Management</strong>
+      </a>
+      <a class="volunteer-link" href="inventorylist" id="inventorylist"
+        ><strong>View Inventory</strong>
+      </a>
+      <a class="volunteer-link" href="orderViewer" id="orderViewer"
+        ><strong>View Orders</strong>
+      </a> 
+      <% if (clearance >= 4) { %>
+      
       <a class="admin-link" href="addItem" id="addItem"
-        ><strong>Add Item</strong></a
-      >
-      <a class="admin-link" href="orderViewer" id="orderViewer"
-        ><strong>View Orders</strong></a
-      >
+        ><strong>Add Item</strong>
+        </a>
       <a class="admin-link" href="manageItems" id="editItem"
-        ><strong>Manage Items</strong></a
-      >
-      <a class="admin-link" href="inventorylist" id="inventorylist"
-        ><strong>View Inventory</strong></a
-      >
+        ><strong>Manage Items</strong>
+        </a>
       <a class="admin-link" href="setTimes" id="setTimes"
-        ><strong>Set Times</strong></a
-      >
+        ><strong>Set Times</strong>
+      </a>
+      <a class="admin-link" href="setPermissions" id="setPermissions"
+        ><strong>Set Permissions</strong>
+      </a>
+      <a class="admin-link" href="editEmails" id="editEmails"
+        ><strong>Edit Email Text</strong>
+      </a>
+      <% } %>
     </div>
 
+    <br>
     
   </div>
 </main>
