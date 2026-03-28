@@ -8,6 +8,27 @@
   </head>
   <body>
     <h1><%= message %></h1>
-    <a href="/">Return to home Page</a>
+    <% if (typeof overrideActionUrl !== "undefined" && typeof overridePayload !== "undefined" && overrideActionUrl && overridePayload) { %>
+    <form action="<%= overrideActionUrl %>" method="POST" class="override-form">
+      <input type="hidden" name="date" value="<%= overridePayload.date %>" />
+      <input type="hidden" name="index" value="<%= overridePayload.index %>" />
+      <input
+        type="hidden"
+        name="openTime"
+        value="<%= overridePayload.openTime %>"
+      />
+      <input
+        type="hidden"
+        name="closeTime"
+        value="<%= overridePayload.closeTime %>"
+      />
+      <input type="hidden" name="action" value="<%= overridePayload.action %>" />
+      <input type="hidden" name="offset" value="<%= overridePayload.offset %>" />
+      <button type="submit" class="override-button">
+        <%= overrideButtonLabel || "Update Anyway" %>
+      </button>
+    </form>
+    <% } %>
+    <a href="<%= redirectUrl || '/' %>">Return</a>
   </body>
 </html>

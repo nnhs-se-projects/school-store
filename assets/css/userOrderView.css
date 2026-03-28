@@ -1,0 +1,32 @@
+.order-block {
+  min-width: fit-content;
+
+  margin: 20px;
+  padding: 10px;
+
+  border: 1px solid #000;
+  border-radius: 8px;
+
+  box-shadow: 5px 10px 10px #ccc;
+}
+
+.order-items {
+  border-collapse: collapse;
+}
+
+.order-items th, .order-items td {
+  width: 30em;
+
+  padding: 8px;
+
+  border: 1px solid #000;
+}
+
+.order-items .main-heading {
+  background-color: #002f55;
+}
+
+.order-items th {
+  background-color: #ff4800;
+  color: #fff;
+}
