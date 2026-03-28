@@ -98,7 +98,7 @@
   <img id="imagePreview" alt="Image Preview" style="display:none;">
 
 
-  <div class = "item-list"> 
+  <div id="item-list-skip" class="item-list"> 
     <% items.forEach(function(item) { %>
       <div class = "item" onclick= "window.location.href='/item/<%= item.id %>'">
         <img src="<%= item.image %>">
