@@ -1,3 +1,8 @@
+hr {
+  margin: 20px;
+  border: 1px solid #000;
+}
+
 .order-block {
   min-width: fit-content;
 

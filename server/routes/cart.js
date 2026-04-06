@@ -495,14 +495,19 @@ route.get("/userOrderView/:id", isStudent, async (req, res) => {
   const userID = req.session.user.googleId;
 
   if (userID === pageID) { // FIXME: check if google id matches page
-    const userOrders = (await Order.find({ email: req.session.user.email }).sort({ date: -1 })).filter(
+    const allUserOrders = await Order.find({ email: req.session.user.email }).sort({ date: -1 });
+    const userOrders = allUserOrders.filter(
       (order) => order.orderStatus !== "completed",
+    );
+    const completedOrders = allUserOrders.filter(
+      (order) => order.orderStatus === "completed",
     );
 
     res.render(
       "userOrderView",
       {
-        userOrders
+        userOrders,
+        completedOrders
       }
     );
   } else {
