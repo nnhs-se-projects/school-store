@@ -9,9 +9,8 @@
 
 <main>
   <div class="wrapper">
-    <h1>Your Orders</h1>
-
     <div class="overflow-wrapper">
+      <h1>Your Upcoming Orders</h1>
       <% if (userOrders.length === 0) { %>
       <h2>You have no current orders.</h2>
       <p>Check out our <a href="/#item-list-skip">store page</a> to see what we have!</p>
@@ -28,7 +27,7 @@
           </tr>
           <tr>
             <th>Name</th>
-            <th>Size</th>
+            <th>Size/Type</th>
             <th>Quantity</th>
           </tr>
         <% for (const item of order.items) { %>
@@ -39,12 +38,40 @@
           </tr>
         <% } %>
         </table>
-        <button class="change-time" order-id="<%= order.id %>">
+         <button class="change-time" order-id="<%= order.id %>">
           Change Pickup Time
         </button>
         <button class="delete-order" order-id="<%= order.id %>">
           Cancel Order
         </button>
+        <p>Order <em>#<%= order.orderNumber %></em></p>
+      </div>
+      <% } %>
+
+
+      <br><br><br><hr>
+      <h1>Your Past Orders</h1>
+      <% for (const order of completedOrders) { %>
+      <div class="order-block">
+        <h2>Date: <em><%= ((new Date(order.date)).toUTCString()).split(" 00:00:00 GMT")[0] %></em></h2>
+        <h2>Total: <em>$<%= order.totalPrice %></em></h2>
+        <table class="order-items">
+          <tr>
+            <th colspan="3" class="main-heading">Items</th>
+          </tr>
+          <tr>
+            <th>Name</th>
+            <th>Size/Type</th>
+            <th>Quantity</th>
+          </tr>
+        <% for (const item of order.items) { %>
+          <tr>
+            <td><%= item.name %></td>
+            <td><%= item.size %></td>
+            <td><%= item.quantity %></td>
+          </tr>
+        <% } %>
+        </table>
         <p>Order <em>#<%= order.orderNumber %></em></p>
       </div>
       <% } %>
