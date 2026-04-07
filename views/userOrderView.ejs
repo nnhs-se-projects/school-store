@@ -38,6 +38,12 @@
           </tr>
         <% } %>
         </table>
+         <button class="change-time" order-id="<%= order.id %>">
+          Change Pickup Time
+        </button>
+        <button class="delete-order" order-id="<%= order.id %>">
+          Cancel Order
+        </button>
         <p>Order <em>#<%= order.orderNumber %></em></p>
       </div>
       <% } %>
@@ -66,12 +72,6 @@
           </tr>
         <% } %>
         </table>
-        <button class="change-time" order-id="<%= order.id %>">
-          Change Pickup Time
-        </button>
-        <button class="delete-order" order-id="<%= order.id %>">
-          Cancel Order
-        </button>
         <p>Order <em>#<%= order.orderNumber %></em></p>
       </div>
       <% } %>
