@@ -300,6 +300,21 @@ route.get("/inventorylist/xlsx", isVolunteer, async (req, res) => {
     }
     sheetData += `</row>`;
     trackRow++;
+
+    // item quantity data
+    sheetData += `<row r="${trackRow}">`;
+    sizeCount = 0;
+    for (const size in items[i].sizes) {
+      // note: `items[i].sizes` is an object, `size` are keys
+      sheetData += `<c r="${abc[sizeCount] + trackRow}" t="inlineStr"><is><t>${items[i].sizes[size]}</t></is></c>`;
+      sizeCount++;
+    }
+    if (sizeCount > maxMergeLength) {
+      // adjust `maxMergeLength` as needed
+      maxMergeLength = sizeCount;
+    }
+    sheetData += `</row>`;
+    trackRow++;
   }
   sheetData += "</sheetData>";
   // create <mergeCells> data
