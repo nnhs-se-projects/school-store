@@ -16,10 +16,10 @@
         </th>
         <tr></tr>
           <% for (let size in item.sizes) { %>
-            <% if (size == "N/A") { %>
+            <% if (size === "N/A") { %>
               <th> <%= item.sizes[size] %> </th>
             <% } %>
-            <% if (size != "N/A") { %>
+            <% if (size !== "N/A") { %>
               <th> <%= size + ": " + item.sizes[size] %> </th>
             <% } %>
           <% } %>

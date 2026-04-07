@@ -2,15 +2,21 @@
 <%- include('include/_header') %>
 <!-- /include header -->
 
+<link rel="stylesheet" href="/css/cart.css" />
 <link rel="stylesheet" href="/css/userOrderView.css" />
 
 <!-- Main Site -->
 
 <main>
   <div class="wrapper">
-    <h1>Your Orders</h1>
 
     <div class="overflow-wrapper">
+      <h1>Your Upcoming Orders</h1>
+      <% if (userOrders.length === 0) { %>
+      <h2>You have no current orders.</h2>
+      <p>Check out our <a href="/#item-list-skip">store page</a> to see what we have!</p>
+      <% } %>
+
       <% for (const order of userOrders) { %>
       <div class="order-block">
         <h2>Date: <em><%= ((new Date(order.date)).toUTCString()).split(" 00:00:00 GMT")[0] %></em></h2>
@@ -22,7 +28,41 @@
           </tr>
           <tr>
             <th>Name</th>
-            <th>Size</th>
+            <th>Size/Type</th>
+            <th>Quantity</th>
+          </tr>
+        <% for (const item of order.items) { %>
+          <tr>
+            <td><%= item.name %></td>
+            <td><%= item.size %></td>
+            <td><%= item.quantity %></td>
+          </tr>
+        <% } %>
+        </table>
+         <button class="change-time" order-id="<%= order.id %>">
+          Change Pickup Time
+        </button>
+        <button class="delete-order" order-id="<%= order.id %>">
+          Cancel Order
+        </button>
+        <p>Order <em>#<%= order.orderNumber %></em></p>
+      </div>
+      <% } %>
+
+
+      <br><br><br><hr>
+      <h1>Your Past Orders</h1>
+      <% for (const order of completedOrders) { %>
+      <div class="order-block">
+        <h2>Date: <em><%= ((new Date(order.date)).toUTCString()).split(" 00:00:00 GMT")[0] %></em></h2>
+        <h2>Total: <em>$<%= order.totalPrice %></em></h2>
+        <table class="order-items">
+          <tr>
+            <th colspan="3" class="main-heading">Items</th>
+          </tr>
+          <tr>
+            <th>Name</th>
+            <th>Size/Type</th>
             <th>Quantity</th>
           </tr>
         <% for (const item of order.items) { %>
@@ -38,9 +78,62 @@
       <% } %>
     </div>
   </div>
+
+  <dialog id="change-time-dialog">
+    <div class="input-box">
+      <div class="user-inputs">
+        <label for="pickup-date">Select Pickup Date:</label>
+        <select id="pickup-date" name="pickup-date" required>
+          <option value="" disabled selected>Select a date</option>
+          <% 
+          function localDateString(d) {
+            const dt = new Date(d);
+            const y = dt.getFullYear();
+            const m = String(dt.getMonth() + 1).padStart(2, '0');
+            const day = String(dt.getDate()).padStart(2, '0');
+            return `${y}-${m}-${day}`;
+          }
+          
+          function formatDateDisplay(d) {
+            const dt = new Date(d);
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            return `${days[dt.getDay()]}, ${months[dt.getMonth()]} ${dt.getDate()}`;
+          }
+          
+          storeHours.forEach(timeEntry => {
+            if (timeEntry.times && timeEntry.times.length > 0) {
+              const dateStr = localDateString(timeEntry.date);
+              const displayDate = formatDateDisplay(timeEntry.date);
+          %>
+          <option value="<%= dateStr %>"><%= displayDate %></option>
+          <% 
+            }
+          });
+          %>
+        </select>
+        <label for="pickup-time">Select Pickup Time:</label>
+        <select id="pickup-time" name="pickup-time" required disabled>
+          <option value="" disabled selected>Select a date first</option>
+        </select>
+      </div>
+    </div>
+    <button id="quit-time-dialog" class="checkout-button">Quit</button>
+    <button id="change-time-button" class="checkout-button">Change Time</button>
+  </dialog>
 </main>
 
 <!-- /Main Site -->
+
+<script>
+  // Store hours data for client-side use
+  const storeHoursData = <%- JSON.stringify(storeHours.map(entry => ({
+    date: entry.date,
+    times: entry.times
+  }))) %>;
+</script>
+
+<script type="module" src="/js/userOrderView.js"></script>
 
 <!-- include footer -->
 <%- include('include/_footer') %>

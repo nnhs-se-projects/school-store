@@ -463,7 +463,7 @@ route.get("/completedOrderViewer/xlsx", isVolunteer, async (req, res) => {
   res.json({ xlsxDownload });
 });
 
-route.post("/deleteOrder", async (req, res) => {
+route.post("/deleteOrder", isVolunteer, async (req, res) => {
   const orderId = req.body.orderId;
   try {
     const order = await Order.findById(orderId);
@@ -501,7 +501,6 @@ route.post("/deleteOrder", async (req, res) => {
 
 route.post("/checkOffOrder", async (req, res) => {
   const orderId = req.body.orderId;
-  console.log("orderId: " + orderId);
 
   const items = await Item.find();
 
@@ -527,15 +526,34 @@ route.get("/userOrderView/:id", isStudent, async (req, res) => {
   const pageID = req.params.id;
   const userID = req.session.user.googleId;
 
-  if (userID === pageID) { // FIXME: check if google id matches page
-    const userOrders = (await Order.find({ email: req.session.user.email }).sort({ date: -1 })).filter(
+  if (userID === pageID) { 
+    const allUserOrders = await Order.find({ email: req.session.user.email }).sort({ date: -1 });
+    const userOrders = allUserOrders.filter(
       (order) => order.orderStatus !== "completed",
     );
+    const completedOrders = allUserOrders.filter(
+      (order) => order.orderStatus === "completed",
+    );
+  
+    // Query store hours for next two weeks only (starting tomorrow)
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+
+    const twoWeeksFromNow = new Date();
+    twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
+    twoWeeksFromNow.setHours(23, 59, 59, 999);
+
+    const storeHours = await Time.find({
+      date: { $gte: tomorrow, $lte: twoWeeksFromNow },
+    }).sort({ date: 1 });
 
     res.render(
       "userOrderView",
       {
-        userOrders
+        userOrders,
+        completedOrders,
+        storeHours
       }
     );
   } else {
@@ -543,6 +561,62 @@ route.get("/userOrderView/:id", isStudent, async (req, res) => {
       title: "Please log in to view your orders",
       redirectUrl: "/",
     });
+  }
+});
+
+
+route.post("/userDeleteOrder", isStudent, async (req, res) => {
+  const orderId = req.body.orderId;
+  try {
+    const order = await Order.findById(orderId);
+
+    const orderEmail = order.email;
+    const userEmail = req.session.user.email;
+
+    if (orderEmail !== userEmail) {
+      res.status(403).send("Order deletion unauthorized");
+    } else {
+      if (!order) {
+        return res.status(404).send("Order not found");
+      }
+
+      for (let i = 0; i < order.items.length; i++) {
+        const item = await Item.findById(order.items[i].itemId);
+        if (item) {
+          const size = order.items[i].size;
+          item.sizes[size] += order.items[i].quantity;
+          await item.save();
+        } else {
+          console.log("Item not found in inventory: ", order.items[i].itemId);
+          return res.status(404).send("Item not found in inventory");
+        }
+      }
+
+      await Order.findByIdAndDelete(orderId);
+      res.status(200).send("Order deleted successfully");
+    }
+  } catch (error) {
+    console.error("Error deleting order:", error);
+    res.status(500).send("Error deleting order");
+  }
+});
+
+route.post("/userChangePickupTime", isStudent, async (req, res) => {
+  const orderId = req.body.orderId;
+  const order = await Order.findById(orderId);
+
+  const orderEmail = order.email;
+  const userEmail = req.session.user.email;
+
+  if (orderEmail !== userEmail) {
+    res.status(403).send("Order pickup time change unauthorized");
+  } else {
+    order.date = req.body.pickUpDate;
+    order.period = req.body.pickUpTime;
+
+    await order.save();
+
+    res.status(200).send("Order pickup time changed successfully");
   }
 });
 

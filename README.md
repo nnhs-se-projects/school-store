@@ -35,21 +35,14 @@ We use a MongoDB database to store all of the information on our items and order
 
 # What to start working on/Known issues
 
-The inventory list is currently just a table on the website itself, making it so that you can export it to an external spreadsheet for printing and sharing would be good for the admins.
-Our trello is quite disorganized as well.
-Fix bugs with the inventory not updating when orders are placed
+Our trello is quite disorganized.
 
 # Backlog User Stories
 
+1. As an admin, I want to be sent an email when new orders are placed so that I know what items to fulfill (need to verify that it works)
 
-1. As an admin, I want to be able to update the list of volunteers so that new home and school volunteers can fulfill orders
+2. As an admin I would like to be able to track long-term trends about when people most want to buy our merchandise so that we can better plan for future years.
 
-2. As an admin, I want to assign blockout dates to weekends and days off school so that no orders can be picked up when school is not in session
-
-3. As an admin, I want to be sent an email when new orders are placed so that I know what items to fulfill
-
-4. As an admin I would like to be able to track long-term trends about when people most want to buy our merchandise so that we can better plan for future years.
-
-5. As an admin I want there to be a spreadsheet for both the orders and the supplies so that I can easily keep stock
+More on the trello board.
 
 Have fun coding!

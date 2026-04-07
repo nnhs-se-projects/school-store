@@ -3,21 +3,36 @@
 document.addEventListener("DOMContentLoaded", function () {
   const sizeSelector = document.getElementById("size");
   const quantitySelector = document.getElementById("quantity");
+  const addToCartBtn = document.getElementById("add-to-cart");
 
   function updateQuantityOptions() {
+
     const sizeSelectorText = sizeSelector ? Object.keys(itemSizes)[sizeSelector.selectedIndex] : "N/A";
     const maxQuantity = itemSizes[sizeSelectorText] - itemsInOrders[formatItemNameAndSize(itemName, sizeSelectorText)]; // `itemSizes`, `itemName`, `itemsInOrders`, and `formatItemNameAndSize` are defined in the EJS
 
     // Clear existing options
     quantitySelector.innerHTML = "";
 
-    // Add new options based on the selected size's quantity
+    if (maxQuantity === 0) {
+      addToCartBtn.disabled = true;
+      addToCartBtn.value = "Size/Type Out of Stock";
 
-    for (let i = 1; i <= Math.min(10, maxQuantity); i++) {
       const option = document.createElement("option");
-      option.value = i;
-      option.textContent = i;
+      option.value = 0;
+      option.textContent = "0";
       quantitySelector.appendChild(option);
+    } else {
+      addToCartBtn.disabled = false;
+      addToCartBtn.value = "Add to Cart";
+
+      // Add new options based on the selected size's quantity
+
+      for (let i = 1; i <= Math.min(10, maxQuantity); i++) {
+        const option = document.createElement("option");
+        option.value = i;
+        option.textContent = i;
+        quantitySelector.appendChild(option);
+      }
     }
   }
 
