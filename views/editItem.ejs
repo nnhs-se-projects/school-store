@@ -44,8 +44,8 @@
 
       <h2>Sizes</h2>
       <div id="sizes">
-        <% if (item.sizes.placeholder === undefined) { %> <% for (let size in
-        item.sizes) { %>
+        <% if (item.sizes["N/A"] === undefined) { %>
+          <% for (let size in item.sizes) { %>
         <div class="size-entry">
           <label>Size Type</label>
           <input type="text" class="size" placeholder="Size Type" value="<%= size %>" />
@@ -58,17 +58,21 @@
           />
           <button type="button" class="delete-size">- Remove Size</button>
         </div>
-        <% } %> <% } else { %>
-        <label>Quantity</label>
-        <input
-          type="number"
-          class="quantity"
-          value="<%= item.sizes.placeholder %>"
-        />
+          <% } %>
+        <% } else { %>
+        <div class="size-entry">
+          <input type="text" class="size" value="N/A" style="display:none;" />
+          <label>Quantity</label>
+          <input
+            type="number"
+            class="quantity"
+            value="<%= item.sizes['N/A'] %>"
+          />
+        </div>
         <% } %>
       </div>
 
-      <% if (item.sizes.placeholder === undefined) { %>
+      <% if (item.sizes["N/A"] === undefined) { %>
       <button id="add-size" type="button">Add Size</button>
       <% } %>
 
