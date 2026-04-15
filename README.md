@@ -16,16 +16,19 @@ our project currently has two separate google client ID's, one for the live serv
 
 # Running the Project
 
-To run the project open up the Run & Debug button on the left side of VS Code and then run the node server, and node client and a window should appear with the site. All of the links on the head bar should work and send you to their specific page. Make sure that you are on port 8080 as port 8087 is for the live server.
+To run the project open up the Run & Debug button on the left side of VS Code and then run the node server, and node client and a window should appear with the site. The website should be running on port 8087. All of the links on the head bar should work and send you to their specific page (some are hidden in for different auth levels, see next section).
 
 # Description of the Project’s Architecture
 
 We have split up our route files into 5 different ones, they are disorganized but all work.
-Router.js: GET routes for the homepage and admin pages
-Cart.js: All cart and order handling; cart adding and updating, order placing
-Inventory.js: Most inventory management
-Size.js: two routes for adding and deleting sizes
-Auth.js: google auth route
+
+- [`router.js`](/server/routes/router.js): GET routes for the homepage and admin pages
+- [`cart.js`](/server/routes/cart.js): All cart and order handling; cart adding and updating, order placing
+- [`inventory.js`](/server/routes/inventory.js): Most inventory management
+- [`size.js`](/server/routes/size.js): two routes for adding and deleting sizes
+- [`auth.js`](/server/routes/auth.js): google auth route
+
+There are also utility functions in [`/server/utils/`](/server/utils/) that are used in different routes.
 
 We have 3 roles for users that determine their clearance number: student, volunteer, and admin. A student is allowed to order items, a volunteer can check off orders in the manage inventory page, and the admins can add new items and adjust the inventory. 
 
@@ -37,11 +40,13 @@ We use a MongoDB database to store all of the information on our items and order
 
 Our trello is quite disorganized.
 
+(See stories and issues on trello).
+
 # Backlog User Stories
 
-1. As an admin, I want to be sent an email when new orders are placed so that I know what items to fulfill (need to verify that it works)
+1. As an admin, I want to be sent an email when new orders are placed so that I know what items to fulfill *(need to verify that it works)*
 
-2. As an admin I would like to be able to track long-term trends about when people most want to buy our merchandise so that we can better plan for future years.
+2. As an admin I would like to be able to track long-term trends about when people most want to buy our merchandise so that we can better plan for future years. *(Right now, admins can track data in spreadsheets, but it might be nice for it to be built-in)*
 
 More on the trello board.
 
