@@ -1,0 +1,48 @@
+<!-- include header -->
+<%- include('include/_header') %>
+<!-- /include header -->
+
+<style>
+  textarea {
+    resize: vertical;
+    min-height: 15em;
+
+    font-family: Verdana, sans-serif;
+  }
+
+  #embedded-text-table {
+    width: fit-content;
+
+    border-collapse: collapse;
+  }
+
+  #embedded-text-table td {
+    padding: 3px;
+
+    border: 1px solid #000;
+  }
+</style>
+
+<!-- Main Site -->
+
+<main>
+  <div class="wrapper">
+    <h1>Edit Splash Page</h1>
+
+    <p>Content for the splash page:</p>
+    <textarea id="splash-content" name="splashContent">
+<%= splashContent %></textarea
+    >
+
+    <br />
+    <form id="update-splash-form" action="/update-splash" method="POST">
+      <button type="submit">Save Changes</button>
+    </form>
+  </div>
+</main>
+
+<script src="/css/splashPage.css"></script>
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->
