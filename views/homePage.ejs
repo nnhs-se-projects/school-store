@@ -7,8 +7,11 @@
 
 <!-- Main Site -->
 
-<% if (session && session.showSplash) { %>
-  <%- include('splashPage') %>
+<% if (splashContent) { %>
+  <section class="splash-content">
+    <h2>Welcome Message</h2>
+    <p><%= splashContent %></p>
+  </section>
 <% } %>
 
 <main>
