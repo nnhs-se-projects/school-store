@@ -12,11 +12,13 @@ saveBtn.addEventListener("click", async () => {
   const confirmStoreText = setIfEmpty(document.getElementById("confirm-store-text").value);
   const confirmStudentText = setIfEmpty(document.getElementById("confirm-student-text").value);
   const cancelStudentText = setIfEmpty(document.getElementById("cancel-student-text").value);
+  const pickupReminderText = setIfEmpty(document.getElementById("pickup-reminder-text").value);
 
   const emailText = {
     confirmStoreText,
     confirmStudentText,
-    cancelStudentText
+    cancelStudentText,
+    pickupReminderText,
   };
   const response = await fetch("/editEmail", {
     method: "POST",

@@ -1,4 +1,4 @@
-module.exports = { sendCancellationEmail, sendOrderEmails };
+module.exports = { sendCancellationEmail, sendOrderEmails, sendPickupReminderEmail };
 
 const User = require("../model/user");
 const EmailText = require("../model/emailText");
@@ -132,5 +132,59 @@ async function sendOrderEmails(order, user, date) {
     console.log("Order notification email sent to admin");
   } catch (error) {
     console.error("Error sending email:", error);
+  }
+}
+
+async function sendPickupReminderEmail(order) {
+  const reminderTextEntry = await EmailText.findOne({ name: "pickup reminder text" });
+
+  if (!reminderTextEntry) {
+    console.warn("Pickup reminder email template not found in database");
+    return false;
+  }
+
+  if (!order || !order.email) {
+    console.warn("Order or order email is missing");
+    return false;
+  }
+
+  const user = await User.findOne({ email: order.email });
+
+  if (!user) {
+    console.warn(`User not found for email: ${order.email}`);
+    return false;
+  }
+
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: adminEmail,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+
+  const unformattedDate = new Date(order.date);
+  const date = unformattedDate.toLocaleDateString("en-US", {
+    month: "2-digit",
+    day: "2-digit",
+    year: "2-digit",
+  });
+
+  const reminderMessage = processEmbeddedText(reminderTextEntry.text, order, user, date);
+
+  const mailOptions = {
+    from: adminEmail,
+    to: order.email,
+    subject: `REMINDER: Your order is going to be ready to get picked up at ${order.period} on ${date}`,
+    text: reminderMessage,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`Pickup reminder email sent to ${order.email} for order ${order.orderNumber}`);
+    return true;
+  } catch (error) {
+    console.error("Error sending pickup reminder email:", error);
+    return false;
   }
 }

@@ -74,6 +74,6 @@ const OrderSchema = new mongoose.Schema({
   // Add other fields as necessary
 });
 
-OrderSchema.index({ sendReminderTime: 1, reminderSentAt: 1, orderStatus: 1 });
+OrderSchema.index({ sendReminderTime: 1, pickupAt: 1, reminderSentAt: 1, orderStatus: 1 });
 
 module.exports = mongoose.model("Order", OrderSchema);

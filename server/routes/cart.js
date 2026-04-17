@@ -355,6 +355,26 @@ route.post("/cart/order", async (req, res) => {
   // generate order number
   const orderNum = Math.floor(Math.random() * 1000000);
 
+  // Calculate pickupAt and sendReminderTime (24 hours before)
+  const parsePickupTime = (dateStr, timeRangeStr) => {
+    // dateStr format: "YYYY-MM-DD"
+    // timeRangeStr format: "9:00 AM - 9:30 AM"
+    const [startTime] = timeRangeStr.split(" - ");
+    const [time, period] = startTime.trim().split(" ");
+    let [hours, minutes] = time.split(":").map(Number);
+    
+    if (period === "PM" && hours !== 12) hours += 12;
+    if (period === "AM" && hours === 12) hours = 0;
+    
+    const pickupDate = new Date(dateStr);
+    pickupDate.setHours(hours, minutes, 0, 0);
+    return pickupDate;
+  };
+
+  const pickupAt = parsePickupTime(pickUpDate, pickUpPeriod);
+  const sendReminderTime = new Date(pickupAt);
+  sendReminderTime.setHours(sendReminderTime.getHours() - 24);
+
   const order = {
     name: user.name,
     email: user.email,
@@ -364,6 +384,8 @@ route.post("/cart/order", async (req, res) => {
     orderNumber: orderNum,
     orderStatus: "pending",
     items: user.cart,
+    pickupAt: pickupAt,
+    sendReminderTime: sendReminderTime,
   };
 
   console.log("Order details:", order);
