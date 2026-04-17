@@ -1,7 +1,7 @@
 /**
  * Migration script to set sendReminderTime for existing orders
  * Run this once to backfill sendReminderTime for all orders that have pickupAt but no sendReminderTime
- * 
+ *
  * Usage: node scripts/updateOrderReminderTimes.js
  */
 
@@ -14,10 +14,23 @@ async function updateOrderReminderTimes() {
     await connectDB();
     console.log("Database connected");
 
-    // Find all orders that have pickupAt but no sendReminderTime
+    const parsePickupTime = (dateStr, timeRangeStr) => {
+      const [startTime] = timeRangeStr.split(" - ");
+      const [time, period] = startTime.trim().split(" ");
+      let [hours, minutes] = time.split(":").map(Number);
+
+      if (period === "PM" && hours !== 12) hours += 12;
+      if (period === "AM" && hours === 12) hours = 0;
+
+      const [year, month, day] = dateStr.split("-").map(Number);
+      return new Date(year, month - 1, day, hours, minutes, 0, 0);
+    };
+
+    // Recompute timestamps for pending orders based on authoritative date/period values.
     const ordersToUpdate = await Order.find({
-      pickupAt: { $exists: true, $ne: null },
-      sendReminderTime: { $exists: false },
+      orderStatus: { $ne: "completed" },
+      date: { $exists: true, $ne: null },
+      period: { $exists: true, $ne: null },
     });
 
     console.log(`Found ${ordersToUpdate.length} orders to update`);
@@ -30,16 +43,22 @@ async function updateOrderReminderTimes() {
     // Update each order
     let updatedCount = 0;
     for (const order of ordersToUpdate) {
-      const sendReminderTime = new Date(order.pickupAt);
+      const pickupAt = parsePickupTime(order.date, order.period);
+      const sendReminderTime = new Date(pickupAt);
       sendReminderTime.setHours(sendReminderTime.getHours() - 24);
 
       await Order.updateOne(
         { _id: order._id },
-        { $set: { sendReminderTime: sendReminderTime } },
+        {
+          $set: {
+            pickupAt,
+            sendReminderTime,
+          },
+        },
       );
 
       console.log(
-        `Updated order ${order.orderNumber}: sendReminderTime set to ${sendReminderTime.toISOString()}`,
+        `Updated order ${order.orderNumber}: pickupAt=${pickupAt.toISOString()}, sendReminderTime=${sendReminderTime.toISOString()}`,
       );
       updatedCount++;
     }

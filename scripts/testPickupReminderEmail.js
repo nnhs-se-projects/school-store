@@ -23,7 +23,9 @@ async function run() {
     const emailArg = getArgValue("--email");
 
     if (!orderNumberArg && !emailArg) {
-      console.error("Missing required argument. Provide --orderNumber=<num> or --email=<address>.");
+      console.error(
+        "Missing required argument. Provide --orderNumber=<num> or --email=<address>.",
+      );
       process.exit(1);
     }
 

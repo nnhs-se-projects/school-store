@@ -58,8 +58,10 @@ async function createXLSXWithOrders(orders) {
 
   // create the headers
 
-  let ordersXML = '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c><c r="B1" t="inlineStr"><is><t>Name</t></is></c><c r="C1" t="inlineStr"><is><t>Email</t></is></c><c r="D1" t="inlineStr"><is><t>Pickup Date</t></is></c><c r="E1" t="inlineStr"><is><t>Pickup Time</t></is></c><c r="F1" t="inlineStr"><is><t>Total Price</t></is></c><c r="G1" t="inlineStr"><is><t>Status</t></is></c></row>';
-  let orderItemsXML = '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c>';
+  let ordersXML =
+    '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c><c r="B1" t="inlineStr"><is><t>Name</t></is></c><c r="C1" t="inlineStr"><is><t>Email</t></is></c><c r="D1" t="inlineStr"><is><t>Pickup Date</t></is></c><c r="E1" t="inlineStr"><is><t>Pickup Time</t></is></c><c r="F1" t="inlineStr"><is><t>Total Price</t></is></c><c r="G1" t="inlineStr"><is><t>Status</t></is></c></row>';
+  let orderItemsXML =
+    '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c>';
 
   // order item headers
   const itemColumnMap = new Map(); // create a Map to map different items (and sizes/variants) to a column in the spreadsheet
@@ -362,13 +364,12 @@ route.post("/cart/order", async (req, res) => {
     const [startTime] = timeRangeStr.split(" - ");
     const [time, period] = startTime.trim().split(" ");
     let [hours, minutes] = time.split(":").map(Number);
-    
+
     if (period === "PM" && hours !== 12) hours += 12;
     if (period === "AM" && hours === 12) hours = 0;
-    
-    const pickupDate = new Date(dateStr);
-    pickupDate.setHours(hours, minutes, 0, 0);
-    return pickupDate;
+
+    const [year, month, day] = dateStr.split("-").map(Number);
+    return new Date(year, month - 1, day, hours, minutes, 0, 0);
   };
 
   const pickupAt = parsePickupTime(pickUpDate, pickUpPeriod);
@@ -529,11 +530,13 @@ route.post("/checkOffOrder", async (req, res) => {
   const orderToUpdate = await Order.findById(orderId);
 
   for (const orderItem of orderToUpdate.items) {
-    const item = items.find((i) => i._id.toString() === orderItem.itemId.toString());
-    
+    const item = items.find(
+      (i) => i._id.toString() === orderItem.itemId.toString(),
+    );
+
     item.sizes[orderItem.size] -= orderItem.quantity;
 
-    await item.updateOne({sizes: item.sizes});
+    await item.updateOne({ sizes: item.sizes });
   }
 
   if (!orderToUpdate) {
@@ -548,15 +551,17 @@ route.get("/userOrderView/:id", isStudent, async (req, res) => {
   const pageID = req.params.id;
   const userID = req.session.user.googleId;
 
-  if (userID === pageID) { 
-    const allUserOrders = await Order.find({ email: req.session.user.email }).sort({ date: -1 });
+  if (userID === pageID) {
+    const allUserOrders = await Order.find({
+      email: req.session.user.email,
+    }).sort({ date: -1 });
     const userOrders = allUserOrders.filter(
       (order) => order.orderStatus !== "completed",
     );
     const completedOrders = allUserOrders.filter(
       (order) => order.orderStatus === "completed",
     );
-  
+
     // Query store hours for next two weeks only (starting tomorrow)
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -570,14 +575,11 @@ route.get("/userOrderView/:id", isStudent, async (req, res) => {
       date: { $gte: tomorrow, $lte: twoWeeksFromNow },
     }).sort({ date: 1 });
 
-    res.render(
-      "userOrderView",
-      {
-        userOrders,
-        completedOrders,
-        storeHours
-      }
-    );
+    res.render("userOrderView", {
+      userOrders,
+      completedOrders,
+      storeHours,
+    });
   } else {
     return res.status(403).render("errorPage", {
       title: "Please log in to view your orders",
@@ -585,7 +587,6 @@ route.get("/userOrderView/:id", isStudent, async (req, res) => {
     });
   }
 });
-
 
 route.post("/userDeleteOrder", isStudent, async (req, res) => {
   const orderId = req.body.orderId;

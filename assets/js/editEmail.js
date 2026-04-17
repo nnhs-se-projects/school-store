@@ -9,10 +9,18 @@ function setIfEmpty(text) {
 }
 
 saveBtn.addEventListener("click", async () => {
-  const confirmStoreText = setIfEmpty(document.getElementById("confirm-store-text").value);
-  const confirmStudentText = setIfEmpty(document.getElementById("confirm-student-text").value);
-  const cancelStudentText = setIfEmpty(document.getElementById("cancel-student-text").value);
-  const pickupReminderText = setIfEmpty(document.getElementById("pickup-reminder-text").value);
+  const confirmStoreText = setIfEmpty(
+    document.getElementById("confirm-store-text").value,
+  );
+  const confirmStudentText = setIfEmpty(
+    document.getElementById("confirm-student-text").value,
+  );
+  const cancelStudentText = setIfEmpty(
+    document.getElementById("cancel-student-text").value,
+  );
+  const pickupReminderText = setIfEmpty(
+    document.getElementById("pickup-reminder-text").value,
+  );
 
   const emailText = {
     confirmStoreText,
@@ -23,9 +31,9 @@ saveBtn.addEventListener("click", async () => {
   const response = await fetch("/editEmail", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(emailText)
+    body: JSON.stringify(emailText),
   });
 
   if (response.ok) {
