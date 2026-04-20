@@ -28,7 +28,9 @@ const connectDB = require("./server/database/connection");
 connectDB();
 
 // start periodic reminder checks for orders that are due for pickup reminders
-const { startOrderReminderScheduler } = require("./server/utils/reminderScheduler");
+const {
+  startOrderReminderScheduler,
+} = require("./server/utils/reminderScheduler");
 startOrderReminderScheduler();
 
 // import the express-session module, which is used to manage sessions
@@ -38,7 +40,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-  })
+  }),
 );
 
 // app.post("/upload", upload.single("file"), (req, res) => {
