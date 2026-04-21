@@ -729,22 +729,52 @@ route.get("/deleteItem/:id", isAdmin, async (req, res) => {
 
 // route to editEmails page
 route.get("/editEmails", isAdmin, async (req, res) => {
-  const confirmStoreTextEntry = await EmailText.findOne({ name: "confirm store text" });
-  const confirmStudentTextEntry = await EmailText.findOne({ name: "confirm student text" });
-  const cancelStudentTextEntry = await EmailText.findOne({ name: "cancel student text" });
+  const confirmStoreTextEntry = await EmailText.findOne({
+    name: "confirm store text",
+  });
+  const confirmStudentTextEntry = await EmailText.findOne({
+    name: "confirm student text",
+  });
+  const cancelStudentTextEntry = await EmailText.findOne({
+    name: "cancel student text",
+  });
+  const pickupReminderTextEntry = await EmailText.findOne({
+    name: "pickup reminder text",
+  });
 
   return res.render("editEmail", {
     confirmStoreText: confirmStoreTextEntry ? confirmStoreTextEntry.text : "",
-    confirmStudentText: confirmStudentTextEntry ? confirmStudentTextEntry.text : "",
-    cancelStudentText: cancelStudentTextEntry ? cancelStudentTextEntry.text : ""
+    confirmStudentText: confirmStudentTextEntry
+      ? confirmStudentTextEntry.text
+      : "",
+    cancelStudentText: cancelStudentTextEntry
+      ? cancelStudentTextEntry.text
+      : "",
+    pickupReminderText: pickupReminderTextEntry
+      ? pickupReminderTextEntry.text
+      : "Hi <student name>,\n\nThis is a reminder that your order will be ready for pickup tomorrow.\n\n<full order>\n\nThank you!",
   });
 });
 
 route.post("/editEmail", isAdmin, async (req, res) => {
-  const { confirmStoreText, confirmStudentText, cancelStudentText } = req.body;
-  const confirmStoreTextEntry = await EmailText.findOne({ name: "confirm store text" });
-  const confirmStudentTextEntry = await EmailText.findOne({ name: "confirm student text" });
-  const cancelStudentTextEntry = await EmailText.findOne({ name: "cancel student text" });
+  const {
+    confirmStoreText,
+    confirmStudentText,
+    cancelStudentText,
+    pickupReminderText,
+  } = req.body;
+  const confirmStoreTextEntry = await EmailText.findOne({
+    name: "confirm store text",
+  });
+  const confirmStudentTextEntry = await EmailText.findOne({
+    name: "confirm student text",
+  });
+  const cancelStudentTextEntry = await EmailText.findOne({
+    name: "cancel student text",
+  });
+  const pickupReminderTextEntry = await EmailText.findOne({
+    name: "pickup reminder text",
+  });
 
   if (confirmStoreTextEntry) {
     confirmStoreTextEntry.text = confirmStoreText;
@@ -752,7 +782,7 @@ route.post("/editEmail", isAdmin, async (req, res) => {
   } else {
     const newEmailEntry = new EmailText({
       name: "confirm store text",
-      text: confirmStoreText
+      text: confirmStoreText,
     });
     await newEmailEntry.save();
   }
@@ -763,7 +793,7 @@ route.post("/editEmail", isAdmin, async (req, res) => {
   } else {
     const newEmailEntry = new EmailText({
       name: "confirm student text",
-      text: confirmStudentText
+      text: confirmStudentText,
     });
     await newEmailEntry.save();
   }
@@ -774,7 +804,18 @@ route.post("/editEmail", isAdmin, async (req, res) => {
   } else {
     const newEmailEntry = new EmailText({
       name: "cancel student text",
-      text: cancelStudentText
+      text: cancelStudentText,
+    });
+    await newEmailEntry.save();
+  }
+
+  if (pickupReminderTextEntry) {
+    pickupReminderTextEntry.text = pickupReminderText;
+    await pickupReminderTextEntry.save();
+  } else {
+    const newEmailEntry = new EmailText({
+      name: "pickup reminder text",
+      text: pickupReminderText,
     });
     await newEmailEntry.save();
   }

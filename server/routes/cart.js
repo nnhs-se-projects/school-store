@@ -37,6 +37,20 @@ function isVolunteer(req, res, next) {
   }
 }
 
+function parsePickupTime(dateStr, timeRangeStr) {
+  // dateStr format: "YYYY-MM-DD"
+  // timeRangeStr format: "9:00 AM - 9:30 AM"
+  const [startTime] = timeRangeStr.split(" - ");
+  const [time, period] = startTime.trim().split(" ");
+  let [hours, minutes] = time.split(":").map(Number);
+
+  if (period === "PM" && hours !== 12) hours += 12;
+  if (period === "AM" && hours === 12) hours = 0;
+
+  const [year, month, day] = dateStr.split("-").map(Number);
+  return new Date(year, month - 1, day, hours, minutes, 0, 0);
+}
+
 const formatItemNameAndSize = (itemName, sizeName) => {
   return itemName + "\\" + sizeName;
 };
@@ -94,8 +108,10 @@ async function createXLSXWithOrders(orders) {
 
   // create the headers
 
-  let ordersXML = '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c><c r="B1" t="inlineStr"><is><t>Name</t></is></c><c r="C1" t="inlineStr"><is><t>Email</t></is></c><c r="D1" t="inlineStr"><is><t>Pickup Date</t></is></c><c r="E1" t="inlineStr"><is><t>Pickup Time</t></is></c><c r="F1" t="inlineStr"><is><t>Total Price</t></is></c><c r="G1" t="inlineStr"><is><t>Status</t></is></c></row>';
-  let orderItemsXML = '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c>';
+  let ordersXML =
+    '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c><c r="B1" t="inlineStr"><is><t>Name</t></is></c><c r="C1" t="inlineStr"><is><t>Email</t></is></c><c r="D1" t="inlineStr"><is><t>Pickup Date</t></is></c><c r="E1" t="inlineStr"><is><t>Pickup Time</t></is></c><c r="F1" t="inlineStr"><is><t>Total Price</t></is></c><c r="G1" t="inlineStr"><is><t>Status</t></is></c></row>';
+  let orderItemsXML =
+    '<sheetData><row r="1"><c r="A1" t="inlineStr"><is><t>Order Number</t></is></c>';
 
   // order item headers
   const itemColumnMap = new Map(); // create a Map to map different items (and sizes/variants) to a column in the spreadsheet
@@ -396,6 +412,11 @@ route.post("/cart/order", async (req, res) => {
   // generate order number
   const orderNum = Math.floor(Math.random() * 1000000);
 
+  // Calculate pickupAt and sendReminderTime (24 hours before)
+  const pickupAt = parsePickupTime(pickUpDate, pickUpPeriod);
+  const sendReminderTime = new Date(pickupAt);
+  sendReminderTime.setHours(sendReminderTime.getHours() - 24);
+
   const order = {
     name: user.name,
     email: user.email,
@@ -405,6 +426,8 @@ route.post("/cart/order", async (req, res) => {
     orderNumber: orderNum,
     orderStatus: "pending",
     items: user.cart,
+    pickupAt: pickupAt,
+    sendReminderTime: sendReminderTime,
   };
 
   console.log("Order details:", order);
@@ -548,11 +571,13 @@ route.post("/checkOffOrder", async (req, res) => {
   const orderToUpdate = await Order.findById(orderId);
 
   for (const orderItem of orderToUpdate.items) {
-    const item = items.find((i) => i._id.toString() === orderItem.itemId.toString());
-    
+    const item = items.find(
+      (i) => i._id.toString() === orderItem.itemId.toString(),
+    );
+
     item.sizes[orderItem.size] -= orderItem.quantity;
 
-    await item.updateOne({sizes: item.sizes});
+    await item.updateOne({ sizes: item.sizes });
   }
 
   if (!orderToUpdate) {
@@ -567,15 +592,17 @@ route.get("/userOrderView/:id", isStudent, async (req, res) => {
   const pageID = req.params.id;
   const userID = req.session.user.googleId;
 
-  if (userID === pageID) { 
-    const allUserOrders = await Order.find({ email: req.session.user.email }).sort({ date: -1 });
+  if (userID === pageID) {
+    const allUserOrders = await Order.find({
+      email: req.session.user.email,
+    }).sort({ date: -1 });
     const userOrders = allUserOrders.filter(
       (order) => order.orderStatus !== "completed",
     );
     const completedOrders = allUserOrders.filter(
       (order) => order.orderStatus === "completed",
     );
-  
+
     // Query store hours for next two weeks only (starting tomorrow)
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -589,14 +616,11 @@ route.get("/userOrderView/:id", isStudent, async (req, res) => {
       date: { $gte: tomorrow, $lte: twoWeeksFromNow },
     }).sort({ date: 1 });
 
-    res.render(
-      "userOrderView",
-      {
-        userOrders,
-        completedOrders,
-        storeHours
-      }
-    );
+    res.render("userOrderView", {
+      userOrders,
+      completedOrders,
+      storeHours,
+    });
   } else {
     return res.status(403).render("errorPage", {
       title: "Please log in to view your orders",
@@ -604,7 +628,6 @@ route.get("/userOrderView/:id", isStudent, async (req, res) => {
     });
   }
 });
-
 
 route.post("/userDeleteOrder", isStudent, async (req, res) => {
   const orderId = req.body.orderId;
@@ -643,21 +666,46 @@ route.post("/userDeleteOrder", isStudent, async (req, res) => {
 });
 
 route.post("/userChangePickupTime", isStudent, async (req, res) => {
-  const orderId = req.body.orderId;
-  const order = await Order.findById(orderId);
+  try {
+    const { orderId, pickUpDate, pickUpTime } = req.body;
+    const order = await Order.findById(orderId);
 
-  const orderEmail = order.email;
-  const userEmail = req.session.user.email;
+    if (!order) {
+      return res.status(404).send("Order not found");
+    }
 
-  if (orderEmail !== userEmail) {
-    res.status(403).send("Order pickup time change unauthorized");
-  } else {
-    order.date = req.body.pickUpDate;
-    order.period = req.body.pickUpTime;
+    const orderEmail = order.email;
+    const userEmail = req.session.user.email;
+
+    if (orderEmail !== userEmail) {
+      return res.status(403).send("Order pickup time change unauthorized");
+    }
+
+    const reminderWasAlreadySent = !!order.reminderSentAt;
+    const pickupAt = parsePickupTime(pickUpDate, pickUpTime);
+    const sendReminderTime = new Date(pickupAt);
+    sendReminderTime.setHours(sendReminderTime.getHours() - 24);
+
+    order.date = pickUpDate;
+    order.period = pickUpTime;
+    order.pickupAt = pickupAt;
+    order.sendReminderTime = sendReminderTime;
+    order.reminderSentAt = undefined;
 
     await order.save();
 
+    if (reminderWasAlreadySent) {
+      const reminderSent = await sendEmail.sendPickupReminderEmail(order);
+      if (reminderSent) {
+        order.reminderSentAt = new Date();
+        await order.save();
+      }
+    }
+
     res.status(200).send("Order pickup time changed successfully");
+  } catch (error) {
+    console.error("Error changing pickup time:", error);
+    res.status(500).send("Error changing pickup time");
   }
 });
 

@@ -17,6 +17,18 @@ const OrderSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  pickupAt: {
+    type: Date,
+    required: false,
+  },
+  sendReminderTime: {
+    type: Date,
+    required: false,
+  },
+  reminderSentAt: {
+    type: Date,
+    required: false,
+  },
   totalPrice: {
     type: mongoose.Types.Decimal128,
     required: true,
@@ -60,6 +72,13 @@ const OrderSchema = new mongoose.Schema({
     },
   ],
   // Add other fields as necessary
+});
+
+OrderSchema.index({
+  sendReminderTime: 1,
+  pickupAt: 1,
+  reminderSentAt: 1,
+  orderStatus: 1,
 });
 
 module.exports = mongoose.model("Order", OrderSchema);
