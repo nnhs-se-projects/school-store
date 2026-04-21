@@ -37,6 +37,20 @@ function isVolunteer(req, res, next) {
   }
 }
 
+function parsePickupTime(dateStr, timeRangeStr) {
+  // dateStr format: "YYYY-MM-DD"
+  // timeRangeStr format: "9:00 AM - 9:30 AM"
+  const [startTime] = timeRangeStr.split(" - ");
+  const [time, period] = startTime.trim().split(" ");
+  let [hours, minutes] = time.split(":").map(Number);
+
+  if (period === "PM" && hours !== 12) hours += 12;
+  if (period === "AM" && hours === 12) hours = 0;
+
+  const [year, month, day] = dateStr.split("-").map(Number);
+  return new Date(year, month - 1, day, hours, minutes, 0, 0);
+}
+
 async function createXLSXWithOrders(orders) {
   // see /server/exportXLSX.js for maintainability note on XLSX worksheet data
 
@@ -358,20 +372,6 @@ route.post("/cart/order", async (req, res) => {
   const orderNum = Math.floor(Math.random() * 1000000);
 
   // Calculate pickupAt and sendReminderTime (24 hours before)
-  const parsePickupTime = (dateStr, timeRangeStr) => {
-    // dateStr format: "YYYY-MM-DD"
-    // timeRangeStr format: "9:00 AM - 9:30 AM"
-    const [startTime] = timeRangeStr.split(" - ");
-    const [time, period] = startTime.trim().split(" ");
-    let [hours, minutes] = time.split(":").map(Number);
-
-    if (period === "PM" && hours !== 12) hours += 12;
-    if (period === "AM" && hours === 12) hours = 0;
-
-    const [year, month, day] = dateStr.split("-").map(Number);
-    return new Date(year, month - 1, day, hours, minutes, 0, 0);
-  };
-
   const pickupAt = parsePickupTime(pickUpDate, pickUpPeriod);
   const sendReminderTime = new Date(pickupAt);
   sendReminderTime.setHours(sendReminderTime.getHours() - 24);
@@ -625,21 +625,46 @@ route.post("/userDeleteOrder", isStudent, async (req, res) => {
 });
 
 route.post("/userChangePickupTime", isStudent, async (req, res) => {
-  const orderId = req.body.orderId;
-  const order = await Order.findById(orderId);
+  try {
+    const { orderId, pickUpDate, pickUpTime } = req.body;
+    const order = await Order.findById(orderId);
 
-  const orderEmail = order.email;
-  const userEmail = req.session.user.email;
+    if (!order) {
+      return res.status(404).send("Order not found");
+    }
 
-  if (orderEmail !== userEmail) {
-    res.status(403).send("Order pickup time change unauthorized");
-  } else {
-    order.date = req.body.pickUpDate;
-    order.period = req.body.pickUpTime;
+    const orderEmail = order.email;
+    const userEmail = req.session.user.email;
+
+    if (orderEmail !== userEmail) {
+      return res.status(403).send("Order pickup time change unauthorized");
+    }
+
+    const reminderWasAlreadySent = !!order.reminderSentAt;
+    const pickupAt = parsePickupTime(pickUpDate, pickUpTime);
+    const sendReminderTime = new Date(pickupAt);
+    sendReminderTime.setHours(sendReminderTime.getHours() - 24);
+
+    order.date = pickUpDate;
+    order.period = pickUpTime;
+    order.pickupAt = pickupAt;
+    order.sendReminderTime = sendReminderTime;
+    order.reminderSentAt = undefined;
 
     await order.save();
 
+    if (reminderWasAlreadySent) {
+      const reminderSent = await sendEmail.sendPickupReminderEmail(order);
+      if (reminderSent) {
+        order.reminderSentAt = new Date();
+        await order.save();
+      }
+    }
+
     res.status(200).send("Order pickup time changed successfully");
+  } catch (error) {
+    console.error("Error changing pickup time:", error);
+    res.status(500).send("Error changing pickup time");
   }
 });
 
