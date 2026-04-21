@@ -40,6 +40,8 @@ We use a MongoDB database to store all of the information on our items and order
 
 Our trello is quite disorganized.
 
+We think there is a chance that set times and other functions involving time do not respect time changes (like daylight savings).
+
 (See stories and issues on trello).
 
 # Backlog User Stories
