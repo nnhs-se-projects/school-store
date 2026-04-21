@@ -37,6 +37,42 @@ function isVolunteer(req, res, next) {
   }
 }
 
+const formatItemNameAndSize = (itemName, sizeName) => {
+  return itemName + "\\" + sizeName;
+};
+
+function getItemsInOrders(orders, items) {
+  const formattedItems = items.map((item) => {
+    return {
+      id: item._id,
+      name: item.name,
+      quantity: item.quantity,
+      sizes: item.sizes,
+    };
+  });
+
+  const itemsInOrders = {};
+
+  for (const item of formattedItems) {
+    for (const size in item.sizes) {
+      itemsInOrders[formatItemNameAndSize(item.name, size)] = 0;
+    }
+  }
+
+  for (const order of orders) {
+    if (order.orderStatus !== "completed") {
+      for (const item of order.items) {
+        const itemNameAndSize = formatItemNameAndSize(item.name, item.size);
+        if (itemsInOrders[itemNameAndSize] !== undefined) {
+          itemsInOrders[itemNameAndSize] += item.quantity;
+        }
+      }
+    }
+  }
+
+  return itemsInOrders;
+}
+
 async function createXLSXWithOrders(orders) {
   // see /server/exportXLSX.js for maintainability note on XLSX worksheet data
 
@@ -127,6 +163,9 @@ route.get("/cart", isStudent, async (req, res) => {
       return res.status(404).send("User not found");
     }
 
+    const items = await Item.find();
+    const orders = await Order.find({}).sort({ date: 1 });
+
     const userCart = [];
     let warnUserOOS = false;
     let warnUserQuant = false;
@@ -144,7 +183,9 @@ route.get("/cart", isStudent, async (req, res) => {
         continue;
       }
 
-      const itemInventoryQuantity = item.sizes[user.cart[i].size];
+      const itemsInOrders = getItemsInOrders(orders, items);
+
+      const itemInventoryQuantity = item.sizes[user.cart[i].size] - itemsInOrders[formatItemNameAndSize(item.name, user.cart[i].size)];
 
       if (typeof itemInventoryQuantity === "undefined") {
         warnUserOOS = true;
