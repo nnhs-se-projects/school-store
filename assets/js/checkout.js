@@ -75,6 +75,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
   const checkoutButton = document.getElementById("checkout-button");
   const pickupDateSelect = document.getElementById("pickup-date");
   const pickupTimeSelect = document.getElementById("pickup-time");
+  const orderNoteText = document.getElementById("order-note-input").value;
 
   populateTimeOptions(pickupDateSelect, pickupTimeSelect, storeHoursData);
 
@@ -98,7 +99,13 @@ document.addEventListener("DOMContentLoaded", (event) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ googleId, pickUpDate, pickUpPeriod, totalCost }),
+      body: JSON.stringify({
+        googleId,
+        pickUpDate,
+        pickUpPeriod,
+        totalCost,
+        orderNoteText
+      }),
     });
 
     if (response.ok) {

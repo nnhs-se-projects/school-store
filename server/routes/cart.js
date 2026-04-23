@@ -401,7 +401,13 @@ route.get("/cart/checkout", async (req, res) => {
 
 route.post("/cart/order", async (req, res) => {
   console.log("Placing order");
-  const { googleId, pickUpDate, pickUpPeriod, totalCost } = req.body;
+  const {
+    googleId,
+    pickUpDate,
+    pickUpPeriod,
+    totalCost,
+    orderNoteText
+  } = req.body;
 
   const user = await User.findOne({ googleId });
 
