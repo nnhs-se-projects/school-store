@@ -434,6 +434,7 @@ route.post("/cart/order", async (req, res) => {
     items: user.cart,
     pickupAt: pickupAt,
     sendReminderTime: sendReminderTime,
+    orderNote: orderNoteText
   };
 
   console.log("Order details:", order);
