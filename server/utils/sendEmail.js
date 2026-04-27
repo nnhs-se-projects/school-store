@@ -7,8 +7,22 @@ module.exports = {
 const User = require("../model/user");
 const EmailText = require("../model/emailText");
 const nodemailer = require("nodemailer");
+const { getLunchPeriodsForSlot } = require("./lunchPeriods");
 
 const adminEmail = "napervillenorthschoolstore@gmail.com";
+
+function formatPickupPeriodWithLunch(order) {
+  if (!order || !order.date || !order.period) {
+    return order?.period || "";
+  }
+
+  const lunchPeriods = getLunchPeriodsForSlot(order.date, order.period);
+  if (!lunchPeriods) {
+    return order.period;
+  }
+
+  return `${order.period} (${lunchPeriods} lunch)`;
+}
 
 function processEmbeddedText(text, order, user, date) {
   const studentNameBlocks = text.split("<student name>");
@@ -24,7 +38,8 @@ function processEmbeddedText(text, order, user, date) {
   for (let i = 1; i < fullOrderBlocks.length; i++) {
     const block = fullOrderBlocks[i];
 
-    let orderDetails = `Student: ${order.name}\nEmail: ${order.email}\nPickup Date: ${date}\nPickup Time: ${order.period}\nTotal Cost: $${order.totalPrice}\nItems:\n`;
+    const pickupTimeDisplay = formatPickupPeriodWithLunch(order);
+    let orderDetails = `Student: ${order.name}\nEmail: ${order.email}\nPickup Date: ${date}\nPickup Time: ${pickupTimeDisplay}\nTotal Cost: $${order.totalPrice}\nItems:\n`;
     for (let i = 0; i < order.items.length; i++) {
       orderDetails += `- ${order.items[i].quantity} x ${order.items[i].size} ${order.items[i].name}\n`;
     }
@@ -206,7 +221,7 @@ async function sendPickupReminderEmail(order) {
   const mailOptions = {
     from: adminEmail,
     to: order.email,
-    subject: `REMINDER: Your order is going to be ready to get picked up at ${order.period} on ${date}`,
+    subject: `REMINDER: Your order is going to be ready to get picked up at ${formatPickupPeriodWithLunch(order)} on ${date}`,
     text: reminderMessage,
   };
 

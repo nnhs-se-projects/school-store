@@ -36,7 +36,7 @@
             <td><%= pendingOrders[i].email %></td>
             <td><%= pendingOrders[i].orderNumber %></td>
             <td><%= pendingOrders[i].date %></td>
-            <td><%= pendingOrders[i].period %></td>
+            <td><%= pendingOrders[i].pickupPeriodDisplay || pendingOrders[i].period %></td>
             <td>$<%= pendingOrders[i].totalPrice %></td>
             <td>
               <button class="check-off-order" order-id="<%=pendingOrders[i].id%>">

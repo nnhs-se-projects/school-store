@@ -7,6 +7,7 @@ const Order = require("../model/order");
 const Time = require("../model/time");
 const nodemailer = require("nodemailer");
 const sendEmail = require("../utils/sendEmail");
+const { getLunchPeriodsForSlot } = require("../utils/lunchPeriods");
 
 const xlsx = require("../utils/exportXLSX");
 const order = require("../model/order");
@@ -49,6 +50,16 @@ function parsePickupTime(dateStr, timeRangeStr) {
 
   const [year, month, day] = dateStr.split("-").map(Number);
   return new Date(year, month - 1, day, hours, minutes, 0, 0);
+}
+
+function formatPickupPeriodWithLunch(dateStr, periodStr) {
+  const lunchPeriods = getLunchPeriodsForSlot(dateStr, periodStr);
+
+  if (!lunchPeriods) {
+    return periodStr;
+  }
+
+  return `${periodStr} (${lunchPeriods} lunch)`;
 }
 
 const formatItemNameAndSize = (itemName, sizeName) => {
@@ -493,6 +504,13 @@ route.get("/orderViewer", isVolunteer, async (req, res) => {
     (order) => order.orderStatus !== "completed",
   );
 
+  for (const pendingOrder of pendingOrders) {
+    pendingOrder.pickupPeriodDisplay = formatPickupPeriodWithLunch(
+      pendingOrder.date,
+      pendingOrder.period,
+    );
+  }
+
   res.render("orderViewer", {
     pendingOrders,
   });
@@ -514,6 +532,14 @@ route.get("/completedOrderViewer", isVolunteer, async (req, res) => {
   const completedOrders = await Order.find({ orderStatus: "completed" }).sort({
     date: -1,
   });
+
+  for (const completedOrder of completedOrders) {
+    completedOrder.pickupPeriodDisplay = formatPickupPeriodWithLunch(
+      completedOrder.date,
+      completedOrder.period,
+    );
+  }
+
   res.render("completedOrderViewer", { completedOrders });
 });
 
@@ -602,6 +628,20 @@ route.get("/userOrderView/:id", isStudent, async (req, res) => {
     const completedOrders = allUserOrders.filter(
       (order) => order.orderStatus === "completed",
     );
+
+    for (const userOrder of userOrders) {
+      userOrder.pickupPeriodDisplay = formatPickupPeriodWithLunch(
+        userOrder.date,
+        userOrder.period,
+      );
+    }
+
+    for (const completedOrder of completedOrders) {
+      completedOrder.pickupPeriodDisplay = formatPickupPeriodWithLunch(
+        completedOrder.date,
+        completedOrder.period,
+      );
+    }
 
     // Query store hours for next two weeks only (starting tomorrow)
     const tomorrow = new Date();
