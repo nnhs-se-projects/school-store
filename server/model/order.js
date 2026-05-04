@@ -42,6 +42,11 @@ const OrderSchema = new mongoose.Schema({
     required: true,
     default: "pending",
   },
+  orderNote: {
+    type: String,
+    required: false,
+    default: ""
+  },
   items: [
     {
       itemId: {

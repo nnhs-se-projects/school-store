@@ -401,7 +401,13 @@ route.get("/cart/checkout", async (req, res) => {
 
 route.post("/cart/order", async (req, res) => {
   console.log("Placing order");
-  const { googleId, pickUpDate, pickUpPeriod, totalCost } = req.body;
+  const {
+    googleId,
+    pickUpDate,
+    pickUpPeriod,
+    totalCost,
+    orderNoteText
+  } = req.body;
 
   const user = await User.findOne({ googleId });
 
@@ -417,6 +423,8 @@ route.post("/cart/order", async (req, res) => {
   const sendReminderTime = new Date(pickupAt);
   sendReminderTime.setHours(sendReminderTime.getHours() - 24);
 
+  console.log("Order note: \"" + orderNoteText + "\"");
+
   const order = {
     name: user.name,
     email: user.email,
@@ -428,6 +436,7 @@ route.post("/cart/order", async (req, res) => {
     items: user.cart,
     pickupAt: pickupAt,
     sendReminderTime: sendReminderTime,
+    orderNote: orderNoteText
   };
 
   console.log("Order details:", order);

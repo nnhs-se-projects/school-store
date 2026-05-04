@@ -20,6 +20,7 @@
             <th>Total Price</th>
             <th>Status</th>
             <th>View Items</th>
+            <th>Order Note</th>
           </tr>
         </thead>
         <tbody>
@@ -37,6 +38,7 @@
             <td>$<%= completedOrders[i].totalPrice %></td>
             <td class="status"><%= completedOrders[i].orderStatus %></td>
             <td><button class="view-items-completed">View Items</button></td>
+            <td><%= completedOrders[i].orderNote %></td>
           </tr>
           <% } %>
          </tbody>
