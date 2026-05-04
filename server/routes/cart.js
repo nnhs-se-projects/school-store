@@ -423,6 +423,8 @@ route.post("/cart/order", async (req, res) => {
   const sendReminderTime = new Date(pickupAt);
   sendReminderTime.setHours(sendReminderTime.getHours() - 24);
 
+  console.log("Order note: \"" + orderNoteText + "\"");
+
   const order = {
     name: user.name,
     email: user.email,

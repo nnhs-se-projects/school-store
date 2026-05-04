@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
   const checkoutButton = document.getElementById("checkout-button");
   const pickupDateSelect = document.getElementById("pickup-date");
   const pickupTimeSelect = document.getElementById("pickup-time");
-  const orderNoteText = document.getElementById("order-note-input").value;
+  const orderNote = document.getElementById("order-note-input");
 
   populateTimeOptions(pickupDateSelect, pickupTimeSelect, storeHoursData);
 
@@ -93,6 +93,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
     if (!userConfirmed) {
       return;
     }
+
+    const orderNoteText = orderNote.value;
 
     const response = await fetch("/cart/order", {
       method: "POST",
