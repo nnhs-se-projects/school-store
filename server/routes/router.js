@@ -395,10 +395,6 @@ route.post("/setTimes", isAdmin, async (req, res) => {
   res.redirect(redirectUrl);
 });
 
-route.get("/setVolunteers", isAdmin, async (req, res) => {
-  res.redirect("/setPermissions");
-});
-
 route.get("/setPermissions", isAdmin, async (req, res) => {
   const volunteerEmailDocs = await VolunteerEmail.find().sort({ email: 1 });
   const adminEmailDocs = await AdminEmail.find().sort({ email: 1 });
