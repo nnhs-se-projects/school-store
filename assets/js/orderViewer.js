@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const checkOffButtons = document.querySelectorAll(".check-off-order");
   const deleteButtons = document.querySelectorAll(".delete-order");
   const viewItemsButtons = document.querySelectorAll(".view-items");
+  const loadingDialog = document.getElementById("loading-dialog");
 
   const exportXLSX = document.getElementById("orderviewerxlsx");
   const exportXLSXText = exportXLSX.innerText;
@@ -60,6 +61,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const orderId = button.getAttribute("order-id");
+
+      loadingDialog.showModal();
+
       const response = await fetch("/checkOffOrder", {
         method: "POST",
         headers: {
@@ -73,6 +77,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (response.ok) {
         console.log("Order checked off successfully");
       } else {
+        loadingDialog.close();
+
         console.error("Failed to check off order");
       }
     });
@@ -88,6 +94,9 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
       const orderId = button.getAttribute("order-id");
+
+      loadingDialog.showModal();
+
       const response = await fetch("/deleteOrder", {
         method: "POST",
         headers: {
@@ -100,6 +109,8 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Order deleted successfully");
         window.location.reload(); // Reload the page to reflect the changes
       } else {
+        loadingDialog.close();
+
         console.error("Failed to delete order");
       }
     });
