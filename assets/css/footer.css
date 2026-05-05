@@ -29,6 +29,10 @@
   margin: 0;
 }
 
+#team-link {
+  color: #8bf;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .site-footer {
