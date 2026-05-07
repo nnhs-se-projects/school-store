@@ -233,3 +233,13 @@ h1 {
   margin-bottom: 20px; /* Add some space below the heading */
   text-align: center; /* Center the heading text */
 }
+
+#order-notes {
+  display: grid;
+  place-items: center;
+}
+
+#order-note-input {
+  resize: vertical;
+  max-width: 90%;
+}

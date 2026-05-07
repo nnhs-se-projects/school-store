@@ -39,7 +39,10 @@
           </tr>
         <% } %>
         </table>
-         <button class="change-time" order-id="<%= order.id %>">
+        <% if (order.orderNote) { %>
+        <p><strong>Order Note: </strong><%= order.orderNote %></p>
+        <% } %>
+        <button class="change-time" order-id="<%= order.id %>">
           Change Pickup Time
         </button>
         <button class="delete-order" order-id="<%= order.id %>">
@@ -73,6 +76,9 @@
           </tr>
         <% } %>
         </table>
+        <% if (order.orderNote) { %>
+        <p><strong>Order Note: </strong><%= order.orderNote %></p>
+        <% } %>
         <p>Order <em>#<%= order.orderNumber %></em></p>
       </div>
       <% } %>
