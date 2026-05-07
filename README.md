@@ -43,7 +43,7 @@ our project currently has two separate google client ID's, one for the live serv
 # Running the Project
 
 To run the project open up the Run & Debug button on the left side of VS Code and then run the node server, and node client and a window should appear with the site. The website should be running on port 8087. All of the links on the head bar should work and send you to their specific page (some are hidden in for different auth levels, see next section).
-Also, developers should contact a current admin (Mr Callagahn or Mr Schmit) to get admin access.
+Also, developers should contact a current admin (e.g. Mr. Callaghan or Mr. Schmit) to get admin access.
 
 # Description of the Project’s Architecture
 
