@@ -105,7 +105,6 @@ async function sendOrderEmails(order, user, date) {
   // send email to user
   // Configure the transporter
 
-  // console.log(process.env.EMAIL_PASSWORD);
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
