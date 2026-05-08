@@ -2,21 +2,48 @@
 
 # Description
 
-The School Store App is a website that allows students to order school supplies online and schedule a time to pick the supplies up. Our group has so far created an order system, a way to add and remove items for sale, a on website spreadsheet for the quantity of inventory, and different web pages for each one of these items. Students buying items works the same way any online store works. When they place their order, they will receive an email form the school store email bot, and the volunteers will get the order on the orders page, along with information of when the student will be coming. 
+The School Store App is a website that allows students to order school supplies online and schedule a time to pick up the supplies. Our group has created these functions so far:
+
+**Volunteer and Admin functions**
+
+- View and change in-person management 
+- Inventory sheet
+- Order viewer (current and previous)
+
+**User functions**
+
+- Placing orders
+- Viewing their current and previous orders
+
+**Admin only functions**
+
+- Manage sale items
+- Manage pickup times
+- Set Admin and Volunteer permissions
+- Edit email text for emails that get sent out
 
 # Start
 
-make sure to run "npm install nodemailer" in the terminal
-your .env file needs to have 4 things in it
+Make sure to run "npm install nodemailer" in the terminal
+Your .env file needs to have 4 things in it, found in trello
 1. The MONGO_URI
-2. the SESSION_SECRET
-3. the EMAIL_PASSWORD
-4. the GOOGLE_CLIENT_ID
-our project currently has two separate google client ID's, one for the live server, and one for local host.
+3. the SESSION_SECRET
+4. the EMAIL_PASSWORD (google app password is a 16-character code in a 4x4 format (i.e. ____ ____ ____ ____))
+5. the GOOGLE_CLIENT_ID
+our project currently has two separate google client ID's, one for the live server and one for localhost.
+
+
+# External services and platform requirements
+
+- MongoDB
+- Google OAUTH
+- Node mailer
+- Gmail SMTP
 
 # Running the Project
 
 To run the project open up the Run & Debug button on the left side of VS Code and then run the node server, and node client and a window should appear with the site. The website should be running on port 8087. All of the links on the head bar should work and send you to their specific page (some are hidden in for different auth levels, see next section).
+Also, developers should contact a current admin (e.g. Mr. Callaghan or Mr. Schmit) to get admin access.
 
 # Description of the Project’s Architecture
 

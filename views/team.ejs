@@ -1,0 +1,68 @@
+<!-- include header -->
+<%- include('include/_header') %>
+<!-- /include header -->
+
+<style>
+  #team-table {
+    margin: 1em;
+    width: fit-content;
+    border-collapse: collapse;
+  }
+
+  #team-table * {
+    margin: 0 1em;
+    width: fit-content;
+  }
+
+  #team-table th {
+    border-bottom: 2px solid #000;
+  }
+
+  #team-table li {
+    display: list-item;
+    list-style-type: square;
+  }
+
+  .wrapper {
+    display: flex;
+    align-items: center;
+  }
+</style>
+
+<!-- Main Site -->
+
+<main>
+  <div class="wrapper">
+    <table id="team-table">
+      <tr>
+        <th>Students</th>
+        <th>Teachers</th>
+      </tr>
+      <tr>
+        <td>
+          <ul>
+            <li>Andrey Kopal</li>
+            <li>Benjamin Pozzi</li>
+            <li>James Carsello</li>
+            <li>Jason Squires</li>
+            <li>KeYi Wang</li>
+            <li>Kieran Neill</li>
+            <li>Owen Hoag</li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>Mr. Geoffrey Schmit</li>
+            <li>Mr. Matthew Callaghan</li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+  </div>
+</main>
+
+<!-- /Main Site -->
+
+<!-- include footer -->
+<%- include('include/_footer') %>
+<!-- /include footer -->

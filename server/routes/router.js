@@ -395,10 +395,6 @@ route.post("/setTimes", isAdmin, async (req, res) => {
   res.redirect(redirectUrl);
 });
 
-route.get("/setVolunteers", isAdmin, async (req, res) => {
-  res.redirect("/setPermissions");
-});
-
 route.get("/setPermissions", isAdmin, async (req, res) => {
   const volunteerEmailDocs = await VolunteerEmail.find().sort({ email: 1 });
   const adminEmailDocs = await AdminEmail.find().sort({ email: 1 });
@@ -822,6 +818,8 @@ route.post("/editEmail", isAdmin, async (req, res) => {
 
   res.status(201).end();
 });
+
+route.get("/team", (req, res) => {res.render("team");});
 
 // API endpoint to get order and item statistics
 route.get("/api/stats", async (req, res) => {
