@@ -13,6 +13,8 @@ const changeTimeButton = document.getElementById("change-time-button");
 const pickupDateSelect = document.getElementById("pickup-date");
 const pickupTimeSelect = document.getElementById("pickup-time");
 
+const loadingDialog = document.getElementById("loading-dialog");
+
 let latestSelectedOrderId = null;
 
 populateTimeOptions(pickupDateSelect, pickupTimeSelect, storeHoursData);
@@ -27,6 +29,9 @@ deleteButtons.forEach((button) => {
       return;
     }
     const orderId = button.getAttribute("order-id");
+
+    loadingDialog.showModal();
+
     const response = await fetch("/userDeleteOrder", {
       method: "POST",
       headers: {
@@ -39,6 +44,8 @@ deleteButtons.forEach((button) => {
       console.log("Order deleted successfully");
       window.location.reload(); // Reload the page to reflect the changes
     } else {
+      loadingDialog.close();
+
       console.error("Failed to delete order");
     }
   });

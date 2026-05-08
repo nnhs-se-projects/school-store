@@ -509,7 +509,10 @@ route.post("/deleteOrder", isVolunteer, async (req, res) => {
     if (!order) {
       return res.status(404).send("Order not found");
     }
-    await sendEmail.sendCancellationEmail(order);
+
+    if (order.orderStatus === "pending") {
+      await sendEmail.sendCancellationEmail(order);
+    }
     await Order.findByIdAndDelete(orderId);
     res.status(200).send("Order deleted successfully");
   } catch (error) {
