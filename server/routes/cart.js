@@ -545,25 +545,9 @@ route.post("/deleteOrder", isVolunteer, async (req, res) => {
       return res.status(404).send("Order not found");
     }
 
-    for (let i = 0; i < order.items.length; i++) {
-      const item = await Item.findById(order.items[i].itemId);
-      if (item) {
-        const size = order.items[i].size;
-        item.sizes[size] += order.items[i].quantity;
-        await item.save();
-        console.log(
-          "Item inventory updated: ",
-          item.name,
-          size,
-          item.sizes[size],
-        );
-      } else {
-        console.log("Item not found in inventory: ", order.items[i].itemId);
-        return res.status(404).send("Item not found in inventory");
-      }
+    if (order.orderStatus === "pending") {
+      await sendEmail.sendCancellationEmail(order);
     }
-
-    await sendEmail.sendCancellationEmail(order);
     await Order.findByIdAndDelete(orderId);
     res.status(200).send("Order deleted successfully");
   } catch (error) {

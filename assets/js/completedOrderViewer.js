@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const exportXLSX = document.getElementById("completed-order-viewer-xlsx");
+  const loadingDialog = document.getElementById("loading-dialog");
   const exportXLSXText = exportXLSX.innerText;
   const exportXLSXLoadingText = "Generating...";
   const exportXLSXErrorText = "Error generating XLSX File";
@@ -7,6 +8,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const viewCompletedItemsButtons = document.querySelectorAll(
     ".view-items-completed"
   );
+
+  const removeOrderButtons = document.querySelectorAll(".remove-order");
 
   viewCompletedItemsButtons.forEach((button) => {
     button.addEventListener("click", (event) => {
@@ -26,6 +29,31 @@ document.addEventListener("DOMContentLoaded", () => {
         itemsCell.innerHTML = generateItemsTable(items);
         itemsRow.appendChild(itemsCell);
         orderRow.parentNode.insertBefore(itemsRow, orderRow.nextElementSibling);
+      }
+    });
+  });
+
+  removeOrderButtons.forEach((button) => {
+    button.addEventListener("click", async () => {
+      const orderId = button.getAttribute("order-id");
+
+      loadingDialog.showModal();
+
+      const response = await fetch("/deleteOrder", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ orderId }),
+      });
+
+      if (response.ok) {
+        console.log("Order deleted successfully");
+        window.location.reload(); // Reload the page to reflect the changes
+      } else {
+        loadingDialog.close();
+
+        console.error("Failed to delete order");
       }
     });
   });
