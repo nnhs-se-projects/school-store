@@ -241,8 +241,6 @@ route.get("/cart", isStudent, async (req, res) => {
       }
     }
 
-    // console.log("User cart: ", userCart);
-    // console.log("Max quantities: ", maxQuantities);
     res.render("cart", {
       cart: userCart,
       warnOOS: warnUserOOS,
@@ -255,8 +253,6 @@ route.get("/cart", isStudent, async (req, res) => {
 });
 
 route.post("/cart/add", isStudent, async (req, res) => {
-  console.log("Adding item to cart");
-  console.log(req.body);
   const { itemId, quantity, size, sizeIndex } = req.body;
   const googleId = req.session.user.googleId;
 
@@ -327,16 +323,13 @@ route.post("/cart/add", isStudent, async (req, res) => {
 // Route to remove an item from the cart
 
 route.post("/cart/updateQuant", async (req, res) => {
-  console.log("Updating item quantity in cart");
   const { googleId, index, quantity } = req.body;
 
-  console.log(quantity);
   const user = await User.findOne({ googleId });
   if (!user) {
     return res.status(404).send("User not found");
   }
 
-  console.log("item index:" + index);
   if (index > -1) {
     if (quantity <= 0) {
       // If the new quantity is 0 or less, remove the item from the cart
@@ -423,8 +416,6 @@ route.post("/cart/order", async (req, res) => {
   const sendReminderTime = new Date(pickupAt);
   sendReminderTime.setHours(sendReminderTime.getHours() - 24);
 
-  console.log("Order note: \"" + orderNoteText + "\"");
-
   const order = {
     name: user.name,
     email: user.email,
@@ -455,32 +446,6 @@ route.post("/cart/order", async (req, res) => {
     day: "2-digit",
     year: "2-digit",
   });
-
-  // change inventory quantities
-  for (let i = 0; i < order.items.length; i++) {
-    const item = await Item.findById(order.items[i].itemId);
-    if (item) {
-      // console.log("Item found in inventory: ", item.name);
-      // const sizeIndex = order.items[i].sizeIndex;
-      // console.log("Item size: ", order.items[i].size);
-      // console.log("Item size index: ", sizeIndex);
-      // console.log("Item quantity ordered: ", order.items[i].quantity);
-      // console.log("Item inventory quantity: ", item.sizes[size]);
-      // console.log("Item size quantity array: ", item.sizes);
-      const size = order.items[i].size;
-      item.sizes[size] -= order.items[i].quantity;
-      await item.save();
-      console.log(
-        "Item inventory updated: ",
-        item.name,
-        size,
-        item.sizes[size],
-      );
-    } else {
-      console.log("Item not found in inventory: ", order.items[i].itemId);
-      return res.status(404).send("Item not found in inventory");
-    }
-  }
 
   user.cart = [];
   await user.save();
@@ -636,19 +601,6 @@ route.post("/userDeleteOrder", isStudent, async (req, res) => {
       if (!order) {
         return res.status(404).send("Order not found");
       }
-
-      for (let i = 0; i < order.items.length; i++) {
-        const item = await Item.findById(order.items[i].itemId);
-        if (item) {
-          const size = order.items[i].size;
-          item.sizes[size] += order.items[i].quantity;
-          await item.save();
-        } else {
-          console.log("Item not found in inventory: ", order.items[i].itemId);
-          return res.status(404).send("Item not found in inventory");
-        }
-      }
-
       await Order.findByIdAndDelete(orderId);
       res.status(200).send("Order deleted successfully");
     }

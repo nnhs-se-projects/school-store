@@ -25,7 +25,6 @@ route.put("/:id", async (req, res) => {
 route.post("/editItem/:id", async (req, res) => {
   const { name, price, quantity, description, image, sizes } = req.body.item;
 
-  console.log(name, price, quantity, description, image, sizes);
   let item;
   if (image !== null) {
     console.log("image is not null");
