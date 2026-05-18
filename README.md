@@ -6,7 +6,7 @@ The School Store App is a website that allows students to order school supplies 
 
 **Volunteer and Admin functions**
 
-- View and change in-person management 
+- View and change in-person management
 - Inventory sheet
 - Order viewer (current and previous)
 
@@ -24,14 +24,14 @@ The School Store App is a website that allows students to order school supplies 
 
 # Start
 
-Make sure to run "npm install nodemailer" in the terminal
+Make sure to run "npm install" in the terminal
 Your .env file needs to have 4 things in it, found in trello
-1. The MONGO_URI
-3. the SESSION_SECRET
-4. the EMAIL_PASSWORD (google app password is a 16-character code in a 4x4 format (i.e. ____ ____ ____ ____))
-5. the GOOGLE_CLIENT_ID
-our project currently has two separate google client ID's, one for the live server and one for localhost.
 
+1. The MONGO_URI
+2. the SESSION_SECRET
+3. the EMAIL_PASSWORD (google app password is a 16-character code in a 4x4 format (i.e. \_**\_ \_\_** \_**\_ \_\_**))
+4. the GOOGLE_CLIENT_ID
+   our project currently has two separate google client ID's, one for the live server and one for localhost.
 
 # External services and platform requirements
 
@@ -57,26 +57,14 @@ We have split up our route files into 5 different ones, they are disorganized bu
 
 There are also utility functions in [`/server/utils/`](/server/utils/) that are used in different routes.
 
-We have 3 roles for users that determine their clearance number: student, volunteer, and admin. A student is allowed to order items, a volunteer can check off orders in the manage inventory page, and the admins can add new items and adjust the inventory. 
+We have 3 roles for users that determine their clearance number: student, volunteer, and admin. A student is allowed to order items, a volunteer can check off orders in the manage inventory page, and the admins can add new items and adjust the inventory.
 
-We have the following functions for our security middleware: isVolunteer, isAdmin, and isStudent. They each do exactly what they say and check to see if the user opening the file is a volunteer, admin, or student account. It is important to call these functions on pages that are only meant for certain levels of clearance. 
+We have the following functions for our security middleware: isVolunteer, isAdmin, and isStudent. They each do exactly what they say and check to see if the user opening the file is a volunteer, admin, or student account. It is important to call these functions on pages that are only meant for certain levels of clearance.
 
-We use a MongoDB database to store all of the information on our items and orders. 
+We use a MongoDB database to store all of the information on our items and orders.
 
-# What to start working on/Known issues
+# What to Start Working on/Known issues
 
-Our trello is quite disorganized.
-
-We think there is a chance that set times and other functions involving time do not respect time changes (like daylight savings).
-
-(See stories and issues on trello).
-
-# Backlog User Stories
-
-1. As an admin, I want to be sent an email when new orders are placed so that I know what items to fulfill *(need to verify that it works)*
-
-2. As an admin I would like to be able to track long-term trends about when people most want to buy our merchandise so that we can better plan for future years. *(Right now, admins can track data in spreadsheets, but it might be nice for it to be built-in)*
-
-More on the trello board.
+Refer to stories on Trello.
 
 Have fun coding!
